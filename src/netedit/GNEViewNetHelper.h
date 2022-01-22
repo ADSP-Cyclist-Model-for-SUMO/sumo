@@ -66,7 +66,9 @@ enum class NetworkEditMode {
     ///@brief Mode for editing Polygons
     NETWORK_POLYGON,
     ///@brief Mode for editing connection prohibitions
-    NETWORK_PROHIBITION
+    NETWORK_PROHIBITION,
+    ///@brief Mode for dynamic intersection connection creation ADSP JAN 2022
+    NETWORK_DYNAMIC
 };
 
 /// @brie enum for demand edit modes
@@ -1140,6 +1142,10 @@ struct GNEViewNetHelper {
 
         /// @brief chekable button for edit mode connection
         MFXCheckableButton* connectionButton;
+
+        /// @brief chekable button for dynamic intersection creation
+        // ADSP Jan 2022
+        MFXCheckableButton* dynamicButton;
 
         /// @brief chekable button for edit mode traffic light
         MFXCheckableButton* trafficLightButton;

@@ -605,6 +605,7 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
 
     myIcons[GUIIcon::MODEADDITIONAL] = new FXXPMIcon(a, modeadditional_xpm);
     myIcons[GUIIcon::MODECONNECTION] = new FXXPMIcon(a, modeconnection_xpm);
+    myIcons[GUIIcon::MODEDYNAMIC] = new FXXPMIcon(a, modedynamic_xpm);
     myIcons[GUIIcon::MODECREATEEDGE] = new FXXPMIcon(a, modecreateedge_xpm);
     myIcons[GUIIcon::MODECROSSING] = new FXXPMIcon(a, modecrossing_xpm);
     myIcons[GUIIcon::MODETAZ] = new FXXPMIcon(a, modetaz_xpm);

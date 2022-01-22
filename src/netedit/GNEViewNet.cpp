@@ -1114,7 +1114,8 @@ GNEViewNet::abortOperation(bool clearSelection) {
         } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_CONNECT) {
             // abort changes in Connector Frame
             myViewParent->getConnectorFrame()->getConnectionModifications()->onCmdCancelModifications(0, 0, 0);
-        } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_TLS) {
+        } 
+        else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_TLS) {
             myViewParent->getTLSEditorFrame()->onCmdCancel(nullptr, 0, nullptr);
         } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_MOVE) {
             myEditNetworkElementShapes.stopEditCustomShape();
@@ -1635,6 +1636,9 @@ GNEViewNet::onCmdSetMode(FXObject*, FXSelector sel, void*) {
                 break;
             case MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN:
                 myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_CONNECT);
+                break;
+            case MID_HOTKEY_X_MODES_CONNECT_DYNAMIC: // ADSP JAN 2022
+                myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_DYNAMIC);
                 break;
             case MID_HOTKEY_T_MODES_TLS_TYPE:
                 myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_TLS);
@@ -3923,6 +3927,13 @@ GNEViewNet::updateNetworkModeSpecificControls() {
             myCurrentFrame = myViewParent->getConnectorFrame();
             myNetworkCheckableButtons.connectionButton->setChecked(true);
             break;
+        // ADSP Jan 2022
+        case NetworkEditMode::NETWORK_DYNAMIC:
+            myViewParent->getConnectorFrame()->show();
+            myViewParent->getConnectorFrame()->focusUpperElement();
+            myCurrentFrame = myViewParent->getConnectorFrame();
+            myNetworkCheckableButtons.dynamicButton->setChecked(true);
+            break;
         case NetworkEditMode::NETWORK_TLS:
             myViewParent->getTLSEditorFrame()->show();
             myViewParent->getTLSEditorFrame()->focusUpperElement();
@@ -4736,6 +4747,14 @@ GNEViewNet::processLeftButtonPressNetwork(void* eventData) {
                 myViewParent->getConnectorFrame()->handleLaneClick(myObjectsUnderCursor);
                 updateViewNet();
             }
+            // process click
+            processClick(eventData);
+            break;
+        }
+        // ADSP Jan 2022
+        case NetworkEditMode::NETWORK_DYNAMIC: {
+            // TODO: Turn feature on or off
+            updateViewNet();
             // process click
             processClick(eventData);
             break;

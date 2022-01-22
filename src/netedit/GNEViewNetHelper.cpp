@@ -3125,6 +3125,7 @@ GNEViewNetHelper::NetworkCheckableButtons::NetworkCheckableButtons(GNEViewNet* v
     moveNetworkElementsButton(nullptr),
     createEdgeButton(nullptr),
     connectionButton(nullptr),
+    dynamicButton(nullptr),          // ADSP Jan 2022
     trafficLightButton(nullptr),
     additionalButton(nullptr),
     crossingButton(nullptr),
@@ -3182,6 +3183,12 @@ GNEViewNetHelper::NetworkCheckableButtons::buildNetworkCheckableButtons() {
                                          "\tset polygon mode\tMode for creating polygons and POIs. (P)",
                                          GUIIconSubSys::getIcon(GUIIcon::MODEPOLYGON), myViewNet, MID_HOTKEY_P_MODES_POLYGON_PERSON, GUIDesignMFXCheckableButton);
     shapeButton->create();
+    // dynamic intersection mode
+    // ADSP Jan 2022
+    dynamicButton = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
+        "\tset connection mode\tMode for turning on dynamic intersection connections creation. (X)",
+        GUIIconSubSys::getIcon(GUIIcon::MODECONNECTION), myViewNet, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC, GUIDesignMFXCheckableButton);
+    dynamicButton->create();
     // always recalc after creating new elements
     myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes->recalc();
 }
@@ -3192,6 +3199,7 @@ GNEViewNetHelper::NetworkCheckableButtons::showNetworkCheckableButtons() {
     moveNetworkElementsButton->show();
     createEdgeButton->show();
     connectionButton->show();
+    dynamicButton->show();         // ADSP Jan 2022
     trafficLightButton->show();
     additionalButton->show();
     crossingButton->show();
@@ -3206,6 +3214,7 @@ GNEViewNetHelper::NetworkCheckableButtons::hideNetworkCheckableButtons() {
     moveNetworkElementsButton->hide();
     createEdgeButton->hide();
     connectionButton->hide();
+    dynamicButton->hide();         // ADSP Jan 2022
     trafficLightButton->hide();
     additionalButton->hide();
     crossingButton->hide();
@@ -3220,6 +3229,7 @@ GNEViewNetHelper::NetworkCheckableButtons::disableNetworkCheckableButtons() {
     moveNetworkElementsButton->setChecked(false);
     createEdgeButton->setChecked(false);
     connectionButton->setChecked(false);
+    dynamicButton->setChecked(false);         // ADSP Jan 2022
     trafficLightButton->setChecked(false);
     additionalButton->setChecked(false);
     crossingButton->setChecked(false);
@@ -3234,6 +3244,7 @@ GNEViewNetHelper::NetworkCheckableButtons::updateNetworkCheckableButtons() {
     moveNetworkElementsButton->update();
     createEdgeButton->update();
     connectionButton->update();
+    dynamicButton->update();         // ADSP Jan 2022
     trafficLightButton->update();
     additionalButton->update();
     crossingButton->update();
