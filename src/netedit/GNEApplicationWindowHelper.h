@@ -247,6 +247,9 @@ struct GNEApplicationWindowHelper {
             /// @brief menu command for connect mode
             FXMenuCommand* connectMode;
 
+            /// @brief menu command for dynamic intersection mode  ADSP JAN 2022
+            FXMenuCommand* dynamicMode;
+
             /// @brief menu command for prohibition mode
             FXMenuCommand* prohibitionMode;
 
@@ -311,6 +314,9 @@ struct GNEApplicationWindowHelper {
 
             /// @brief menu command for person plan mode
             FXMenuCommand* personPlanMode;
+
+            /// @brief menu command for person plan mode
+            FXMenuCommand* dynamicMode;
 
             /// @brief menu command for container mode
             FXMenuCommand* containerMode;

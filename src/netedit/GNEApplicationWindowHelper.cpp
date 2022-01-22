@@ -382,6 +382,11 @@ GNEApplicationWindowHelper::ModesMenuCommands::NetworkMenuCommands::buildNetwork
     connectMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
                   "&Connection mode", "C", "Modes connections between lanes.",
                   GUIIconSubSys::getIcon(GUIIcon::MODECONNECTION), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN);
+    // ADSP JAN 2022
+    dynamicMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
+        "Dynamic intersection mode", "X", "Modes for bicycle turns.",
+        GUIIconSubSys::getIcon(GUIIcon::MODEDYNAMIC), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC);
+
     prohibitionMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
                       "Pro&hibition mode", "W", "Modes connection prohibitions.",
                       GUIIconSubSys::getIcon(GUIIcon::MODEPROHIBITION), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_W_MODES_PROHIBITION);

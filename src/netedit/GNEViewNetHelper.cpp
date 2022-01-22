@@ -3187,7 +3187,7 @@ GNEViewNetHelper::NetworkCheckableButtons::buildNetworkCheckableButtons() {
     // ADSP Jan 2022
     dynamicButton = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
         "\tset connection mode\tMode for turning on dynamic intersection connections creation. (X)",
-        GUIIconSubSys::getIcon(GUIIcon::MODECONNECTION), myViewNet, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC, GUIDesignMFXCheckableButton);
+        GUIIconSubSys::getIcon(GUIIcon::MODEDYNAMIC), myViewNet, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC, GUIDesignMFXCheckableButton);
     dynamicButton->create();
     // always recalc after creating new elements
     myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes->recalc();
