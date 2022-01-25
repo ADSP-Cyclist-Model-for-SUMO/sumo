@@ -391,6 +391,8 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "weight",                 SUMO_ATTR_WEIGHT },
     { "node",                   SUMO_ATTR_NODE },
     { "edges",                  SUMO_ATTR_EDGES },
+
+    { "usageProbabilities", SUMO_ATTR_USAGE_PROBABILITIES },
     // Vehicle
     { "depart",                 SUMO_ATTR_DEPART },
     { "departLane",             SUMO_ATTR_DEPARTLANE },

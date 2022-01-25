@@ -91,6 +91,7 @@ public:
      * @param[in] width The width of the lane
      * @param[in] permissions Encoding of vehicle classes that may drive on this lane
      * @param[in] index The index of this lane within its parent edge
+     * @param[in] usageProbabilities The probability of a given vehicle to use this lane [0.0, 1.0]
      * @see SUMOVehicleClass
      * @see MSLane
      * @todo Definitely not a good way
@@ -101,7 +102,8 @@ public:
                             SVCPermissions permissions,
                             SVCPermissions changeLeft, SVCPermissions changeRight,
                             int index, bool isRampAccel,
-                            const std::string& type);
+                            const std::string& type,
+                            const std::map<SUMOVehicleClass, double> usageProbabilities);
 
     /** @brief process a stopOffset element (originates either from the active edge or lane).
      */

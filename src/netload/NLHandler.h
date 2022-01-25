@@ -224,6 +224,9 @@ protected:
 
 
 private:
+    /// parses usage probabilities
+    std::map<SUMOVehicleClass, double> parseUsageProbabilities(const std::string usageProbabilitiesS);
+
     /// begins the processing of an edge
     void beginEdgeParsing(const SUMOSAXAttributes& attrs);
 

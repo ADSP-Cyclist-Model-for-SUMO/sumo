@@ -184,7 +184,8 @@ MSLane::MSLane(const std::string& id, double maxSpeed, double length, MSEdge* co
                SVCPermissions permissions,
                SVCPermissions changeLeft, SVCPermissions changeRight,
                int index, bool isRampAccel,
-               const std::string& type) :
+               const std::string& type,
+               std::map<SUMOVehicleClass, double> usageProbabilities) :
     Named(id),
     myNumericalID(numericalID), myShape(shape), myIndex(index),
     myVehicles(), myLength(length), myWidth(width),
@@ -208,6 +209,7 @@ MSLane::MSLane(const std::string& id, double maxSpeed, double length, MSEdge* co
     myRightSideOnEdge(0), // initialized in MSEdge::initialize
     myRightmostSublane(0),
     myNeedsCollisionCheck(false),
+    myUsageProbabilities(usageProbabilities),
 #ifdef HAVE_FOX
     mySimulationTask(*this, 0),
 #endif
@@ -3964,6 +3966,12 @@ MSLane::resetPermissions(long long transientID) {
 bool
 MSLane::hadPermissionChanges() const {
     return !myPermissionChanges.empty();
+}
+
+
+void
+MSLane::setUsageProbabilities(std::map<SUMOVehicleClass, double> probabilities) {
+    myUsageProbabilities = probabilities;
 }
 
 

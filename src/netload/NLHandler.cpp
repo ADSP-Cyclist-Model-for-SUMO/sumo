@@ -510,6 +510,8 @@ NLHandler::addLane(const SUMOSAXAttributes& attrs) {
     const int index = attrs.get<int>(SUMO_ATTR_INDEX, id.c_str(), ok);
     const bool isRampAccel = attrs.getOpt<bool>(SUMO_ATTR_ACCELERATION, id.c_str(), ok, false);
     const std::string type = attrs.getOpt<std::string>(SUMO_ATTR_TYPE, id.c_str(), ok, "");
+    // TODO: parse up usage probabilities here
+    const std::string usageProbabilitiesS = attrs.get<std::string>(SUMO_ATTR_USAGE_PROBABILITIES, id.c_str(), ok, "");
     if (shape.size() < 2) {
         WRITE_ERROR("Shape of lane '" + id + "' is broken.\n Can not build according edge.");
         myCurrentIsBroken = true;
@@ -518,6 +520,7 @@ NLHandler::addLane(const SUMOSAXAttributes& attrs) {
     const SVCPermissions permissions = parseVehicleClasses(allow, disallow, myNetworkVersion);
     SVCPermissions changeLeft = parseVehicleClasses(changeLeftS, "", myNetworkVersion);
     SVCPermissions changeRight = parseVehicleClasses(changeRightS, "", myNetworkVersion);
+    const std::map<SUMOVehicleClass, double> usageProbabilities = parseUsageProbabilities(usageProbabilitiesS);
     if (MSGlobals::gLefthand) {
         // internally, changeLeft always checks for the higher lane index
         // even though the higher lane index is to the right in a left-hand network
@@ -529,7 +532,7 @@ NLHandler::addLane(const SUMOSAXAttributes& attrs) {
     myCurrentIsBroken |= !ok;
     if (!myCurrentIsBroken) {
         try {
-            MSLane* lane = myEdgeControlBuilder.addLane(id, maxSpeed, length, shape, width, permissions, changeLeft, changeRight, index, isRampAccel, type);
+            MSLane* lane = myEdgeControlBuilder.addLane(id, maxSpeed, length, shape, width, permissions, changeLeft, changeRight, index, isRampAccel, type, usageProbabilities);
             // insert the lane into the lane-dictionary, checking
             if (!MSLane::dictionary(id, lane)) {
                 delete lane;
@@ -545,6 +548,38 @@ NLHandler::addLane(const SUMOSAXAttributes& attrs) {
     }
 }
 
+
+std::map<SUMOVehicleClass, double>
+NLHandler::parseUsageProbabilities(const std::string usageProbabilitiesS) {
+    StringTokenizer vt(usageProbabilitiesS, " ");
+    std::map<SUMOVehicleClass, double> usageProbabilities;
+    while (vt.hasNext()) {
+        std::string vehProbability = vt.next();
+        StringTokenizer pt(vehProbability, "-");
+        if (pt.size() == 2) {
+            std::string vehicleS = pt.next();
+            std::string probabilityS = pt.next();
+
+            if (SumoVehicleClassStrings.hasString(vehicleS)) {
+                SUMOVehicleClass vc = SumoVehicleClassStrings.get(vehicleS);
+                double probability = strtod(probabilityS.c_str(), nullptr);
+                if (probability >= 0.0 && probability <= 1.0) {
+                    usageProbabilities.insert({ vc, probability });
+                } else {
+                    WRITE_ERROR("Invalid usage probability '" + std::to_string(probability) + "' encountered [0.0, 1.0].");
+                    // TODO: add error handling
+                }
+            } else {
+                WRITE_ERROR("Unknown vehicle class '" + vehicleS + "' encountered.");
+                // TODO: add error handling
+            }
+        } else {
+            WRITE_ERROR("UsageProbabilities must have one left-hand one right-hand side value!");
+            // TODO: add error handling
+        }
+    }
+    return usageProbabilities;
+}
 
 // ---- the root/junction - element
 void

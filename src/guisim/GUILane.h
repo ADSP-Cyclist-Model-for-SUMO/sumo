@@ -68,6 +68,7 @@ public:
      * @param[in] shape The shape of the lane
      * @param[in] width The width of the lane
      * @param[in] permissions Encoding of vehicle classes that may drive on this lane
+     * @param[in] usageProbabilities The probability of a given vehicle to use this lane [0.0, 1.0]
      * @see SUMOVehicleClass
      * @see MSLane
      */
@@ -77,7 +78,8 @@ public:
             SVCPermissions permissions,
             SVCPermissions changeLeft, SVCPermissions changeRight,
             int index, bool isRampAccel,
-            const std::string& type);
+            const std::string& type,
+            std::map<SUMOVehicleClass, double> usageProbabilities);
 
 
     /// @brief Destructor

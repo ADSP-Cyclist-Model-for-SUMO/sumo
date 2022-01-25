@@ -190,6 +190,7 @@ public:
      * @param[in] permissions Encoding of the Vehicle classes that may drive on this lane
      * @param[in] index The index of this lane within its parent edge
      * @param[in] isRampAccel Whether this lane is an acceleration lane
+     * @param[in] usageProbabilities The probability of a given vehicle to use this lane [0.0, 1.0]
      * @see SUMOVehicleClass
      */
     MSLane(const std::string& id, double maxSpeed, double length, MSEdge* const edge,
@@ -197,7 +198,8 @@ public:
            SVCPermissions permissions,
            SVCPermissions changeLeft, SVCPermissions changeRight,
            int index, bool isRampAccel,
-           const std::string& type);
+           const std::string& type,
+           std::map<SUMOVehicleClass, double> usageProbabilities);
 
 
     /// @brief Destructor
@@ -550,6 +552,12 @@ public:
         return myPermissions;
     }
 
+    /// @brief Returns the vehicle class probability of usage for this lane
+    /// @returns This lane's vehicle usage probability
+    inline std::map<SUMOVehicleClass, double> getUsageProbabilities() const {
+        return myUsageProbabilities;
+    };
+
     /** @brief Returns the lane's width
      * @return This lane's width
      */
@@ -810,6 +818,7 @@ public:
     void resetPermissions(long long transientID);
     bool hadPermissionChanges() const;
 
+    void setUsageProbabilities(std::map<SUMOVehicleClass, double> probabilities);
 
     inline bool allowsVehicleClass(SUMOVehicleClass vclass) const {
         return (myPermissions & vclass) == vclass;
@@ -1387,6 +1396,9 @@ protected:
 
     /// The vClass permissions for this lane
     SVCPermissions myPermissions;
+
+    /// @brief probability of different vehicle classes to use this lane
+    std::map<SUMOVehicleClass, double> myUsageProbabilities;
 
     /// The vClass permissions for changing from this lane
     SVCPermissions myChangeLeft;

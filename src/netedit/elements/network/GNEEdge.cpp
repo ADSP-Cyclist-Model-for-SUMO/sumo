@@ -846,6 +846,9 @@ GNEEdge::getAttribute(SumoXMLAttr key) const {
             }
         case SUMO_ATTR_DISTANCE:
             return toString(myNBEdge->getDistance());
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
         case GNE_ATTR_MODIFICATION_STATUS:
             return myConnectionStatus;
         case GNE_ATTR_SHAPE_START:
@@ -957,6 +960,10 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
         case SUMO_ATTR_TYPE:
         case SUMO_ATTR_SPREADTYPE:
         case SUMO_ATTR_DISTANCE:
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
+            break;
         case GNE_ATTR_MODIFICATION_STATUS:
         case GNE_ATTR_SHAPE_START:
         case GNE_ATTR_SHAPE_END:
@@ -1064,6 +1071,9 @@ GNEEdge::isValid(SumoXMLAttr key, const std::string& value) {
             return canParse<double>(value) && parse<double>(value) >= 0 && parse<double>(value) < myNBEdge->getLoadedLength();
         case SUMO_ATTR_DISTANCE:
             return canParse<double>(value);
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
         case GNE_ATTR_SHAPE_START: {
             if (value.empty()) {
                 return true;
@@ -1579,6 +1589,10 @@ GNEEdge::setAttribute(SumoXMLAttr key, const std::string& value) {
             break; // no edge value
         case SUMO_ATTR_DISTANCE:
             myNBEdge->setDistance(parse<double>(value));
+            break;
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
             break;
         case GNE_ATTR_MODIFICATION_STATUS:
             myConnectionStatus = value;

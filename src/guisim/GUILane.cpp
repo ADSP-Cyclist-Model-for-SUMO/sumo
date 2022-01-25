@@ -77,8 +77,9 @@ GUILane::GUILane(const std::string& id, double maxSpeed, double length,
                  SVCPermissions permissions,
                  SVCPermissions changeLeft, SVCPermissions changeRight,
                  int index, bool isRampAccel,
-                 const std::string& type) :
-    MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions, changeLeft, changeRight, index, isRampAccel, type),
+                 const std::string& type,
+                 std::map<SUMOVehicleClass, double> usageProbabilities) :
+    MSLane(id, maxSpeed, length, edge, numericalID, shape, width, permissions, changeLeft, changeRight, index, isRampAccel, type, usageProbabilities),
     GUIGlObject(GLO_LANE, id),
     myParkingAreas(nullptr),
 #ifdef HAVE_OSG

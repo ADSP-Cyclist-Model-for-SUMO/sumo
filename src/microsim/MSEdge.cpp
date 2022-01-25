@@ -102,14 +102,37 @@ MSEdge::initialize(const std::vector<MSLane*>* lanes) {
     if (myFunction == SumoXMLEdgeFunc::CONNECTOR) {
         myCombinedPermissions = SVCAll;
     }
+
+    auto usageWeightTotal = new std::map<SUMOVehicleClass, double>();
     for (MSLane* const lane : *lanes) {
         lane->setRightSideOnEdge(myWidth, (int)mySublaneSides.size());
+
         MSLeaderInfo ahead(lane);
         for (int j = 0; j < ahead.numSublanes(); ++j) {
             mySublaneSides.push_back(myWidth + j * MSGlobals::gLateralResolution);
         }
         myWidth += lane->getWidth();
+
+        for (auto it = lane->getUsageProbabilities().begin(); it != lane->getUsageProbabilities().end(); it++) {
+            if (it == lane->getUsageProbabilities().begin()) {
+                usageWeightTotal->insert(*it);
+            } else if (it == lane->getUsageProbabilities().end()) {
+                usageWeightTotal->find(it->first)->second = std::max(usageWeightTotal->find(it->first)->second, 1.0);
+            } else {
+                usageWeightTotal->find(it->first)->second += it->second;
+            }
+        }
     }
+
+    for (MSLane* const lane : *myLanes) {
+        auto normalized = new std::map<SUMOVehicleClass, double>();
+        for (auto it : lane->getUsageProbabilities()) {
+            normalized->insert({ it.first, it.second / usageWeightTotal->find(it.first)->second });
+        }
+        lane->setUsageProbabilities(*normalized);
+    }
+
+    delete usageWeightTotal;
 }
 
 

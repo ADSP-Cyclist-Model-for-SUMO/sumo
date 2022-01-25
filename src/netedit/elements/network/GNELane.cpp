@@ -874,6 +874,9 @@ GNELane::getAttribute(SumoXMLAttr key) const {
             return edge->getLaneStruct(myIndex).type;
         case SUMO_ATTR_INDEX:
             return toString(myIndex);
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
         case GNE_ATTR_STOPOFFSET:
             return toString(edge->getLaneStruct(myIndex).laneStopOffset.getOffset());
         case GNE_ATTR_STOPOEXCEPTION:
@@ -927,6 +930,9 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* un
             // no special handling
             undoList->changeAttribute(new GNEChange_Attribute(this, key, value));
             break;
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
         default:
             throw InvalidArgument(getTagStr() + " doesn't have an attribute of type '" + toString(key) + "'");
     }
@@ -983,6 +989,9 @@ GNELane::isValid(SumoXMLAttr key, const std::string& value) {
         }
         case SUMO_ATTR_TYPE:
             return true;
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
         case GNE_ATTR_STOPOFFSET:
             return canParse<int>(value) && (parse<double>(value) >= 0);
         case GNE_ATTR_STOPOEXCEPTION:
@@ -1086,6 +1095,10 @@ GNELane::setAttribute(SumoXMLAttr key, const std::string& value) {
             myParentEdge->updateCenteringBoundary(true);
             break;
         }
+        case SUMO_ATTR_USAGE_PROBABILITIES:
+            // TODO: check implementation
+            WRITE_WARNING("not implemented");
+            break;
         case GNE_ATTR_OPPOSITE: {
             if (value != "") {
                 NBEdge* oppEdge = myNet->getEdgeCont().retrieve(value.substr(0, value.rfind("_")));

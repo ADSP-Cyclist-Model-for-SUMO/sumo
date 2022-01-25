@@ -823,6 +823,8 @@ public:
         int bestLaneOffset;
         /// @brief Whether this lane allows to continue the drive
         bool allowsContinuation;
+        /// @brief Given vehicle's probability to use this lane
+        std::map<SUMOVehicleClass, double> usageProbabilities;
         /* @brief Longest sequence of (normal-edge) lanes that can be followed without a lane change
          * The 'length' attribute is the sum of these lane lengths
          * (There may be alternative sequences that have equal length)
@@ -831,9 +833,11 @@ public:
         std::vector<MSLane*> bestContinuations;
     };
 
-    /** @brief Returns the description of best lanes to use in order to continue the route
-     * @return The LaneQ for all lanes of the current edge
-     */
+    std::vector<LaneQ>* getProbableLanes(std::vector<LaneQ> nextLanes) const;
+
+        /** @brief Returns the description of best lanes to use in order to continue the route
+         * @return The LaneQ for all lanes of the current edge
+         */
     const std::vector<LaneQ>& getBestLanes() const;
 
     /** @brief computes the best lanes to use in order to continue the route

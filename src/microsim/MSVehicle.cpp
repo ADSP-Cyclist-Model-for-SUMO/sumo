@@ -5234,6 +5234,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
             q.allowsContinuation = allowed == nullptr || std::find(allowed->begin(), allowed->end(), cl) != allowed->end();
             q.occupation = 0;
             q.nextOccupation = 0;
+            q.usageProbabilities = cl->getUsageProbabilities();
             currentLanes.push_back(q);
         }
         //
@@ -5306,7 +5307,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         std::vector<LaneQ>& laneQs = myBestLanes.back();
         for (std::vector<LaneQ>::iterator j = laneQs.begin(); j != laneQs.end(); ++j) {
             std::cout << "     lane=" << (*j).lane->getID() << " length=" << (*j).length << " bestOffset=" << (*j).bestLaneOffset << "\n";
-        }
+-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*        }
     }
 #endif
     // go backward through the lanes
@@ -5329,33 +5330,50 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         // compute index of the best lane (highest length and least offset from the best next lane)
         int bestThisIndex = 0;
         if (bestConnectedLength > 0) {
-            index = 0;
-            for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
-                LaneQ bestConnectedNext;
-                bestConnectedNext.length = -1;
-                if ((*j).allowsContinuation) {
-                    for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
-                        if (((*m).lane->allowsVehicleClass(getVClass()) || (*m).lane->hadPermissionChanges())
-                                && (*m).lane->isApproachedFrom(&cE, (*j).lane)) {
-                            if (bestConnectedNext.length < (*m).length || (bestConnectedNext.length == (*m).length && abs(bestConnectedNext.bestLaneOffset) > abs((*m).bestLaneOffset))) {
-                                bestConnectedNext = *m;
+            double randomForNext = RandHelper::rand(0.0, 1.0, nullptr);
+            std::vector<LaneQ>* probableCLanes = getProbableLanes(clanes);
+            for (std::vector<LaneQ>::iterator m = probableCLanes->begin(); m != probableCLanes->end(); m++) {
+                randomForNext -= m->usageProbabilities.find(myType->getVehicleClass())->second;
+                if (m == probableCLanes->end() - 1 || randomForNext <= 0) {
+                    m->length += bestLength;
+                    bestThisIndex = m - probableCLanes->begin();
+                    for (std::vector<LaneQ>::iterator j = probableCLanes->begin(); j != probableCLanes->end(); j++) {
+                        j->bestLaneOffset = bestThisIndex - (j - probableCLanes->begin());
+                    }
+                    break;
+                }
+            }
+            if (probableCLanes->empty()) {
+                index = 0;
+                for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
+                    LaneQ bestConnectedNext;
+                    bestConnectedNext.length = -1;
+                    if ((*j).allowsContinuation) {
+                        if (bestConnectedNext.length > -1) {
+                            for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
+                                if (((*m).lane->allowsVehicleClass(getVClass()) || (*m).lane->hadPermissionChanges())
+                                    && (*m).lane->isApproachedFrom(&cE, (*j).lane)) {
+                                    if (bestConnectedNext.length < (*m).length || (bestConnectedNext.length == (*m).length && abs(bestConnectedNext.bestLaneOffset) > abs((*m).bestLaneOffset))) {
+                                        bestConnectedNext = *m;
+                                    }
+                                }
+                                if (bestConnectedNext.length == bestConnectedLength && abs(bestConnectedNext.bestLaneOffset) < 2) {
+                                    (*j).length += bestLength;
+                                } else {
+                                    (*j).length += bestConnectedNext.length;
+                                }
+                                (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
                             }
                         }
                     }
-                    if (bestConnectedNext.length == bestConnectedLength && abs(bestConnectedNext.bestLaneOffset) < 2) {
-                        (*j).length += bestLength;
-                    } else {
-                        (*j).length += bestConnectedNext.length;
-                    }
-                    (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
-                }
-                copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
-                if (clanes[bestThisIndex].length < (*j).length
+                    copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
+                    if (clanes[bestThisIndex].length < (*j).length
                         || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
                         || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) &&
                             nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
-                   ) {
-                    bestThisIndex = index;
+                            ) {
+                        bestThisIndex = index;
+                    }
                 }
             }
 
@@ -7082,6 +7100,17 @@ MSVehicle::getStopArrivalDelay() const {
         // vehicles can arrival earlier than planned so arrival delay can be negative
         return INVALID_DOUBLE;
     }
+}
+
+std::vector<MSVehicle::LaneQ>*
+MSVehicle::getProbableLanes(std::vector<LaneQ> lanes) const {
+    std::vector<LaneQ>* probableLanes = new std::vector<LaneQ>();
+    for (std::vector<LaneQ>::const_iterator l = lanes.begin(); l != lanes.end(); ++l) {
+        if ((*l).usageProbabilities.count(myType->getVehicleClass())) {
+            probableLanes->push_back(*l);
+        }
+    }
+    return probableLanes;
 }
 
 /****************************************************************************/
