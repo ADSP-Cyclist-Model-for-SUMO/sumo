@@ -406,6 +406,10 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("bikelanes.guess", "Bicycle",
                       "Guess bike lanes based on edge speed");
 
+    oc.doRegister("bike.indirectturn", new Option_Bool(false));
+    oc.addDescription("bike.indirectturn", "Bicycle",
+        "Add indirect turns for bikes at large intersections");
+
     oc.doRegister("bikelanes.guess.max-speed", new Option_Float((double) 22.22));
     oc.addDescription("bikelanes.guess.max-speed", "Bicycle",
                       "Add bike lanes for edges with a speed equal or below the given limit");

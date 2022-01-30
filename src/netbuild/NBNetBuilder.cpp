@@ -569,6 +569,43 @@ NBNetBuilder::compute(OptionsCont& oc, const std::set<std::string>& explicitTurn
     for (std::map<std::string, NBEdge*>::const_iterator i = myEdgeCont.begin(); i != myEdgeCont.end(); ++i) {
         (*i).second->sortOutgoingConnectionsByIndex();
     }
+
+    // >> ADSP start changes
+    // SET INDIRECT TURNS FOR BICYCLES ON LARGE CROSSINGS
+    if (oc.getBool("bike.indirectturn")) {
+        for (std::map<std::string, NBNode*>::const_iterator i = myNodeCont.begin(); i != myNodeCont.end(); ++i) {
+            EdgeVector edges = i->second->getEdges();
+            int totalLanes = 0;
+            for (NBEdge* e : edges) {
+                totalLanes += e->getNumLanes();
+            }
+            for (NBEdge* e : edges) {
+                for (NBEdge::Connection& con : e->getConnections()) {
+                    if (con.toEdge == nullptr) {
+                        continue;
+                    }
+
+                    if ((e != con.toEdge) && (e->getToNode() == i->second)) {
+
+                        LinkDirection dir = e->getToNode()->getDirection(e, con.toEdge);
+
+                        if ((dir == LinkDirection::LEFT) && (con.toEdge->getPermissions(con.toLane) == SVC_BICYCLE)) {
+                            if (totalLanes > 8) {   // for testing - replace with a better value later
+                                // SET INDIRECT TURN TO TRUE
+                                con.indirectLeft = true;
+                            }
+                            else {
+                                // SET INDIRECT TURN TO FALSE
+                                con.indirectLeft = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // << ADSP end changes
+
     // FINISHING INNER EDGES
     if (!oc.getBool("no-internal-links")) {
         before = PROGRESS_BEGIN_TIME_MESSAGE("Building inner edges");
