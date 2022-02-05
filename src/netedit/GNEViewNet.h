@@ -601,6 +601,9 @@ private:
     /// @brief front attribute carrier
     GNEAttributeCarrier* myFrontAttributeCarrier;
 
+    /// @brief variable used to save status of bicycle intersection mode
+    bool bicycleIntersectionMode;
+
     /// @brief create edit mode buttons and elements
     void buildEditModeControls();
 
