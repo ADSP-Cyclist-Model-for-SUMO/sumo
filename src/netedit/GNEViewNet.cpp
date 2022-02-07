@@ -252,7 +252,6 @@ GNEViewNet::GNEViewNet(FXComposite* tmpParent, FXComposite* actualParent, GUIMai
     GUITextureSubSys::resetTextures();
     // init testing mode
     myTestingMode.initTestingMode();
-    bicycleIntersectionMode = false;
 }
 
 
@@ -4758,16 +4757,8 @@ GNEViewNet::processLeftButtonPressNetwork(void* eventData) {
         }
         // ADSP Jan 2022
         case NetworkEditMode::NETWORK_DYNAMIC: {
-            bicycleIntersectionMode = !bicycleIntersectionMode;
-            // use tmp file to talk to netconvert
-            // todo find better solution
-            if (bicycleIntersectionMode == true) {
-                FILE* fo = fopen("bike.indirectturn.set", "wb"); 
-                if (fo) { fwrite("true", 4, 1, fo); fclose(fo); }
-            }
-            else {
-                unlink("bike.indirectturn.set");
-            }
+            OptionsCont::getOptions().unSet("bike.indirectturn.enabled");
+            OptionsCont::getOptions().set("bike.indirectturn.enabled", OptionsCont::getOptions().getBool("bike.indirectturn.enabled") ? "false" : "true");
             updateViewNet();
             // process click
             processClick(eventData);

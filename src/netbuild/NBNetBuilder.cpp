@@ -572,15 +572,9 @@ NBNetBuilder::compute(OptionsCont& oc, const std::set<std::string>& explicitTurn
 
     // >> ADSP start changes
     // SET INDIRECT TURNS FOR BICYCLES ON LARGE CROSSINGS
-    int bikeIndirectTurn = OptionsCont::getOptions().getInt("bike.indirectturn");
-    if (bikeIndirectTurn < 0) {
-        // Check for tmp file from netedit (todo find better solution)
-        if (FILE* file = fopen("bike.indirectturn.set", "r")) {
-            fclose(file);
-            bikeIndirectTurn = 8;  // default for netedit
-        }
-    }
-    if (bikeIndirectTurn >=0) {
+    // todo: find a better way to iterate
+    // todo!: reset indirect turn connections here
+    if (OptionsCont::getOptions().getBool("bike.indirectturn.enabled")) {
         for (std::map<std::string, NBNode*>::const_iterator i = myNodeCont.begin(); i != myNodeCont.end(); ++i) {
             EdgeVector edges = i->second->getEdges();
             int totalLanes = 0;
@@ -598,12 +592,10 @@ NBNetBuilder::compute(OptionsCont& oc, const std::set<std::string>& explicitTurn
                         LinkDirection dir = e->getToNode()->getDirection(e, con.toEdge);
 
                         if ((dir == LinkDirection::LEFT) && (con.toEdge->getPermissions(con.toLane) == SVC_BICYCLE)) {
-                            if (totalLanes > bikeIndirectTurn) {   // for testing - replace with a better value later
-                                // SET INDIRECT TURN TO TRUE
+                            if (totalLanes > OptionsCont::getOptions().getInt("bike.indirectturn.heuristic")) {
                                 con.indirectLeft = true;
                             }
                             else {
-                                // SET INDIRECT TURN TO FALSE
                                 con.indirectLeft = false;
                             }
                         }

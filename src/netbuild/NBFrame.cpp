@@ -406,10 +406,6 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("bikelanes.guess", "Bicycle",
                       "Guess bike lanes based on edge speed");
 
-    oc.doRegister("bike.indirectturn", new Option_Integer(-1));
-    oc.addDescription("bike.indirectturn", "Bicycle",
-        "Add indirect turns for bikes at large intersections (give number of lanes as parameter)");
-
     oc.doRegister("bikelanes.guess.max-speed", new Option_Float((double) 22.22));
     oc.addDescription("bikelanes.guess.max-speed", "Bicycle",
                       "Add bike lanes for edges with a speed equal or below the given limit");
@@ -425,6 +421,14 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.doRegister("bikelanes.guess.exclude", new Option_StringVector());
     oc.addDescription("bikelanes.guess.exclude", "Bicycle",
                       "Do not guess bikelanes for the given list of edges");
+
+    oc.doRegister("bike.indirectturn.enabled", new Option_Bool(false));
+    oc.addDescription("bike.indirectturn.enabled", "Bicycle",
+        "Enable indirect left turn heuristic");
+
+    oc.doRegister("bike.indirectturn.heuristic", new Option_Integer(8));
+    oc.addDescription("bike.indirectturn.heuristic", "Bicycle",
+        "Add indirect turns for bikes at large intersections (give number of total lanes as parameter)");
 
     oc.doRegister("crossings.guess", new Option_Bool(false));
     oc.addDescription("crossings.guess", "Pedestrian",
