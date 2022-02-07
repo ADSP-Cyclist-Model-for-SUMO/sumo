@@ -43,8 +43,6 @@ enum {
     MID_HOTKEY_A_MODES_ADDITIONAL_STOP,
     /// @brief hotkey for mode connecting lanes
     MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN,
-    /// @brief hotkey for mode create dynamic intersections ADSP JAN 2022
-    MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,
     /// @brief hotkey for mode deleting things
     MID_HOTKEY_D_MODES_DELETE,
     /// @brief hotkey for mode adding edges AND edgeDatas
@@ -69,6 +67,8 @@ enum {
     MID_HOTKEY_V_MODES_VEHICLE,
     /// @brief hotkey for mode editing connection prohibitions
     MID_HOTKEY_W_MODES_PROHIBITION,
+    /// @brief hotkey for mode create dynamic intersections ADSP JAN 2022
+    MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,
     /// @brief hotkey for mode editing TAZ and TAZRel
     MID_HOTKEY_Z_MODES_TAZ_TAZREL,
 

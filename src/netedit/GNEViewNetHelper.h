@@ -55,6 +55,8 @@ enum class NetworkEditMode {
     NETWORK_CREATE_EDGE,
     ///@brief mode for connecting lanes
     NETWORK_CONNECT,
+    ///@brief Mode for dynamic intersection connection creation ADSP JAN 2022
+    NETWORK_DYNAMIC,
     ///@brief mode for editing tls
     NETWORK_TLS,
     ///@brief Mode for editing additionals
@@ -66,9 +68,7 @@ enum class NetworkEditMode {
     ///@brief Mode for editing Polygons
     NETWORK_POLYGON,
     ///@brief Mode for editing connection prohibitions
-    NETWORK_PROHIBITION,
-    ///@brief Mode for dynamic intersection connection creation ADSP JAN 2022
-    NETWORK_DYNAMIC
+    NETWORK_PROHIBITION
 };
 
 /// @brie enum for demand edit modes

@@ -3153,6 +3153,12 @@ GNEViewNetHelper::NetworkCheckableButtons::buildNetworkCheckableButtons() {
             "\tset connection mode\tMode for edit connections between lanes. (C)",
             GUIIconSubSys::getIcon(GUIIcon::MODECONNECTION), myViewNet, MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN, GUIDesignMFXCheckableButton);
     connectionButton->create();
+    // dynamic intersection mode
+    // ADSP Jan 2022
+    dynamicButton = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
+        "\tset connection mode\tMode for turning on dynamic intersection connections creation. (X)",
+        GUIIconSubSys::getIcon(GUIIcon::MODEDYNAMIC), myViewNet, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC, GUIDesignMFXCheckableButton);
+    dynamicButton->create();
     // prohibition mode
     prohibitionButton = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
             "\tset prohibition mode\tMode for editing connection prohibitions. (W)",
@@ -3183,12 +3189,6 @@ GNEViewNetHelper::NetworkCheckableButtons::buildNetworkCheckableButtons() {
                                          "\tset polygon mode\tMode for creating polygons and POIs. (P)",
                                          GUIIconSubSys::getIcon(GUIIcon::MODEPOLYGON), myViewNet, MID_HOTKEY_P_MODES_POLYGON_PERSON, GUIDesignMFXCheckableButton);
     shapeButton->create();
-    // dynamic intersection mode
-    // ADSP Jan 2022
-    dynamicButton = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
-        "\tset connection mode\tMode for turning on dynamic intersection connections creation. (X)",
-        GUIIconSubSys::getIcon(GUIIcon::MODEDYNAMIC), myViewNet, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC, GUIDesignMFXCheckableButton);
-    dynamicButton->create();
     // always recalc after creating new elements
     myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes->recalc();
 }
