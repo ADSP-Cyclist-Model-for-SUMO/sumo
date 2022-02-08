@@ -1221,7 +1221,8 @@ Vehicle::add(const std::string& vehID,
              const std::string& toTaz,
              const std::string& line,
              int /*personCapacity*/,
-             int personNumber) {
+             int personNumber,
+             double directTurnProbability) {
     SUMOVehicle* veh = MSNet::getInstance()->getVehicleControl().getVehicle(vehID);
     if (veh != nullptr) {
         throw TraCIException("The vehicle '" + vehID + "' to add already exists.");
@@ -1302,6 +1303,7 @@ Vehicle::add(const std::string& vehID,
     vehicleParams.line = line;
     //vehicleParams.personCapacity = personCapacity;
     vehicleParams.personNumber = personNumber;
+    vehicleParams.directTurnProbability = directTurnProbability;
 
     SUMOVehicleParameter* params = new SUMOVehicleParameter(vehicleParams);
     SUMOVehicle* vehicle = nullptr;

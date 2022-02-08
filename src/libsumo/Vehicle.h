@@ -167,7 +167,8 @@ public:
                     const std::string& toTaz = "",
                     const std::string& line = "",
                     int personCapacity = 4,
-                    int personNumber = 0);
+                    int personNumber = 0,
+                    double directTurnProbability = 0.0);
 
     static void changeTarget(const std::string& vehID, const std::string& edgeID);
     static void changeLane(const std::string& vehID, int laneIndex, double duration);
