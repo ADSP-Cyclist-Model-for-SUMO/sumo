@@ -221,6 +221,12 @@ GNECalibratorFlow::getAttribute(SumoXMLAttr key) const {
             } else {
                 return myTagProperty.getDefaultValue(SUMO_ATTR_PERSON_NUMBER);
             }
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
+            if (wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+                return toString(directTurnProbability);
+            } else {
+                return myTagProperty.getDefaultValue(SUMO_ATTR_DIRECT_TURN_PROBABILITY);
+            }
         case SUMO_ATTR_CONTAINER_NUMBER:
             if (wasSet(VEHPARS_CONTAINER_NUMBER_SET)) {
                 return toString(containerNumber);
@@ -310,6 +316,7 @@ GNECalibratorFlow::setAttribute(SumoXMLAttr key, const std::string& value, GNEUn
         case SUMO_ATTR_ARRIVALSPEED:
         case SUMO_ATTR_LINE:
         case SUMO_ATTR_PERSON_NUMBER:
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
         case SUMO_ATTR_CONTAINER_NUMBER:
         case SUMO_ATTR_REROUTE:
         case SUMO_ATTR_DEPARTPOS_LAT:
@@ -407,6 +414,8 @@ GNECalibratorFlow::isValid(SumoXMLAttr key, const std::string& value) {
             return true;
         case SUMO_ATTR_PERSON_NUMBER:
             return canParse<int>(value) && parse<int>(value) >= 0;
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
+            return canParse<double>(value) && parse<double>(value) >= 0;
         case SUMO_ATTR_CONTAINER_NUMBER:
             return canParse<int>(value) && parse<int>(value) >= 0;
         case SUMO_ATTR_REROUTE:
@@ -616,6 +625,15 @@ GNECalibratorFlow::setAttribute(SumoXMLAttr key, const std::string& value) {
                 personNumber = parse<int>(myTagProperty.getDefaultValue(key));
                 // unset parameter
                 parametersSet &= ~VEHPARS_PERSON_NUMBER_SET;
+            }
+            break;
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
+            if (!value.empty() && (value != myTagProperty.getDefaultValue(key))) {
+                directTurnProbability = parse<double>(value);
+                parametersSet |= VEHPARS_DIRECT_TURN_PROBABILITY_SET;
+            } else {
+                directTurnProbability = parse<double>(myTagProperty.getDefaultValue(key));
+                parametersSet &= ~VEHPARS_DIRECT_TURN_PROBABILITY_SET;
             }
             break;
         case SUMO_ATTR_CONTAINER_NUMBER:

@@ -4559,6 +4559,12 @@ GNEAttributeCarrier::fillCommonVehicleAttributes(SumoXMLTag currentTag) {
                                           "0");
     myTagProperties[currentTag].addAttribute(attrProperty);
 
+    attrProperty = GNEAttributeProperties(SUMO_ATTR_DIRECT_TURN_PROBABILITY,
+                                          GNEAttributeProperties::FLOAT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
+                                          "The probability of the " + toString(currentTag) + " to prefer a lane leading to a direct turn over one with an indirect turn - if both are available on an edge.",
+                                          "0");
+    myTagProperties[currentTag].addAttribute(attrProperty);
+
     attrProperty = GNEAttributeProperties(SUMO_ATTR_CONTAINER_NUMBER,
                                           GNEAttributeProperties::INT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
                                           "The number of occupied container places when the " + toString(currentTag) + " is inserted",
