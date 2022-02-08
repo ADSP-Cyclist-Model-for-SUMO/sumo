@@ -315,9 +315,6 @@ struct GNEApplicationWindowHelper {
             /// @brief menu command for person plan mode
             FXMenuCommand* personPlanMode;
 
-            /// @brief menu command for person plan mode
-            FXMenuCommand* dynamicMode;
-
             /// @brief menu command for container mode
             FXMenuCommand* containerMode;
 

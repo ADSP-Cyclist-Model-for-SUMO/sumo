@@ -98,10 +98,7 @@ enum class DemandEditMode {
     ///@brief Mode for editing container
     DEMAND_CONTAINER,
     ///@brief Mode for editing container plan
-    DEMAND_CONTAINERPLAN,
-    // ADSP JAN 2022
-    ///@brief Mode for editing dynamic mode
-    DEMAND_DYNAMIC
+    DEMAND_CONTAINERPLAN
 };
 
 /// @brie enum for data edit modes

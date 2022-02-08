@@ -1115,8 +1115,7 @@ GNEViewNet::abortOperation(bool clearSelection) {
         } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_CONNECT) {
             // abort changes in Connector Frame
             myViewParent->getConnectorFrame()->getConnectionModifications()->onCmdCancelModifications(0, 0, 0);
-        } 
-        else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_TLS) {
+        } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_TLS) {
             myViewParent->getTLSEditorFrame()->onCmdCancel(nullptr, 0, nullptr);
         } else if (myEditModes.networkEditMode == NetworkEditMode::NETWORK_MOVE) {
             myEditNetworkElementShapes.stopEditCustomShape();
@@ -1700,9 +1699,6 @@ GNEViewNet::onCmdSetMode(FXObject*, FXSelector sel, void*) {
                 break;
             case MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN:
                 myEditModes.setDemandEditMode(DemandEditMode::DEMAND_PERSONPLAN);
-                break;
-            case MID_HOTKEY_X_MODES_CONNECT_DYNAMIC:
-                myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_DYNAMIC);
                 break;
             default:
                 break;
