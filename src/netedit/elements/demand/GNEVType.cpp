@@ -470,6 +470,12 @@ GNEVType::getAttribute(SumoXMLAttr key) const {
             } else {
                 return myTagProperty.getDefaultValue(SUMO_ATTR_CARRIAGE_GAP);
             }
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
+            if (wasSet(VTYPEPARS_DIRECT_TURN_PROBABILITY)) {
+                return toString(directTurnProbability);
+            } else {
+                return myTagProperty.getDefaultValue(SUMO_ATTR_DIRECT_TURN_PROBABILITY);
+            }
         case GNE_ATTR_SELECTED:
             return toString(isAttributeCarrierSelected());
         case GNE_ATTR_PARAMETERS:
@@ -648,6 +654,7 @@ GNEVType::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList* u
         case SUMO_ATTR_CARRIAGE_LENGTH:
         case SUMO_ATTR_LOCOMOTIVE_LENGTH:
         case SUMO_ATTR_CARRIAGE_GAP:
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
         case GNE_ATTR_SELECTED:
         case GNE_ATTR_PARAMETERS:
             // if we change the original value of a default vehicle Type, change also flag "myDefaultVehicleType"
@@ -849,6 +856,8 @@ GNEVType::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_LOCOMOTIVE_LENGTH:
             return canParse<double>(value) && (parse<double>(value) >= -1);
         case SUMO_ATTR_CARRIAGE_GAP:
+            return canParse<double>(value) && (parse<double>(value) >= 0);
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
             return canParse<double>(value) && (parse<double>(value) >= 0);
         case GNE_ATTR_SELECTED:
             return canParse<bool>(value);
@@ -1808,6 +1817,22 @@ GNEVType::setAttribute(SumoXMLAttr key, const std::string& value) {
                 carriageGap = parse<double>(myTagProperty.getDefaultValue(key));
                 // unset parameter
                 parametersSet &= ~VTYPEPARS_CARRIAGE_GAP_SET;
+                // remove from params (needed for writting in XML)
+                SUMOVTypeParameter::unsetParameter(toString(key));
+            }
+            break;
+        case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
+            if (!value.empty() && (value != myTagProperty.getDefaultValue(key))) {
+                directTurnProbability = parse<double>(value);
+                // mark parameter as set
+                parametersSet |= VTYPEPARS_DIRECT_TURN_PROBABILITY;
+                // set parameter in SUMOVTypeParameter (needed for writting in XML)
+                SUMOVTypeParameter::setParameter(toString(key), value);
+            } else {
+                // set default value
+                directTurnProbability = parse<double>(myTagProperty.getDefaultValue(key));
+                // unset parameter
+                parametersSet &= ~VTYPEPARS_DIRECT_TURN_PROBABILITY;
                 // remove from params (needed for writting in XML)
                 SUMOVTypeParameter::unsetParameter(toString(key));
             }

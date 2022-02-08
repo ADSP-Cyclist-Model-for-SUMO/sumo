@@ -3361,6 +3361,12 @@ GNEAttributeCarrier::fillDemandElements() {
                                               "1");
         myTagProperties[currentTag].addAttribute(attrProperty);
 
+        attrProperty = GNEAttributeProperties(SUMO_ATTR_DIRECT_TURN_PROBABILITY,
+                                              GNEAttributeProperties::FLOAT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
+                                              "The probability of prioritizing a lane with a direct turn in the next intersection over one with an indirect turn",
+                                              "0");
+        myTagProperties[currentTag].addAttribute(attrProperty);
+
         // fill VType Car Following Model Values (implemented in a separated function to improve code legibility)
         fillCarFollowingModelAttributes(currentTag);
 

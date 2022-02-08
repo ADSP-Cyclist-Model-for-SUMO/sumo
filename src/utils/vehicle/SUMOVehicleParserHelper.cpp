@@ -946,6 +946,18 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
                 vType->parametersSet |= VTYPEPARS_CONTAINER_CAPACITY;
             }
         }
+        if (attrs.hasAttribute(SUMO_ATTR_DIRECT_TURN_PROBABILITY)) {
+            bool ok = true;
+            const double directTurnProbability = attrs.get<double>(SUMO_ATTR_DIRECT_TURN_PROBABILITY, vType->id.c_str(), ok);
+            if (!ok) {
+                return handleVehicleTypeError(hardFail, vType);
+            } else if (directTurnProbability < 0) {
+                return handleVehicleTypeError(hardFail, vType, toString(SUMO_ATTR_DIRECT_TURN_PROBABILITY) + " must be equal or greater than 0");
+            } else {
+                vType->directTurnProbability = directTurnProbability;
+                vType->parametersSet |= VTYPEPARS_DIRECT_TURN_PROBABILITY;
+            }
+        }
         if (attrs.hasAttribute(SUMO_ATTR_BOARDING_DURATION)) {
             bool ok = true;
             const SUMOTime boardingDuration = attrs.getSUMOTimeReporting(SUMO_ATTR_BOARDING_DURATION, vType->id.c_str(), ok);

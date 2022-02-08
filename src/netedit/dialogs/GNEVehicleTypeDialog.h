@@ -296,6 +296,9 @@ public:
         /// @brief VTypeAttributeRow for Probability
         VTypeAttributeRow* myProbability;
 
+        /// @brief VTypeAttributeRow for DirectTurnProbability
+        VTypeAttributeRow* myDirectTurnProbability;
+
         /// @brief VTypeAttributeRow for parameters
         VTypeAttributeRow* myParameters;
 

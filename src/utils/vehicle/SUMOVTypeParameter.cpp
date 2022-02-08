@@ -71,6 +71,7 @@ SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues(SUMOVehicleClass vc
             height = 1.7;
             shape = SUMOVehicleShape::BICYCLE;
             personCapacity = 1;
+            directTurnProbability = 0.0;
             emissionClass = PollutantsInterface::getClassByName(EMPREFIX + "zero", vclass);
             speedFactor.getParameter()[1] = 0.1;
             latAlignmentProcedure = LatAlignmentDefinition::RIGHT;
@@ -269,6 +270,7 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
       carriageLength(-1),
       locomotiveLength(-1),
       carriageGap(1),
+      directTurnProbability(0.0),
       frontSeatPos(1.7),
       parametersSet(0),
       saved(false),
@@ -291,6 +293,7 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
     speedFactor = defaultValues.speedFactor;
     personCapacity = defaultValues.personCapacity;
     containerCapacity = defaultValues.containerCapacity;
+    directTurnProbability = defaultValues.directTurnProbability;
     osgFile = defaultValues.osgFile;
     carriageLength = defaultValues.carriageLength;
     locomotiveLength = defaultValues.locomotiveLength;
@@ -421,6 +424,9 @@ SUMOVTypeParameter::write(OutputDevice& dev) const {
     }
     if (wasSet(VTYPEPARS_CONTAINER_CAPACITY)) {
         dev.writeAttr(SUMO_ATTR_CONTAINER_CAPACITY, containerCapacity);
+    }
+    if (wasSet(VTYPEPARS_DIRECT_TURN_PROBABILITY)) {
+        dev.writeAttr(SUMO_ATTR_DIRECT_TURN_PROBABILITY, directTurnProbability);
     }
     if (wasSet(VTYPEPARS_BOARDING_DURATION)) {
         dev.writeAttr(SUMO_ATTR_BOARDING_DURATION, boardingDuration);

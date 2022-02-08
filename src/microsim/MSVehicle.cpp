@@ -5325,10 +5325,10 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         }
         // determine which of { direct turn, indirect turn } are available
         int turnTypeOptions = 0;
-        for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
-            for (auto x : j->lane->getLinkCont()) {
-                if (x->getLane()->allowsVehicleClass(getVClass())) {
-                    turnTypeOptions |= x->isIndirect() ? 1 : 2;
+        for (const LaneQ& j : clanes) {
+            for (const MSLink* m : j.lane->getLinkCont()) {
+                if (m->getLane()->allowsVehicleClass(getVClass())) {
+                    turnTypeOptions |= m->isIndirect() ? 1 : 2;
                 }
             }
         }
@@ -5337,7 +5337,12 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         int bestThisIndex = 0;
         bool prefersDirectTurn;
         if (hasMultipleTurnOptions) {
-            prefersDirectTurn = myParameter->directTurnProbability <= RandHelper::rand(0.0, 1.0);
+            double rand = RandHelper::rand(0.0, 1.0);
+            if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+                prefersDirectTurn = myParameter->directTurnProbability <= rand;
+            } else {
+                prefersDirectTurn = myType->getDirectTurnProbability() <= rand;
+            }
         }
         if (bestConnectedLength > 0) {
             index = 0;
