@@ -2174,7 +2174,12 @@ GNEApplicationWindow::onCmdOptions(FXObject*, FXSelector, void*) {
         SystemFrame::checkOptions(); // needed to set precision
 
         //process triggers
-        NBFrame::processTriggers(getViewNet());
+        if (OptionsCont::getOptions().getBool("bike.indirectturn.enabled")) {
+            getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(TRUE);
+        } else {
+            getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(FALSE);
+        }
+        getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->update();
     }
     return 1;
 }

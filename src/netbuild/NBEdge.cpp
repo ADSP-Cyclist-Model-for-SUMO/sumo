@@ -109,7 +109,7 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) :
     permissions(SVC_UNSPECIFIED),
     changeLeft(SVC_UNSPECIFIED),
     changeRight(SVC_UNSPECIFIED),
-    indirectLeft(false),
+    indirectLeft(INDIRECTLEFT_UNSPECIFIED),
     id(toEdge_ == nullptr ? "" : toEdge->getFromNode()->getID()),
     haveVia(false),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX),
@@ -119,7 +119,7 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) :
 
 NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, KeepClear keepClear_, double contPos_,
                                double visibility_, double speed_, double length_, bool haveVia_, bool uncontrolled_, const PositionVector& customShape_,
-                               SVCPermissions permissions_, bool indirectLeft_, const std::string& edgeType_,
+                               SVCPermissions permissions_, IndirectLeft indirectLeft_, const std::string& edgeType_,
                                SVCPermissions changeLeft_, SVCPermissions changeRight_) :
     fromLane(fromLane_),
     toEdge(toEdge_),
@@ -1069,7 +1069,7 @@ NBEdge::addLane2LaneConnection(int from, NBEdge* dest,
                                const PositionVector& customShape,
                                bool uncontrolled,
                                SVCPermissions permissions,
-                               bool indirectLeft,
+                               IndirectLeft indirectLeft,
                                const std::string& edgeType,
                                SVCPermissions changeLeft,
                                SVCPermissions changeRight,
@@ -1121,7 +1121,7 @@ NBEdge::setConnection(int lane, NBEdge* destEdge,
                       const PositionVector& customShape,
                       bool uncontrolled,
                       SVCPermissions permissions,
-                      bool indirectLeft,
+                      IndirectLeft indirectLeft,
                       const std::string& edgeType,
                       SVCPermissions changeLeft,
                       SVCPermissions changeRight,
@@ -1557,7 +1557,7 @@ NBEdge::replaceInConnections(NBEdge* which, const std::vector<NBEdge::Connection
         }
 #endif
         setConnection(toUse, i->toEdge, i->toLane, Lane2LaneInfoType::COMPUTED, false, i->mayDefinitelyPass, i->keepClear,
-                      i->contPos, i->visibility, i->speed, i->customLength, i->customShape, i->uncontrolled);
+                      i->contPos, i->visibility, i->speed, i->customLength, i->customShape, i->uncontrolled, SVC_UNSPECIFIED, i->indirectLeft);
     }
     // remove the remapped edge from connections
     removeFromConnections(which);

@@ -1005,6 +1005,18 @@ GNEJunction::getAttribute(SumoXMLAttr key) const {
                 }
             }
             return toString(false);
+        case SUMO_ATTR_INDIRECT:
+            // indirect left is only used as a convenience feature in plain xml
+            // input. When saving to .net.xml the status is saved only for the connections
+            // to show the correct state we must check all connections
+            for (const auto& i : myGNEIncomingEdges) {
+                for (const auto& j : i->getGNEConnections()) {
+                    if (j->getNBEdgeConnection().indirectLeft) {
+                        return toString(true);
+                    }
+                }
+            }
+            return toString(false);
         case SUMO_ATTR_RIGHT_OF_WAY:
             return SUMOXMLDefinitions::RightOfWayValues.getString(myNBNode->getRightOfWay());
         case SUMO_ATTR_FRINGE:
@@ -1042,6 +1054,16 @@ GNEJunction::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
         case SUMO_ATTR_KEEP_CLEAR:
             // change Keep Clear attribute in all connections
             undoList->begin(GUIIcon::JUNCTION, "change keepClear for whole junction");
+            for (const auto& i : myGNEIncomingEdges) {
+                for (const auto& j : i->getGNEConnections()) {
+                    undoList->add(new GNEChange_Attribute(j, key, value), true);
+                }
+            }
+            undoList->end();
+            break;
+        case SUMO_ATTR_INDIRECT:
+            // change Indirect Left attribute in all connections
+            undoList->begin(GUIIcon::JUNCTION, "change indirectLeft for whole junction");
             for (const auto& i : myGNEIncomingEdges) {
                 for (const auto& j : i->getGNEConnections()) {
                     undoList->add(new GNEChange_Attribute(j, key, value), true);
@@ -1219,6 +1241,8 @@ GNEJunction::isValid(SumoXMLAttr key, const std::string& value) {
             return myNBNode->isTLControlled() && (value != "");
         case SUMO_ATTR_KEEP_CLEAR:
             return canParse<bool>(value);
+        case SUMO_ATTR_INDIRECT:
+            return canParse<bool>(value);
         case SUMO_ATTR_RIGHT_OF_WAY:
             return SUMOXMLDefinitions::RightOfWayValues.hasString(value);
         case SUMO_ATTR_FRINGE:
@@ -1243,6 +1267,15 @@ GNEJunction::isAttributeEnabled(SumoXMLAttr key) const {
         case SUMO_ATTR_TLID:
             return myNBNode->isTLControlled();
         case SUMO_ATTR_KEEP_CLEAR: {
+            // check if at least there is an incoming connection
+            for (const auto& incomingEdge : myGNEIncomingEdges) {
+                if (incomingEdge->getGNEConnections().size() > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        case SUMO_ATTR_INDIRECT: {
             // check if at least there is an incoming connection
             for (const auto& incomingEdge : myGNEIncomingEdges) {
                 if (incomingEdge->getGNEConnections().size() > 0) {
@@ -1325,6 +1358,9 @@ void
 GNEJunction::setAttribute(SumoXMLAttr key, const std::string& value) {
     switch (key) {
         case SUMO_ATTR_KEEP_CLEAR: {
+            throw InvalidArgument(toString(key) + " cannot be edited");
+        }
+        case SUMO_ATTR_INDIRECT: {
             throw InvalidArgument(toString(key) + " cannot be edited");
         }
         case SUMO_ATTR_ID: {

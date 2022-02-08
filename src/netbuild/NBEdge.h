@@ -213,7 +213,7 @@ public:
                    bool uncontrolled_ = false,
                    const PositionVector& customShape_ = PositionVector::EMPTY,
                    SVCPermissions permissions = SVC_UNSPECIFIED,
-                   bool indirectLeft = false,
+                   IndirectLeft indirectLeft = INDIRECTLEFT_UNSPECIFIED,
                    const std::string& edgeType = "",
                    SVCPermissions changeLeft_ = SVC_UNSPECIFIED,
                    SVCPermissions changeRight_ = SVC_UNSPECIFIED);
@@ -267,7 +267,7 @@ public:
         SVCPermissions changeRight;
 
         /// @brief Whether this connection is an indirect left turn
-        bool indirectLeft;
+        IndirectLeft indirectLeft;
 
         /// @brief optional type of Connection
         std::string edgeType;
@@ -915,7 +915,7 @@ public:
                                 const PositionVector& customShape = PositionVector::EMPTY,
                                 const bool uncontrolled = UNSPECIFIED_CONNECTION_UNCONTROLLED,
                                 SVCPermissions permissions = SVC_UNSPECIFIED,
-                                const bool indirectLeft = false,
+                                const IndirectLeft indirectLeft = INDIRECTLEFT_UNSPECIFIED,
                                 const std::string& edgeType = "",
                                 SVCPermissions changeLeft = SVC_UNSPECIFIED,
                                 SVCPermissions changeRight = SVC_UNSPECIFIED,
@@ -966,7 +966,7 @@ public:
                        const PositionVector& customShape = PositionVector::EMPTY,
                        const bool uncontrolled = UNSPECIFIED_CONNECTION_UNCONTROLLED,
                        SVCPermissions permissions = SVC_UNSPECIFIED,
-                       bool indirectLeft = false,
+                       IndirectLeft indirectLeft = INDIRECTLEFT_UNSPECIFIED,
                        const std::string& edgeType = "",
                        SVCPermissions changeLeft = SVC_UNSPECIFIED,
                        SVCPermissions changeRight = SVC_UNSPECIFIED,

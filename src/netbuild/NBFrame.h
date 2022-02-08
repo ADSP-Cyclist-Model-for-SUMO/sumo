@@ -32,7 +32,6 @@
 #include "NBTrafficLightLogicCont.h"
 #include "NBDistrictCont.h"
 #include <utils/common/UtilExceptions.h>
-#include <netedit/GNEViewNet.h>
 
 
 // ===========================================================================
@@ -40,7 +39,7 @@
 // ===========================================================================
 /**
  * @class NBFrame
- * @brief Sets and checks options for netbuild; processes triggers
+ * @brief Sets and checks options for netbuild
  */
 class NBFrame {
 public:
@@ -54,12 +53,6 @@ public:
      * @return Whether needed (netbuild) options are set and have proper values
      */
     static bool checkOptions();
-
-
-    /** @brief Processes triggers of modified options from the OptionsCont-singleton
-     *  @param[in] viewNet The GNEViewNet of the application
-     */
-    static void processTriggers(const GNEViewNet* viewNet);
 
 
 };

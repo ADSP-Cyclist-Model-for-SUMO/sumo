@@ -593,10 +593,10 @@ NBNetBuilder::compute(OptionsCont& oc, const std::set<std::string>& explicitTurn
 
                         if ((dir == LinkDirection::LEFT) && (con.toEdge->getPermissions(con.toLane) == SVC_BICYCLE)) {
                             if (totalLanes > OptionsCont::getOptions().getInt("bike.indirectturn.heuristic")) {
-                                con.indirectLeft = true;
+                                con.indirectLeft = INDIRECTLEFT_TRUE;
                             }
                             else {
-                                con.indirectLeft = false;
+                                con.indirectLeft = INDIRECTLEFT_FALSE;
                             }
                         }
                     }

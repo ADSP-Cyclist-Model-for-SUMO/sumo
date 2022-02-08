@@ -284,6 +284,11 @@ public:
         return myKeepClear;
     }
 
+    /// @brief Returns the indirectLeft flag
+    bool getIndirectLeft() const {
+        return myIndirectLeft;
+    }
+
     /// @brief Returns hint on how to compute right of way
     RightOfWay getRightOfWay() const {
         return myRightOfWay;
@@ -537,6 +542,11 @@ public:
     /// @brief set the keepClear flag
     void setKeepClear(bool keepClear) {
         myKeepClear = keepClear;
+    }
+
+    /// @brief set the indirectLeft flag
+    void setIndirectLeft(bool indirectLeft) {
+        myIndirectLeft = indirectLeft;
     }
 
     /// @brief set method for computing right-of-way
@@ -901,6 +911,9 @@ private:
 
     /// @brief whether the junction area must be kept clear
     bool myKeepClear;
+
+    /// @brief whether the junction allows indirect left turns for all suitable connections
+    bool myIndirectLeft;
 
     /// @brief how to compute right of way for this node
     RightOfWay myRightOfWay;

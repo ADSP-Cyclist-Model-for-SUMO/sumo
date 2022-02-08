@@ -763,16 +763,4 @@ NBFrame::checkOptions() {
     return ok;
 }
 
-
-void
-NBFrame::processTriggers(const GNEViewNet* viewNet) {
-    OptionsCont& oc = OptionsCont::getOptions();
-    if (oc.getBool("bike.indirectturn.enabled")) {
-        viewNet->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(TRUE);
-    } else {
-        viewNet->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(FALSE);
-    }
-    viewNet->getNetworkViewOptions().menuCheckIndirectTurn->update();
-}
-
 /****************************************************************************/

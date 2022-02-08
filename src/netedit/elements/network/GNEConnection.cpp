@@ -767,7 +767,7 @@ GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value) {
             nbCon.mayDefinitelyPass = parse<bool>(value);
             break;
         case SUMO_ATTR_INDIRECT:
-            nbCon.indirectLeft = parse<bool>(value);
+            nbCon.indirectLeft = parse<bool>(value) ? INDIRECTLEFT_TRUE : INDIRECTLEFT_FALSE;
             break;
         case SUMO_ATTR_KEEP_CLEAR:
             nbCon.keepClear = parse<bool>(value) ? KEEPCLEAR_TRUE : KEEPCLEAR_FALSE;
