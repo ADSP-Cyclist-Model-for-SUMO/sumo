@@ -424,11 +424,11 @@ NBFrame::fillOptions(bool forNetgen) {
 
     oc.doRegister("bike.indirectturn.enabled", new Option_Bool(false));
     oc.addDescription("bike.indirectturn.enabled", "Bicycle",
-        "Enable indirect left turn heuristic");
+                      "Enable indirect left turn heuristic");
 
     oc.doRegister("bike.indirectturn.heuristic", new Option_Integer(8));
     oc.addDescription("bike.indirectturn.heuristic", "Bicycle",
-        "Add indirect turns for bikes at large intersections (give number of total lanes as parameter)");
+                      "Add indirect turns for bikes at large intersections (give number of total lanes as parameter)");
 
     oc.doRegister("crossings.guess", new Option_Bool(false));
     oc.addDescription("crossings.guess", "Pedestrian",
@@ -763,5 +763,16 @@ NBFrame::checkOptions() {
     return ok;
 }
 
+
+void
+NBFrame::processTriggers(const GNEViewNet* viewNet) {
+    OptionsCont& oc = OptionsCont::getOptions();
+    if (oc.getBool("bike.indirectturn.enabled")) {
+        viewNet->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(TRUE);
+    } else {
+        viewNet->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(FALSE);
+    }
+    viewNet->getNetworkViewOptions().menuCheckIndirectTurn->update();
+}
 
 /****************************************************************************/

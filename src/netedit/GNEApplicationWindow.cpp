@@ -2172,6 +2172,9 @@ GNEApplicationWindow::onCmdOptions(FXObject*, FXSelector, void*) {
         NBFrame::checkOptions();
         NWFrame::checkOptions();
         SystemFrame::checkOptions(); // needed to set precision
+
+        //process triggers
+        NBFrame::processTriggers(getViewNet());
     }
     return 1;
 }

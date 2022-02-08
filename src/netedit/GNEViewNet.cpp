@@ -3311,11 +3311,13 @@ GNEViewNet::onCmdToggleAutoOppositeEdge(FXObject*, FXSelector sel, void*) {
 long
 GNEViewNet::onCmdToggleIndirectTurn(FXObject*, FXSelector sel, void*) {
     // Toggle menuCheckIndirectTurn
-            
+    OptionsCont::getOptions().unSet("bike.indirectturn.enabled");
     if (myNetworkViewOptions.menuCheckIndirectTurn->amChecked() == TRUE) {
         myNetworkViewOptions.menuCheckIndirectTurn->setChecked(FALSE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "false");
     } else {
         myNetworkViewOptions.menuCheckIndirectTurn->setChecked(TRUE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "true");
     }
     myNetworkViewOptions.menuCheckIndirectTurn->update();
     // Only update view

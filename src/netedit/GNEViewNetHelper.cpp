@@ -2022,7 +2022,7 @@ GNEViewNetHelper::NetworkViewOptions::buildNetworkViewOptionsMenuChecks() {
             ("\t\tToggle indirect turn generation."),
             GUIIconSubSys::getIcon(GUIIcon::COMMONMODE_CHECKBOX_INDIRECTTURN),
             myViewNet, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN, GUIDesignMFXCheckableButton);
-    menuCheckIndirectTurn->setChecked(false);
+    menuCheckIndirectTurn->setChecked(OptionsCont::getOptions().getBool("bike.indirectturn.enabled"));
     menuCheckIndirectTurn->create();
 
     menuCheckSelectEdges = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
