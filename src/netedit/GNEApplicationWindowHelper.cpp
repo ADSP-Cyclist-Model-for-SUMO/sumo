@@ -382,11 +382,6 @@ GNEApplicationWindowHelper::ModesMenuCommands::NetworkMenuCommands::buildNetwork
     connectMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
                   "&Connection mode", "C", "Modes connections between lanes.",
                   GUIIconSubSys::getIcon(GUIIcon::MODECONNECTION), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN);
-    // ADSP JAN 2022
-    dynamicMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
-        "Dynamic intersection mode", "X", "Modes for bicycle turns.",
-        GUIIconSubSys::getIcon(GUIIcon::MODEDYNAMIC), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC);
-
     prohibitionMode = GUIDesigns::buildFXMenuCommandShortcut(modesMenu,
                       "Pro&hibition mode", "W", "Modes connection prohibitions.",
                       GUIIconSubSys::getIcon(GUIIcon::MODEPROHIBITION), myModesMenuCommandsParent->myGNEApp, MID_HOTKEY_W_MODES_PROHIBITION);
@@ -563,6 +558,7 @@ GNEApplicationWindowHelper::EditMenuCommands::NetworkViewOptions::NetworkViewOpt
     menuCheckToggleGrid(nullptr),
     menuCheckDrawSpreadVehicles(nullptr),
     menuCheckShowDemandElements(nullptr),
+    menuCheckIndirectTurn(nullptr),
     menuCheckSelectEdges(nullptr),
     menuCheckShowConnections(nullptr),
     menuCheckHideConnections(nullptr),
@@ -597,58 +593,64 @@ GNEApplicationWindowHelper::EditMenuCommands::NetworkViewOptions::buildNetworkVi
                                   GUIIconSubSys::getIcon(GUIIcon::COMMONMODE_CHECKBOX_SHOWDEMANDELEMENTS),
                                   myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS);
 
+    // ADSP JAN 2022
+    menuCheckIndirectTurn = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
+                            "Toggle indirect turn generation", "Alt+4", "",
+                            GUIIconSubSys::getIcon(GUIIcon::COMMONMODE_CHECKBOX_INDIRECTTURN),
+                            myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN);
+
     menuCheckSelectEdges = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                           "Clicking should select edges or lanes", "Alt+4", "",
+                           "Clicking should select edges or lanes", "Alt+5", "",
                            GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_SELECTEDGES),
                            myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES);
 
     menuCheckShowConnections = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                               "Show connections over junctions", "Alt+5", "",
+                               "Show connections over junctions", "Alt+6", "",
                                GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_SHOWCONNECTIONS),
                                myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS);
 
     menuCheckHideConnections = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                               "Hide connections", "Alt+6", "",
+                               "Hide connections", "Alt+7", "",
                                GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_HIDECONNECTIONS),
                                myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_HIDECONNECTIONS);
 
     menuCheckShowAdditionalSubElements = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                                         "Show sub-additional elements", "Alt+7", "",
+                                         "Show sub-additional elements", "Alt+8", "",
                                          GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_SHOWSUBADDITIONALS),
                                          myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_SHOWSUBADDITIONALS);
 
     menuCheckExtendSelection = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                               "Selecting multiple edges automatically select their junctions", "Alt+6", "",
+                               "Selecting multiple edges automatically select their junctions", "Alt+7", "",
                                GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_AUTOSELECTJUNCTIONS),
                                myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_EXTENDSELECTION);
 
     menuCheckChangeAllPhases = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                               "Clicking should apply state changes to all phases of TLS plan", "Alt+4", "",
+                               "Clicking should apply state changes to all phases of TLS plan", "Alt+5", "",
                                GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_APPLYTOALLPHASES),
                                myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_CHANGEALLPHASES);
 
     menuCheckWarnAboutMerge = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                              "Ask for confirmation before merging junction", "Alt+4", "",
+                              "Ask for confirmation before merging junction", "Alt+5", "",
                               GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_ASKFORMERGE),
                               myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_ASKFORMERGE);
 
     menuCheckShowJunctionBubble = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                                  "Show bubbles over junctions shapes", "Alt+5", "",
+                                  "Show bubbles over junctions shapes", "Alt+6", "",
                                   GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_BUBBLES),
                                   myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_SHOWBUBBLES);
 
     menuCheckMoveElevation = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                             "Apply mouse movement to elevation", "Alt+6", "",
+                             "Apply mouse movement to elevation", "Alt+7", "",
                              GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_ELEVATION),
                              myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_MOVEELEVATION);
 
     menuCheckChainEdges = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                          "Create consecutive edges", "Alt+4", "",
+                          "Create consecutive edges", "Alt+5", "",
                           GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_CHAIN),
                           myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_CHAINEDGES);
 
     menuCheckAutoOppositeEdge = GUIDesigns::buildFXMenuCheckboxIcon(editMenu,
-                                "Create an edge in the opposite direction", "Alt+5", "",
+                                "Create an edge in the opposite direction", "Alt+6", "",
                                 GUIIconSubSys::getIcon(GUIIcon::NETWORKMODE_CHECKBOX_TWOWAY),
                                 myGNEApp, MID_GNE_NETWORKVIEWOPTIONS_AUTOOPPOSITEEDGES);
 
@@ -662,6 +664,7 @@ GNEApplicationWindowHelper::EditMenuCommands::NetworkViewOptions::hideNetworkVie
     menuCheckToggleGrid->hide();
     menuCheckDrawSpreadVehicles->hide();
     menuCheckShowDemandElements->hide();
+    menuCheckIndirectTurn->hide();
     menuCheckSelectEdges->hide();
     menuCheckShowConnections->hide();
     menuCheckHideConnections->hide();
@@ -1749,6 +1752,17 @@ GNEApplicationWindowHelper::toggleEditOptionsNetwork(GNEViewNet* viewNet, const 
         }
         // Call manually onCmdToggleShowDemandElementsNetwork
         viewNet->onCmdToggleShowDemandElementsNetwork(obj, sel, nullptr);
+    } else if (menuCheck == viewNet->getNetworkViewOptions().menuCheckIndirectTurn) {
+        // Toggle menuCheckIndirectTurn
+        if (viewNet->getNetworkViewOptions().menuCheckIndirectTurn->amChecked() == TRUE) {
+            // show extra information for tests
+            WRITE_DEBUG("Disabled indirect turn generation through alt + " + toString(numericalKeyPressed + 1));
+        } else {
+            // show extra information for tests
+            WRITE_DEBUG("Enabled indirect turn generation through alt + " + toString(numericalKeyPressed + 1));
+        }
+        // Call manually onCmdToggleIndirectTurn
+        viewNet->onCmdToggleIndirectTurn(obj, sel, nullptr);
     } else if (menuCheck == viewNet->getNetworkViewOptions().menuCheckSelectEdges) {
         // Toggle menuCheckSelectEdges
         if (viewNet->getNetworkViewOptions().menuCheckSelectEdges->amChecked() == TRUE) {

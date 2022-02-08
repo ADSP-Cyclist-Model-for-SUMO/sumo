@@ -247,9 +247,6 @@ struct GNEApplicationWindowHelper {
             /// @brief menu command for connect mode
             FXMenuCommand* connectMode;
 
-            /// @brief menu command for dynamic intersection mode  ADSP JAN 2022
-            FXMenuCommand* dynamicMode;
-
             /// @brief menu command for prohibition mode
             FXMenuCommand* prohibitionMode;
 
@@ -422,6 +419,9 @@ struct GNEApplicationWindowHelper {
 
             /// @brief menu check to show Demand Elements
             FXMenuCheckIcon* menuCheckShowDemandElements;
+
+            /// @brief menu check to toggle indirect turn generation  ADSP JAN 2022
+            FXMenuCheckIcon* menuCheckIndirectTurn;
 
             /// @brief menu check to select only edges
             FXMenuCheckIcon* menuCheckSelectEdges;

@@ -688,6 +688,8 @@ enum {
     MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,
     /// @brief show demand elements
     MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,
+    /// @brief toggle indirect turn generation ADSP JAN 2022
+    MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,
     /// @brief select edges
     MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,
     /// @brief show connections

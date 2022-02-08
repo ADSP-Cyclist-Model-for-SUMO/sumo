@@ -55,8 +55,6 @@ enum class NetworkEditMode {
     NETWORK_CREATE_EDGE,
     ///@brief mode for connecting lanes
     NETWORK_CONNECT,
-    ///@brief Mode for dynamic intersection connection creation ADSP JAN 2022
-    NETWORK_DYNAMIC,
     ///@brief mode for editing tls
     NETWORK_TLS,
     ///@brief Mode for editing additionals
@@ -535,6 +533,10 @@ struct GNEViewNetHelper {
 
         /// @brief checkable button to show Demand Elements
         MFXCheckableButton* menuCheckShowDemandElements;
+
+        /// @brief chekable button to toggle indirect turn generation
+        // ADSP Jan 2022
+        MFXCheckableButton* menuCheckIndirectTurn;
 
         /// @brief checkable button to select only edges
         MFXCheckableButton* menuCheckSelectEdges;
@@ -1142,10 +1144,6 @@ struct GNEViewNetHelper {
 
         /// @brief chekable button for edit mode connection
         MFXCheckableButton* connectionButton;
-
-        /// @brief chekable button for dynamic intersection creation
-        // ADSP Jan 2022
-        MFXCheckableButton* dynamicButton;
 
         /// @brief chekable button for edit mode traffic light
         MFXCheckableButton* trafficLightButton;

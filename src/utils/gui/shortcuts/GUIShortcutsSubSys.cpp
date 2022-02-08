@@ -165,10 +165,6 @@ GUIShortcutsSubSys::buildNETEDITAccelerators(GNEApplicationWindow* GNEApp) {
     GNEApp->getAccelTable()->addAccel(parseKey(KEY_w), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_W_MODES_PROHIBITION));
     GNEApp->getAccelTable()->addAccel(parseKey(KEY_W), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_W_MODES_PROHIBITION));
 
-    // ADSP JAN 2022
-    GNEApp->getAccelTable()->addAccel(parseKey(KEY_x), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC));
-    GNEApp->getAccelTable()->addAccel(parseKey(KEY_X), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC));
-
     GNEApp->getAccelTable()->addAccel(parseKey(KEY_z), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_Z_MODES_TAZ_TAZREL));
     GNEApp->getAccelTable()->addAccel(parseKey(KEY_Z), GNEApp, FXSEL(SEL_COMMAND, MID_HOTKEY_Z_MODES_TAZ_TAZREL));
 

@@ -102,6 +102,7 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_TOGGLEGRID,           GNEViewNet::onCmdToggleShowGrid),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,   GNEViewNet::onCmdToggleDrawSpreadVehicles),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,   GNEViewNet::onCmdToggleShowDemandElementsNetwork),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEViewNet::onCmdToggleIndirectTurn),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,          GNEViewNet::onCmdToggleSelectEdges),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS,      GNEViewNet::onCmdToggleShowConnections),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_HIDECONNECTIONS,      GNEViewNet::onCmdToggleHideConnections),
@@ -1654,9 +1655,6 @@ GNEViewNet::onCmdSetMode(FXObject*, FXSelector sel, void*) {
                 break;
             case MID_HOTKEY_W_MODES_PROHIBITION:
                 myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_PROHIBITION);
-                break;
-            case MID_HOTKEY_X_MODES_CONNECT_DYNAMIC: // ADSP JAN 2022
-                myEditModes.setNetworkEditMode(NetworkEditMode::NETWORK_DYNAMIC);
                 break;
             default:
                 break;
@@ -3310,6 +3308,25 @@ GNEViewNet::onCmdToggleAutoOppositeEdge(FXObject*, FXSelector sel, void*) {
     return 1;
 }
 
+long
+GNEViewNet::onCmdToggleIndirectTurn(FXObject*, FXSelector sel, void*) {
+    // Toggle menuCheckIndirectTurn
+            
+    if (myNetworkViewOptions.menuCheckIndirectTurn->amChecked() == TRUE) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(FALSE);
+    } else {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(TRUE);
+    }
+    myNetworkViewOptions.menuCheckIndirectTurn->update();
+    // Only update view
+    updateViewNet();
+    // set focus in menu check again, if this function was called clicking over menu check instead using alt+<key number>
+    if (sel == FXSEL(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN)) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setFocus();
+    }
+    return 1;
+}
+
 
 long
 GNEViewNet::onCmdToggleHideNonInspecteDemandElements(FXObject*, FXSelector sel, void*) {
@@ -3838,9 +3855,11 @@ GNEViewNet::updateNetworkModeSpecificControls() {
     myNetworkViewOptions.menuCheckToggleGrid->show();
     myNetworkViewOptions.menuCheckDrawSpreadVehicles->show();
     myNetworkViewOptions.menuCheckShowDemandElements->show();
+    myNetworkViewOptions.menuCheckIndirectTurn->show(); // ADSP changes 2022
     menuChecks.menuCheckToggleGrid->show();
     menuChecks.menuCheckDrawSpreadVehicles->show();
     menuChecks.menuCheckShowDemandElements->show();
+    menuChecks.menuCheckIndirectTurn->show();
     // show separator
     menuChecks.separator->show();
     // enable selected controls
@@ -3926,13 +3945,6 @@ GNEViewNet::updateNetworkModeSpecificControls() {
             myViewParent->getConnectorFrame()->focusUpperElement();
             myCurrentFrame = myViewParent->getConnectorFrame();
             myNetworkCheckableButtons.connectionButton->setChecked(true);
-            break;
-        // ADSP Jan 2022
-        case NetworkEditMode::NETWORK_DYNAMIC:
-            myViewParent->getConnectorFrame()->show();
-            myViewParent->getConnectorFrame()->focusUpperElement();
-            myCurrentFrame = myViewParent->getConnectorFrame();
-            myNetworkCheckableButtons.dynamicButton->setChecked(true);
             break;
         case NetworkEditMode::NETWORK_TLS:
             myViewParent->getTLSEditorFrame()->show();
@@ -4747,15 +4759,6 @@ GNEViewNet::processLeftButtonPressNetwork(void* eventData) {
                 myViewParent->getConnectorFrame()->handleLaneClick(myObjectsUnderCursor);
                 updateViewNet();
             }
-            // process click
-            processClick(eventData);
-            break;
-        }
-        // ADSP Jan 2022
-        case NetworkEditMode::NETWORK_DYNAMIC: {
-            OptionsCont::getOptions().unSet("bike.indirectturn.enabled");
-            OptionsCont::getOptions().set("bike.indirectturn.enabled", OptionsCont::getOptions().getBool("bike.indirectturn.enabled") ? "false" : "true");
-            updateViewNet();
             // process click
             processClick(eventData);
             break;

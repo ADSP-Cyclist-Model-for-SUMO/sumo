@@ -326,6 +326,9 @@ public:
     /// @brief toggle autoOpposite edge
     long onCmdToggleAutoOppositeEdge(FXObject*, FXSelector, void*);
 
+    /// @brief toggle indirect turn generation
+    long onCmdToggleIndirectTurn(FXObject*, FXSelector, void*);
+
     /// @brief toggle hide non inspected demand elements
     long onCmdToggleHideNonInspecteDemandElements(FXObject*, FXSelector, void*);
 

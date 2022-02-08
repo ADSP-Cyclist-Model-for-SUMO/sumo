@@ -185,6 +185,8 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,   GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,   GNEApplicationWindow::onCmdToggleViewOption),
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,   GNEApplicationWindow::onUpdToggleViewOption),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEApplicationWindow::onCmdToggleViewOption),
+    FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,          GNEApplicationWindow::onCmdToggleViewOption),
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,          GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS,      GNEApplicationWindow::onCmdToggleViewOption),
@@ -2601,6 +2603,8 @@ GNEApplicationWindow::onCmdToggleViewOption(FXObject* obj, FXSelector sel, void*
                 return myViewNet->onCmdToggleDrawSpreadVehicles(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS:
                 return myViewNet->onCmdToggleShowDemandElementsNetwork(obj, sel, ptr);
+            case MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN:
+                return myViewNet->onCmdToggleIndirectTurn(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES:
                 return myViewNet->onCmdToggleSelectEdges(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS:
@@ -2692,6 +2696,14 @@ GNEApplicationWindow::onUpdToggleViewOption(FXObject* obj, FXSelector sel, void*
                 if (myViewNet->getNetworkViewOptions().menuCheckShowDemandElements->amChecked()) {
                     menuCheck->setCheck(TRUE);
                 } else {
+                    menuCheck->setCheck(FALSE);
+                }
+                break;
+            case MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN:
+                if (myViewNet->getNetworkViewOptions().menuCheckIndirectTurn->amChecked()) {
+                    menuCheck->setCheck(TRUE);
+                }
+                else {
                     menuCheck->setCheck(FALSE);
                 }
                 break;
