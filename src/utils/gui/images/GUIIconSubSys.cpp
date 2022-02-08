@@ -202,6 +202,7 @@
 
 #include "modeadditional.xpm"
 #include "modeconnection.xpm"
+#include "modedynamic.xpm"
 #include "modecreateedge.xpm"
 #include "modecrossing.xpm"
 #include "modetaz.xpm"

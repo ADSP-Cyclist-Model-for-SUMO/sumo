@@ -23,30 +23,3 @@ static const char *modeconnection_xpm[] = {
 "..x.rrr......x..",
 "..x..r.......x.."
 };
-
-/* XPM */
-// ADSP JAN 2022
-static const char *modedynamic_xpm[] = {
-/* columns rows colors chars-per-pixel */
-"16 16 3 1",
-"r c red",
-". c black",
-"x c gray100",
-/* pixels */
-"..x..........x..",
-"..x..........x..",
-"xxx..........xxx",
-"................",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"rrrrrrrrrrrrrrrr",
-"xxx............r",
-"x..xx...........",
-"x...x........xxx",
-"x..xx........x..",
-"xxx..........x.."
-};
