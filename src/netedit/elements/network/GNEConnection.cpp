@@ -725,7 +725,7 @@ GNEConnection::isAttributeEnabled(SumoXMLAttr key) const {
             if (getEdgeFrom()->getNBEdge()->getToNode()->isTLControlled()) {
                 NBTrafficLightDefinition* tlDef = *getEdgeFrom()->getNBEdge()->getToNode()->getControllingTLS().begin();
                 NBLoadedSUMOTLDef* sumoDef = dynamic_cast<NBLoadedSUMOTLDef*>(tlDef);
-                NBTrafficLightLogic* tllogic = sumoDef != nullptr ? sumoDef->getLogic() : tlDef->compute(OptionsCont::getOptions());
+                NBTrafficLightLogic* tllogic = sumoDef != nullptr ? sumoDef->getLogic() : tlDef->compute(OptionsCont::getOptions()); //todo: bug found on compute(...)
                 if (tllogic != nullptr) {
                     return true;
                 } else {
@@ -733,6 +733,8 @@ GNEConnection::isAttributeEnabled(SumoXMLAttr key) const {
                 }
             }
             return false;
+        case SUMO_ATTR_INDIRECT:
+            return getEdgeFrom()->getNBEdge()->isValidIndirectLeftConnection(getNBEdgeConnection());
         default:
             return true;
     }

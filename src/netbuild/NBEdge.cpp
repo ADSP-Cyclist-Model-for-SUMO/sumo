@@ -1621,6 +1621,7 @@ NBEdge::buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex,
     const bool higherSpeed = oc.getBool("junctions.higher-speed");
     const double interalJunctionVehicleWidth = oc.getFloat("internal-junctions.vehicle-width");
     const bool fromRail = isRailway(getPermissions());
+    const bool indirectLeftHeuristic = oc.getBool("bike.indirectturn.enabled");
     std::string innerID = ":" + n.getID();
     NBEdge* toEdge = nullptr;
     int edgeIndex = linkIndex;
@@ -1652,6 +1653,25 @@ NBEdge::buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex,
         averageLength = !isTurn || joinTurns; // legacy behavior
         SVCPermissions conPermissions = getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane);
         const int conShapeFlag = (conPermissions & ~SVC_PEDESTRIAN) != 0 ? 0 : NBNode::SCURVE_IGNORE;
+        
+        // SET INDIRECT TURNS FOR BICYCLES ON LARGE CROSSINGS
+        // todo: find a better way to iterate
+        // todo!: reset indirect turn connections here
+
+        if (indirectLeftHeuristic) {
+            // automatic mode
+            if (n.isHeuristicAllowingIndirectTurns() && isValidIndirectLeftConnection(conPermissions, dir)) {
+                con.indirectLeft = INDIRECTLEFT_TRUE;
+            }
+            else {
+                con.indirectLeft = INDIRECTLEFT_FALSE;
+            }
+        } else {
+            // manual mode
+            if(!isValidIndirectLeftConnection(conPermissions, dir))
+                con.indirectLeft = INDIRECTLEFT_FALSE;
+        }
+
         PositionVector shape = n.computeInternalLaneShape(this, con, numPoints, myTo, conShapeFlag);
         std::vector<int> foeInternalLinks;
 
@@ -3677,6 +3697,18 @@ NBEdge::hasSignalisedConnectionTo(const NBEdge* const e) const {
         }
     }
     return false;
+}
+
+
+bool
+NBEdge::isValidIndirectLeftConnection(const Connection& con) {
+    return isValidIndirectLeftConnection(getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane), getToNode()->getDirection(this, con.toEdge));
+}
+
+
+bool
+NBEdge::isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir) {
+    return getToNode()->isTLControlled() && isBikepath(perm) && dir == LinkDirection::LEFT;
 }
 
 

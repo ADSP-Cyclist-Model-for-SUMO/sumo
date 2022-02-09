@@ -584,6 +584,9 @@ public:
     /// @brief check if node is a district
     bool isDistrict() const;
 
+    /// @brief check if node can have indirect turn connections based on the heuristic
+    bool isHeuristicAllowingIndirectTurns() const;
+
     /// @brief whether an internal junction should be built at from and respect other
     bool needsCont(const NBEdge* fromE, const NBEdge* otherFromE,
                    const NBEdge::Connection& c, const NBEdge::Connection& otherC) const;

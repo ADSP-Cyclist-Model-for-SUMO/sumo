@@ -1278,8 +1278,9 @@ GNEJunction::isAttributeEnabled(SumoXMLAttr key) const {
         case SUMO_ATTR_INDIRECT: {
             // check if at least there is an incoming connection
             for (const auto& incomingEdge : myGNEIncomingEdges) {
-                if (incomingEdge->getGNEConnections().size() > 0) {
-                    return true;
+                for (const auto& connection : incomingEdge->getGNEConnections()) {
+                    if(connection->isAttributeEnabled(key))
+                        return true;
                 }
             }
             return false;
