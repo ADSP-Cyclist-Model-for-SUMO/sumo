@@ -1660,15 +1660,15 @@ NBEdge::buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex,
 
         if (indirectLeftHeuristic) {
             // automatic mode
-            if (n.isHeuristicAllowingIndirectTurns() && isValidIndirectLeftConnection(conPermissions, dir)) {
+            if (n.isHeuristicAllowingIndirectTurns() && isValidIndirectLeftConnection(conPermissions, dir, toEdge)) {
                 con.indirectLeft = INDIRECTLEFT_TRUE;
             }
             else {
                 con.indirectLeft = INDIRECTLEFT_FALSE;
             }
         } else {
-            // manual mode
-            if(!isValidIndirectLeftConnection(conPermissions, dir))
+            // manual mode; do not allow unspecified mode, it behaves as "true" which is not the behaviour wanted
+            if(!isValidIndirectLeftConnection(conPermissions, dir, toEdge) || con.indirectLeft == INDIRECTLEFT_UNSPECIFIED)
                 con.indirectLeft = INDIRECTLEFT_FALSE;
         }
 
@@ -3702,13 +3702,27 @@ NBEdge::hasSignalisedConnectionTo(const NBEdge* const e) const {
 
 bool
 NBEdge::isValidIndirectLeftConnection(const Connection& con) {
-    return isValidIndirectLeftConnection(getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane), getToNode()->getDirection(this, con.toEdge));
+    // con.permissions cannot be used!
+    return isValidIndirectLeftConnection(getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane), getToNode()->getDirection(this, con.toEdge), con.toEdge);
 }
 
 
 bool
-NBEdge::isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir) {
-    return getToNode()->isTLControlled() && isBikepath(perm) && dir == LinkDirection::LEFT;
+NBEdge::isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir, const NBEdge* toEdge) {
+    
+    // check if we have a straight connection from any edge to our toEdge
+    // this is similar to the ckeck on linkIndex2
+    bool ok = false;
+    for (const NBEdge* incoming : toEdge->getIncomingEdges()) {
+        if (getToNode()->getDirection(incoming, toEdge) == LinkDirection::STRAIGHT) {
+            if (!isBikepath(incoming->getPermissions())) { // the straight lane taken into account must not be a bike lane
+                ok = true;
+                break;
+            }
+        }
+    }
+
+    return ok && getToNode()->isTLControlled() && isBikepath(perm) && dir == LinkDirection::LEFT;
 }
 
 

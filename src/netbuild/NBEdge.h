@@ -1254,8 +1254,8 @@ public:
     /// @brief Check if this edge's connection can have an indirect left turn
     bool isValidIndirectLeftConnection(const Connection& con);
 
-    /// @brief Check if this edge's connection (permission + direction) can have an indirect left turn
-    bool isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir);
+    /// @brief Check if this edge's connection (permission + direction + toEdge) can have an indirect left turn
+    bool isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir, const NBEdge* toEdge);
 
     /// @brief move outgoing connection
     void moveOutgoingConnectionsFrom(NBEdge* e, int laneOff);

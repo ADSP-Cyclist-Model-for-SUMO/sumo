@@ -581,7 +581,7 @@ GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
             break;
         case SUMO_ATTR_INDIRECT:
             undoList->begin(GUIIcon::CONNECTION, "change attribute indirect for connection");
-            if (isAttributeEnabled(SUMO_ATTR_TLLINKINDEX) && (value != getAttribute(key))) {
+            if (isAttributeEnabled(SUMO_ATTR_INDIRECT) && (value != getAttribute(key))) {
                 undoList->changeAttribute(new GNEChange_Attribute(this, key, value));
                 int linkIndex2 = -1;
                 if (parse<bool>(value)) {
