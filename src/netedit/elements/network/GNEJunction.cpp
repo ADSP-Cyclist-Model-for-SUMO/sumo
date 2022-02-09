@@ -1066,7 +1066,8 @@ GNEJunction::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoList
             undoList->begin(GUIIcon::JUNCTION, "change indirectLeft for whole junction");
             for (const auto& i : myGNEIncomingEdges) {
                 for (const auto& j : i->getGNEConnections()) {
-                    undoList->add(new GNEChange_Attribute(j, key, value), true);
+                    if(j->isAttributeEnabled(key))
+                        undoList->add(new GNEChange_Attribute(j, key, value), true);
                 }
             }
             undoList->end();

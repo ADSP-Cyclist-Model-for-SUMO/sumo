@@ -3322,6 +3322,8 @@ GNEViewNet::onCmdToggleIndirectTurn(FXObject*, FXSelector sel, void*) {
     myNetworkViewOptions.menuCheckIndirectTurn->update();
     // Only update view
     updateViewNet();
+    // trigger update on indirect flag checkbox
+    myViewParent->getInspectorFrame()->getAttributesEditor()->refreshAttributeEditor(false, false);
     // set focus in menu check again, if this function was called clicking over menu check instead using alt+<key number>
     if (sel == FXSEL(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN)) {
         myNetworkViewOptions.menuCheckIndirectTurn->setFocus();

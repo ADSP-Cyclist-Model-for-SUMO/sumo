@@ -734,7 +734,7 @@ GNEConnection::isAttributeEnabled(SumoXMLAttr key) const {
             }
             return false;
         case SUMO_ATTR_INDIRECT:
-            return getEdgeFrom()->getNBEdge()->isValidIndirectLeftConnection(getNBEdgeConnection());
+            return !OptionsCont::getOptions().getBool("bike.indirectturn.enabled") && getEdgeFrom()->getNBEdge()->isValidIndirectLeftConnection(getNBEdgeConnection()); // enable editing of indirect left flag only if (1) auto generation is off and (2) connection is relevant
         default:
             return true;
     }
