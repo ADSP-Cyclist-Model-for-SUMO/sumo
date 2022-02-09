@@ -2180,6 +2180,7 @@ GNEApplicationWindow::onCmdOptions(FXObject*, FXSelector, void*) {
             getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(FALSE);
         }
         getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->update();
+        getViewNet()->getViewParent()->getInspectorFrame()->getAttributesEditor()->refreshAttributeEditor(false, false);
     }
     return 1;
 }
