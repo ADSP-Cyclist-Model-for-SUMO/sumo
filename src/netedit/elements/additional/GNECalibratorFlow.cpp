@@ -415,7 +415,11 @@ GNECalibratorFlow::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_PERSON_NUMBER:
             return canParse<int>(value) && parse<int>(value) >= 0;
         case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
-            return canParse<double>(value) && parse<double>(value) >= 0;
+            if (canParse<double>(value)) {
+                double parsed = parse<double>(value);
+                return parsed >= 0 && parsed <= 1;
+            }
+            return false;
         case SUMO_ATTR_CONTAINER_NUMBER:
             return canParse<int>(value) && parse<int>(value) >= 0;
         case SUMO_ATTR_REROUTE:

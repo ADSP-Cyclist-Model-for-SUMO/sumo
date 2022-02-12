@@ -858,7 +858,11 @@ GNEVType::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_CARRIAGE_GAP:
             return canParse<double>(value) && (parse<double>(value) >= 0);
         case SUMO_ATTR_DIRECT_TURN_PROBABILITY:
-            return canParse<double>(value) && (parse<double>(value) >= 0);
+            if (canParse<double>(value)) {
+                double parsed = parse<double>(value);
+                return parsed >= 0 && parsed <= 1;
+            }
+            return false;
         case GNE_ATTR_SELECTED:
             return canParse<bool>(value);
         case GNE_ATTR_PARAMETERS:
