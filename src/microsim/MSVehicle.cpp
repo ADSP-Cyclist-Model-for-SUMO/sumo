@@ -5327,7 +5327,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         int turnTypeOptions = 0;
         for (const LaneQ& j : clanes) {
             for (const MSLink* m : j.lane->getLinkCont()) {
-                if (m->getLane()->allowsVehicleClass(getVClass())) {
+                if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
                     turnTypeOptions |= m->isIndirect() ? 1 : 2;
                 }
             }
@@ -5352,8 +5352,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                 if ((*j).allowsContinuation) {
                     for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
                         if (((*m).lane->allowsVehicleClass(getVClass()) || (*m).lane->hadPermissionChanges())
-                                && (*m).lane->isApproachedFrom(&cE, (*j).lane)
-                                && (!hasMultipleTurnOptions || (prefersDirectTurn == j->lane->getLinkTo(m->lane)->isIndirect()))) {
+                                && (*m).lane->isApproachedFrom(&cE, (*j).lane)) {
                             if (bestConnectedNext.length < (*m).length || (bestConnectedNext.length == (*m).length && abs(bestConnectedNext.bestLaneOffset) > abs((*m).bestLaneOffset))) {
                                 bestConnectedNext = *m;
                             }
@@ -5367,11 +5366,16 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                     (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
                 }
                 copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
-                if (hasMultipleTurnOptions
-                        || clanes[bestThisIndex].length < (*j).length
-                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
-                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) &&
-                            nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
+                if (clanes[bestThisIndex].length < (*j).length
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) > nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn))
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) == nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)
+                            && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) == nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)
+                            && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset)
+                            && nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
                    ) {
                     bestThisIndex = index;
                 }
@@ -5417,11 +5421,14 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         int requireChangeToLeftForbidden = -1;
         for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
             if ((*j).length < clanes[bestThisIndex].length
+                    || (nextLinkTurnPriority((*j).bestContinuations, prefersDirectTurn) < nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn))
                     || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset))
                     || (nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)
                ) {
                 (*j).bestLaneOffset = bestThisIndex - index;
-                if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
+                if (nextLinkTurnPriority((*j).bestContinuations, prefersDirectTurn) < nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)) {
+                    (*j).length = (*j).currentLength;
+                } else if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
                     // try to move away from the lower-priority lane before it ends
                     (*j).length = (*j).currentLength;
                 }
@@ -5508,6 +5515,19 @@ MSVehicle::updateOccupancyAndCurrentBestLane(const MSLane* startLane) {
             myCurrentLaneInBestLanes = i;
         }
     }
+}
+
+
+int
+MSVehicle::nextLinkTurnPriority(const std::vector<MSLane*>& conts, bool prefersDirectTurn) const {
+    if (conts.size() < 2) {
+        return -1;
+    }
+    const MSLink* const link = conts[0]->getLinkTo(conts[1]);
+    if (link->getDirection() != LinkDirection::LEFT) {
+        return -1;
+    }
+    return prefersDirectTurn == link->isIndirect() ? 0 : 1;
 }
 
 
