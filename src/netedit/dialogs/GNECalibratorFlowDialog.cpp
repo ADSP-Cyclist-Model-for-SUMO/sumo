@@ -122,6 +122,9 @@ GNECalibratorFlowDialog::GNECalibratorFlowDialog(GNEAdditional* editedCalibrator
     // 19 create textfield for end
     new FXLabel(columnRightLabel, toString(SUMO_ATTR_END).c_str(), nullptr, GUIDesignLabelThick);
     myTextFieldEnd = new FXTextField(columnRightValue, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextField);
+    // 20 create textfield for direct turn probability
+    new FXLabel(columnRightLabel, toString(SUMO_ATTR_DIRECT_TURN_PROBABILITY).c_str(), nullptr, GUIDesignLabelThick);
+    myTextFieldDirectTurnProbability = new FXTextField(columnRightValue, GUIDesignTextFieldNCol, this, MID_GNE_SET_ATTRIBUTE, GUIDesignTextField);
 
     // fill comboBox of VTypes
     for (const auto& vType : myEditedAdditional->getNet()->getViewNet()->getNet()->getAttributeCarriers()->getDemandElements().at(SUMO_TAG_VTYPE)) {
@@ -346,6 +349,15 @@ GNECalibratorFlowDialog::onCmdSetVariable(FXObject*, FXSelector, void*) {
         myCalibratorFlowValid = false;
         myInvalidAttr = SUMO_ATTR_PERSON_NUMBER;
     }
+    // set color of myTextFieldDirectTurnProbability, depending if current value is valid or not
+    if (myEditedAdditional->isValid(SUMO_ATTR_DIRECT_TURN_PROBABILITY, myTextFieldDirectTurnProbability->getText().text())) {
+        myTextFieldDirectTurnProbability->setTextColor(FXRGB(0, 0, 0));
+        myEditedAdditional->setAttribute(SUMO_ATTR_DIRECT_TURN_PROBABILITY, myTextFieldDirectTurnProbability->getText().text(), undoList);
+    } else {
+        myTextFieldDirectTurnProbability->setTextColor(FXRGB(255, 0, 0));
+        myCalibratorFlowValid = false;
+        myInvalidAttr = SUMO_ATTR_DIRECT_TURN_PROBABILITY;
+    }
     // set color of myTextFieldContainerNumber, depending if current value is valid or not
     if (myEditedAdditional->isValid(SUMO_ATTR_CONTAINER_NUMBER, myTextFieldContainerNumber->getText().text())) {
         myTextFieldContainerNumber->setTextColor(FXRGB(0, 0, 0));
@@ -419,6 +431,7 @@ GNECalibratorFlowDialog::updateCalibratorFlowValues() {
     myTextFieldArrivalSpeed->setText(myEditedAdditional->getAttribute(SUMO_ATTR_ARRIVALSPEED).c_str());
     myTextFieldLine->setText(myEditedAdditional->getAttribute(SUMO_ATTR_LINE).c_str());
     myTextFieldPersonNumber->setText(myEditedAdditional->getAttribute(SUMO_ATTR_PERSON_NUMBER).c_str());
+    myTextFieldDirectTurnProbability->setText(myEditedAdditional->getAttribute(SUMO_ATTR_DIRECT_TURN_PROBABILITY).c_str());
     myTextFieldContainerNumber->setText(myEditedAdditional->getAttribute(SUMO_ATTR_CONTAINER_NUMBER).c_str());
     myRerouteCheckButton->setCheck(GNEAttributeCarrier::parse<bool>(myEditedAdditional->getAttribute(SUMO_ATTR_REROUTE).c_str()));
     myTextFieldDepartPosLat->setText(myEditedAdditional->getAttribute(SUMO_ATTR_DEPARTPOS_LAT).c_str());

@@ -616,6 +616,7 @@ StringBijection<int>::Entry SUMOXMLDefinitions::attrs[] = {
     { "containerCapacity",      SUMO_ATTR_CONTAINER_CAPACITY },
     { "parkingLength",          SUMO_ATTR_PARKING_LENGTH },
     { "personNumber",           SUMO_ATTR_PERSON_NUMBER },
+    { "directTurnProbability",  SUMO_ATTR_DIRECT_TURN_PROBABILITY },
     { "containerNumber",        SUMO_ATTR_CONTAINER_NUMBER },
     { "modes",                  SUMO_ATTR_MODES },
     { "walkFactor",             SUMO_ATTR_WALKFACTOR },

@@ -130,6 +130,9 @@ GNEVehicleTypeDialog::VTypeAtributes::VClassRow::setVariable() {
             if (!myVTypeAtributesParent->myVehicleTypeDialog->myEditedDemandElement->isAttributeEnabled(SUMO_ATTR_CONTAINER_CAPACITY)) {
                 myVTypeAtributesParent->myContainerCapacity->updateValue(toString(defaultVTypeParameters.containerCapacity));
             }
+            if (!myVTypeAtributesParent->myVehicleTypeDialog->myEditedDemandElement->isAttributeEnabled(SUMO_ATTR_DIRECT_TURN_PROBABILITY)) {
+                myVTypeAtributesParent->myContainerCapacity->updateValue(toString(defaultVTypeParameters.directTurnProbability));
+            }
             if (!myVTypeAtributesParent->myVehicleTypeDialog->myEditedDemandElement->isAttributeEnabled(SUMO_ATTR_CARRIAGE_LENGTH)) {
                 myVTypeAtributesParent->myCarriageLength->updateValue(toString(defaultVTypeParameters.containerCapacity));
             }
@@ -900,7 +903,10 @@ GNEVehicleTypeDialog::VTypeAtributes::buildAttributesB(FXVerticalFrame* column) 
     // 12 create FXTextField and Label for carriage GAP
     myCarriageGap = new VTypeAttributeRow(this, column, SUMO_ATTR_CARRIAGE_GAP, VTypeAttributeRow::RowAttrType::ROWTYPE_STRING);
 
-    // 13 create FXTextField and Label for parameters
+    // 13 create FXTextField and Label for direct turn probability
+    myDirectTurnProbability = new VTypeAttributeRow(this, column, SUMO_ATTR_DIRECT_TURN_PROBABILITY, VTypeAttributeRow::RowAttrType::ROWTYPE_STRING);
+
+    // 14 create FXTextField and Label for parameters
     myParameters = new VTypeAttributeRow(this, column, GNE_ATTR_PARAMETERS, VTypeAttributeRow::RowAttrType::ROWTYPE_PARAMETERS);
 }
 
@@ -1035,6 +1041,7 @@ GNEVehicleTypeDialog::VTypeAtributes::updateValues() {
     myActionStepLength->updateValue();
     myProbability->updateValue();
     myCarriageGap->updateValue();
+    myDirectTurnProbability->updateValue(toString(defaultVTypeParameters.directTurnProbability));
     // JM Parameters
     myJMCrossingGap->updateValue();
     myJMIgnoreKeepclearTime->updateValue();
@@ -1125,6 +1132,7 @@ GNEVehicleTypeDialog::VTypeAtributes::onCmdSetAttribute(FXObject*, FXSelector, v
     myActionStepLength->setVariable();
     myProbability->setVariable();
     myCarriageGap->setVariable();
+    myDirectTurnProbability->setVariable(toString(defaultVTypeParameters.directTurnProbability));
     // JM Variables
     myJMCrossingGap->setVariable();
     myJMIgnoreKeepclearTime->setVariable();

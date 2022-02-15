@@ -111,6 +111,9 @@ protected:
     /// @brief TextField for PersonNumber
     FXTextField* myTextFieldPersonNumber;
 
+    /// @brief TextField for PersonNumber
+    FXTextField* myTextFieldDirectTurnProbability;
+
     /// @brief TextField for Container Number
     FXTextField* myTextFieldContainerNumber;
 

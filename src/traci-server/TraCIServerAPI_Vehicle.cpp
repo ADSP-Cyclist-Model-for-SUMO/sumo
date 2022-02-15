@@ -1054,8 +1054,12 @@ TraCIServerAPI_Vehicle::processSet(TraCIServer& server, tcpip::Storage& inputSto
                 if (!server.readTypeCheckingInt(inputStorage, personNumber)) {
                     return server.writeErrorStatusCmd(libsumo::CMD_SET_VEHICLE_VARIABLE, "14th parameter (person number) requires an int.", outputStorage);
                 }
+                double directTurnProbability;
+                if (!server.readTypeCheckingDouble(inputStorage, directTurnProbability)) {
+                    return server.writeErrorStatusCmd(libsumo::CMD_SET_VEHICLE_VARIABLE, "15th parameter (direct turn probability) requires a double", outputStorage);
+                }
                 libsumo::Vehicle::add(id, routeID, vTypeID, depart, departLane, departPos, departSpeed, arrivalLane, arrivalPos, arrivalSpeed,
-                                      fromTaz, toTaz, line, personCapacity, personNumber);
+                                      fromTaz, toTaz, line, personCapacity, personNumber, directTurnProbability);
             }
             break;
             case libsumo::REMOVE: {

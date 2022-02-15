@@ -927,6 +927,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myActionStep(true),
     myLastActionTime(0),
     myLane(nullptr),
+    myDirectTurnsPreferred(),
     myLaneChangeModel(nullptr),
     myLastBestLanesEdge(nullptr),
     myLastBestLanesInternalLane(nullptr),
@@ -1046,6 +1047,30 @@ MSVehicle::hasArrivedInternal(bool oppositeTransformed) const {
 bool
 MSVehicle::replaceRoute(const MSRoute* newRoute, const std::string& info, bool onInit, int offset, bool addRouteStops, bool removeStops, std::string* msgReturn) {
     if (MSBaseVehicle::replaceRoute(newRoute, info, onInit, offset, addRouteStops, removeStops, msgReturn)) {
+        // apply turn probabilities
+        for (auto edge = myRoute->getEdges().begin(); edge != myRoute->getEdges().end() - 1; edge++) {
+            int turnTypeOptions = 0;
+            for (const MSLane* lane : (*edge)->getLanes()) {
+                for (const MSLink* m : lane->getLinkCont()) {
+                    if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
+                        turnTypeOptions |= m->isIndirect() ? 1 : 2;
+                    }
+                }
+            }
+            bool hasMultipleTurnOptions = turnTypeOptions == 3;
+            // compute index of the best lane (highest length and least offset from the best next lane)
+            bool prefersDirectTurn;
+            if (hasMultipleTurnOptions) {
+                double rand = RandHelper::rand(0.0, 1.0);
+                if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+                    prefersDirectTurn = myParameter->directTurnProbability <= rand;
+                } else {
+                    prefersDirectTurn = myType->getDirectTurnProbability() <= rand;
+                }
+            }
+
+            myDirectTurnsPreferred.insert({ *edge, prefersDirectTurn });
+        }
         // update best lanes (after stops were added)
         myLastBestLanesEdge = nullptr;
         myLastBestLanesInternalLane = nullptr;
@@ -5312,6 +5337,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         std::vector<LaneQ>& nextLanes = (*(i - 1));
         std::vector<LaneQ>& clanes = (*i);
         MSEdge& cE = clanes[0].lane->getEdge();
+        bool prefersDirectTurn = myDirectTurnsPreferred.at(&cE);
         int index = 0;
         double bestConnectedLength = -1;
         double bestLength = -1;
@@ -5348,9 +5374,15 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                 }
                 copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
                 if (clanes[bestThisIndex].length < (*j).length
-                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
-                        || (clanes[bestThisIndex].length == (*j).length && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset) &&
-                            nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) > nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn))
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) == nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)
+                            && abs(clanes[bestThisIndex].bestLaneOffset) > abs((*j).bestLaneOffset))
+                        || (clanes[bestThisIndex].length == (*j).length
+                            && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) == nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)
+                            && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset)
+                            && nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
                    ) {
                     bestThisIndex = index;
                 }
@@ -5396,11 +5428,14 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         int requireChangeToLeftForbidden = -1;
         for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
             if ((*j).length < clanes[bestThisIndex].length
+                    || (nextLinkTurnPriority((*j).bestContinuations, prefersDirectTurn) < nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn))
                     || ((*j).length == clanes[bestThisIndex].length && abs((*j).bestLaneOffset) > abs(clanes[bestThisIndex].bestLaneOffset))
                     || (nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)
                ) {
                 (*j).bestLaneOffset = bestThisIndex - index;
-                if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
+                if (nextLinkTurnPriority((*j).bestContinuations, prefersDirectTurn) < nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)) {
+                    (*j).length = (*j).currentLength;
+                } else if ((nextLinkPriority((*j).bestContinuations)) < nextLinkPriority(clanes[bestThisIndex].bestContinuations)) {
                     // try to move away from the lower-priority lane before it ends
                     (*j).length = (*j).currentLength;
                 }
@@ -5487,6 +5522,19 @@ MSVehicle::updateOccupancyAndCurrentBestLane(const MSLane* startLane) {
             myCurrentLaneInBestLanes = i;
         }
     }
+}
+
+
+int
+MSVehicle::nextLinkTurnPriority(const std::vector<MSLane*>& conts, bool prefersDirectTurn) const {
+    if (conts.size() < 2) {
+        return -1;
+    }
+    const MSLink* const link = conts[0]->getLinkTo(conts[1]);
+    if (link->getDirection() != LinkDirection::LEFT) {
+        return -1;
+    }
+    return prefersDirectTurn == link->isIndirect() ? 0 : 1;
 }
 
 
