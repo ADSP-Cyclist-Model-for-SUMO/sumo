@@ -927,6 +927,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myActionStep(true),
     myLastActionTime(0),
     myLane(nullptr),
+    myDirectTurnsPreferred(),
     myLaneChangeModel(nullptr),
     myLastBestLanesEdge(nullptr),
     myLastBestLanesInternalLane(nullptr),
@@ -1046,6 +1047,30 @@ MSVehicle::hasArrivedInternal(bool oppositeTransformed) const {
 bool
 MSVehicle::replaceRoute(const MSRoute* newRoute, const std::string& info, bool onInit, int offset, bool addRouteStops, bool removeStops, std::string* msgReturn) {
     if (MSBaseVehicle::replaceRoute(newRoute, info, onInit, offset, addRouteStops, removeStops, msgReturn)) {
+        // apply turn probabilities
+        for (auto edge = myRoute->getEdges().begin(); edge != myRoute->getEdges().end() - 1; edge++) {
+            int turnTypeOptions = 0;
+            for (const MSLane* lane : (*edge)->getLanes()) {
+                for (const MSLink* m : lane->getLinkCont()) {
+                    if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
+                        turnTypeOptions |= m->isIndirect() ? 1 : 2;
+                    }
+                }
+            }
+            bool hasMultipleTurnOptions = turnTypeOptions == 3;
+            // compute index of the best lane (highest length and least offset from the best next lane)
+            bool prefersDirectTurn;
+            if (hasMultipleTurnOptions) {
+                double rand = RandHelper::rand(0.0, 1.0);
+                if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+                    prefersDirectTurn = myParameter->directTurnProbability <= rand;
+                } else {
+                    prefersDirectTurn = myType->getDirectTurnProbability() <= rand;
+                }
+            }
+
+            myDirectTurnsPreferred.insert({ *edge, prefersDirectTurn });
+        }
         // update best lanes (after stops were added)
         myLastBestLanesEdge = nullptr;
         myLastBestLanesInternalLane = nullptr;
@@ -5312,6 +5337,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         std::vector<LaneQ>& nextLanes = (*(i - 1));
         std::vector<LaneQ>& clanes = (*i);
         MSEdge& cE = clanes[0].lane->getEdge();
+        bool prefersDirectTurn = myDirectTurnsPreferred.at(&cE);
         int index = 0;
         double bestConnectedLength = -1;
         double bestLength = -1;
@@ -5323,27 +5349,8 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                 bestLength = (*j).length;
             }
         }
-        // determine which of { direct turn, indirect turn } are available
-        int turnTypeOptions = 0;
-        for (const LaneQ& j : clanes) {
-            for (const MSLink* m : j.lane->getLinkCont()) {
-                if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
-                    turnTypeOptions |= m->isIndirect() ? 1 : 2;
-                }
-            }
-        }
-        bool hasMultipleTurnOptions = turnTypeOptions == 3;
         // compute index of the best lane (highest length and least offset from the best next lane)
         int bestThisIndex = 0;
-        bool prefersDirectTurn;
-        if (hasMultipleTurnOptions) {
-            double rand = RandHelper::rand(0.0, 1.0);
-            if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
-                prefersDirectTurn = myParameter->directTurnProbability <= rand;
-            } else {
-                prefersDirectTurn = myType->getDirectTurnProbability() <= rand;
-            }
-        }
         if (bestConnectedLength > 0) {
             index = 0;
             for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {

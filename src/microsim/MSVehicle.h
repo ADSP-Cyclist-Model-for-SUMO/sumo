@@ -1826,6 +1826,8 @@ protected:
     /// The lane the vehicle is on
     MSLane* myLane;
 
+    std::map<const MSEdge*, bool> myDirectTurnsPreferred;
+
     MSAbstractLaneChangeModel* myLaneChangeModel;
 
     const MSEdge* myLastBestLanesEdge;
