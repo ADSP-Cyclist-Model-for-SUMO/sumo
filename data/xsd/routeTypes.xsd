@@ -499,7 +499,7 @@
         <xsd:attribute name="routeLength" type="nonNegativeFloatType"/>
         <xsd:attribute name="line" type="xsd:string"/>
         <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
-        <xsd:attribute name="directTurnProbability" type="positiveFloatType"/>
+        <xsd:attribute name="directTurnProbability" type="nonNegativeFloatType"/>
         <xsd:attribute name="containerNumber" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="speedFactor" type="positiveFloatType"/>
         <xsd:attribute name="insertionChecks" type="xsd:string"/>
@@ -540,7 +540,7 @@
         <xsd:attribute name="arrivalPosLat" type="arrivalPosLatType"/>
         <xsd:attribute name="line" type="xsd:string"/>
         <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
-        <xsd:attribute name="directTurnProbability" type="positiveFloatType"/>
+        <xsd:attribute name="directTurnProbability" type="nonNegativeFloatType"/>
         <xsd:attribute name="containerNumber" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="speedFactor" type="positiveFloatType"/>
         <xsd:attribute name="insertionChecks" type="xsd:string"/>
@@ -610,7 +610,7 @@
         <xsd:attribute name="arrivalPosLat" type="arrivalPosLatType"/>
         <xsd:attribute name="line" type="xsd:string"/>
         <xsd:attribute name="personNumber" type="xsd:nonNegativeInteger"/>
-        <xsd:attribute name="directTurnProbability" type="positiveFloatType"/>
+        <xsd:attribute name="directTurnProbability" type="nonNegativeFloatType"/>
         <xsd:attribute name="containerNumber" type="xsd:nonNegativeInteger"/>
         <xsd:attribute name="speedFactor" type="positiveFloatType"/>
         <xsd:attribute name="insertionChecks" type="xsd:string"/>
