@@ -3234,8 +3234,8 @@ GNEAttributeCarrier::fillDemandElements() {
         myTagProperties[currentTag].addAttribute(attrProperty);
 
         attrProperty = GNEAttributeProperties(SUMO_ATTR_MAXSPEED,
-                                              GNEAttributeProperties::FLOAT | GNEAttributeProperties::POSITIVE,
-                                              "The vehicle's maximum velocity [m/s]");
+                                              GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED,
+                                              "The vehicle's maximum velocity [m/s] (or a distribution specifier)");
         myTagProperties[currentTag].addAttribute(attrProperty);
 
         attrProperty = GNEAttributeProperties(SUMO_ATTR_SPEEDFACTOR,

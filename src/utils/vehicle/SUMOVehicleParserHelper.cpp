@@ -723,13 +723,10 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         }
         if (attrs.hasAttribute(SUMO_ATTR_MAXSPEED)) {
             bool ok = true;
-            const double maxSpeed = attrs.get<double>(SUMO_ATTR_MAXSPEED, vType->id.c_str(), ok);
+            vType->speedFactor.parse(attrs.get<std::string>(SUMO_ATTR_MAXSPEED, vType->id.c_str(), ok), hardFail);
             if (!ok) {
                 return handleVehicleTypeError(hardFail, vType);
-            } else if (maxSpeed <= 0) {
-                return handleVehicleTypeError(hardFail, vType, toString(SUMO_ATTR_MAXSPEED) + " must be greater than 0");
             } else {
-                vType->maxSpeed = maxSpeed;
                 vType->parametersSet |= VTYPEPARS_MAXSPEED_SET;
             }
         }

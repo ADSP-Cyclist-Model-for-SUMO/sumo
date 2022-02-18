@@ -580,7 +580,7 @@ GUIViewTraffic::onCmdShowReachability(FXObject* menu, FXSelector, void*) {
         // prepare
         FXMenuCommand* mc = dynamic_cast<FXMenuCommand*>(menu);
         const SUMOVehicleClass svc = SumoVehicleClassStrings.get(mc->getText().text());
-        const double defaultMaxSpeed = SUMOVTypeParameter::VClassDefaultValues(svc).maxSpeed;
+        const double defaultMaxSpeed = SUMOVTypeParameter::VClassDefaultValues(svc).maxSpeed.getMax();
         // find reachable
         std::map<MSEdge*, double> reachableEdges;
         reachableEdges[&lane->getEdge()] = 0;

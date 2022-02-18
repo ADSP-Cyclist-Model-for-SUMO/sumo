@@ -445,7 +445,7 @@ MSTransportable::getWaitingTime() const {
 
 double
 MSTransportable::getMaxSpeed() const {
-    return getVehicleType().getMaxSpeed() * getSpeedFactor();
+    return getMaxSpeed() * getSpeedFactor();
 }
 
 SUMOVehicleClass

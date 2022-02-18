@@ -113,7 +113,7 @@ public:
 
     /// @brief Returns the vehicle's maximum speed
     inline double getMaxSpeed() const {
-        return myType->maxSpeed;
+        return myType->maxSpeed.getMax();
     }
 
 

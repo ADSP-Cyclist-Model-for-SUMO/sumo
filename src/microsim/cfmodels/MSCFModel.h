@@ -411,14 +411,17 @@ public:
     /** @brief Computes the minimal possible arrival speed after covering a given distance
      * @param[in] dist Distance to be covered
      * @param[in] currentSpeed Actual speed of vehicle
+     * @param[in] currentSpeed Actual speed of vehicle
+     * @param[in] maxSpeed Maximum speed of vehicle
      */
-    double getMinimalArrivalSpeed(double dist, double currentSpeed) const;
+    double getMinimalArrivalSpeed(double dist, double currentSpeed, double maxSpeed) const;
 
     /** @brief Computes the minimal possible arrival speed after covering a given distance for Euler update
      * @param[in] dist Distance to be covered
      * @param[in] currentSpeed Actual speed of vehicle
+     * @param[in] maxSpeed Maximum speed of vehicle
      */
-    double getMinimalArrivalSpeedEuler(double dist, double currentSpeed) const;
+    double getMinimalArrivalSpeedEuler(double dist, double currentSpeed, double maxSpeed) const;
 
 
     /** @brief return the resulting gap if, starting with gap currentGap, two vehicles
@@ -474,11 +477,12 @@ public:
     /* @brief estimate speed while accelerating for the given distance
      * @param[in] dist The distance during which accelerating takes place
      * @param[in] v The initial speed
+     * @param[in] maxSpeed The maximum speed of the vehicle
      * @param[in] accel The acceleration
      * XXX affected by ticket #860 (the formula is invalid for the Euler position update rule)
      * XXX (Leo) Migrated estimateSpeedAfterDistance() to MSCFModel from MSVehicle as Jakob suggested (removed inline property, because myType is fw-declared)
      */
-    double estimateSpeedAfterDistance(const double dist, const double v, const double accel) const;
+    double estimateSpeedAfterDistance(const double dist, const double v, const double maxSpeed, const double accel) const;
 
     /// @name Setter methods
     /// @{

@@ -234,8 +234,8 @@ MSCFModel::interactionGap(const MSVehicle* const veh, double vL) const {
 
 
 double
-MSCFModel::maxNextSpeed(double speed, const MSVehicle* const /*veh*/) const {
-    return MIN2(speed + (double) ACCEL2SPEED(getMaxAccel()), myType->getMaxSpeed());
+MSCFModel::maxNextSpeed(double speed, const MSVehicle* const veh) const {
+    return MIN2(speed + (double) ACCEL2SPEED(getMaxAccel()), veh->getMaxSpeed());
 }
 
 
@@ -289,7 +289,7 @@ MSCFModel::insertionStopSpeed(const MSVehicle* const veh, double speed, double g
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         return stopSpeed(veh, speed, gap);
     } else {
-        return MIN2(maximumSafeStopSpeed(gap, myDecel, 0., true, 0.), myType->getMaxSpeed());
+        return MIN2(maximumSafeStopSpeed(gap, myDecel, 0., true, 0.), veh->getMaxSpeed());
     }
 }
 
@@ -477,14 +477,14 @@ MSCFModel::avoidArrivalAccel(double dist, double time, double speed, double maxD
 
 
 double
-MSCFModel::getMinimalArrivalSpeed(double dist, double currentSpeed) const {
+MSCFModel::getMinimalArrivalSpeed(double dist, double currentSpeed, double maxSpeed) const {
     // ballistic update
-    return estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, -getMaxDecel());
+    return estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, maxSpeed, -getMaxDecel());
 }
 
 
 double
-MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed) const {
+MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed, double maxSpeed) const {
     double arrivalSpeedBraking;
     // Because we use a continuous formula for computing the possible slow-down
     // we need to handle the mismatch with the discrete dynamics
@@ -492,7 +492,7 @@ MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed) const {
         arrivalSpeedBraking = INVALID_SPEED; // no time left for braking after this step
         //	(inserted max() to get rid of arrivalSpeed dependency within method) (Leo)
     } else if (2 * (dist - currentSpeed * getHeadwayTime()) * -getMaxDecel() + currentSpeed * currentSpeed >= 0) {
-        arrivalSpeedBraking = estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, -getMaxDecel());
+        arrivalSpeedBraking = estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, maxSpeed, -getMaxDecel());
     } else {
         arrivalSpeedBraking = getMaxDecel();
     }
@@ -704,10 +704,9 @@ MSCFModel::speedAfterTime(const double t, const double v0, const double dist) {
 
 
 double
-MSCFModel::estimateSpeedAfterDistance(const double dist, const double v, const double accel) const {
+MSCFModel::estimateSpeedAfterDistance(const double dist, const double v, const double maxSpeed, const double accel) const {
     // dist=v*t + 0.5*accel*t^2, solve for t and use v1 = v + accel*t
-    return MIN2(myType->getMaxSpeed(),
-                (double)sqrt(MAX2(0., 2 * dist * accel + v * v)));
+    return MIN2(maxSpeed,(double)sqrt(MAX2(0., 2 * dist * accel + v * v)));
 }
 
 

@@ -905,6 +905,9 @@ protected:
     /// @brief Iterator to current route-edge
     MSRouteIterator myCurrEdge;
 
+    /// @brief A precomputed speed limit of the vehicle
+    double myChosenMaxSpeed;
+
     /// @brief A precomputed factor by which the driver wants to be faster than the speed limit
     double myChosenSpeedFactor;
 

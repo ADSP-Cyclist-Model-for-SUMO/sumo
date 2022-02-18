@@ -45,7 +45,7 @@ MSCFModel_KraussPS::maxNextSpeed(double speed, const MSVehicle* const veh) const
     const double aMax = MAX2(0., getMaxAccel() - GRAVITY * sin(DEG2RAD(veh->getSlope())));
     // assuming drag force is proportional to the square of speed
     const double vMax = MAX2(
-                            sqrt(aMax / getMaxAccel()) * myType->getMaxSpeed(),
+                            sqrt(aMax / getMaxAccel()) * veh->getMaxSpeed(),
                             // prevent emergency braking when inclination changes suddenly (momentum)
                             speed - ACCEL2SPEED(getMaxDecel()));
     return MAX2(

@@ -135,7 +135,7 @@ MSMeanData_Emissions::MSLaneMeanDataValues::write(OutputDevice& dev, long long i
         dev.writeOptionalAttr(SUMO_ATTR_ELECTRICITY_PERVEH, OutputDevice::realString(vehFactor * myEmissions.electricity, 6), attributeMask);
     } else if (defaultTravelTime >= 0.) {
         const MSVehicleType* t = MSNet::getInstance()->getVehicleControl().getVType();
-        const double speed = MIN2(myLaneLength / defaultTravelTime, t->getMaxSpeed());
+        const double speed = MIN2(myLaneLength / defaultTravelTime, t->getMaxSpeed().getParameter()[0]);  // not computing based on concrete vehicles makes this a rough estimate of the speed
 
         if (attributeMask == 0) {
             dev << "\n           ";

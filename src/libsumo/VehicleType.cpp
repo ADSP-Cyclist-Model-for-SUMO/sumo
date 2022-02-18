@@ -62,7 +62,7 @@ VehicleType::getLength(const std::string& typeID) {
 
 double
 VehicleType::getMaxSpeed(const std::string& typeID) {
-    return getVType(typeID)->getMaxSpeed();
+    return getVType(typeID)->getMaxSpeed().getMax();
 }
 
 

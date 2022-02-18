@@ -336,7 +336,7 @@ GNEPathManager::PathCalculator::calculateReachability(const SUMOVehicleClass vCl
         }
     }
     // get max speed
-    const double defaultMaxSpeed = SUMOVTypeParameter::VClassDefaultValues(vClass).maxSpeed;
+    const double defaultMaxSpeed = SUMOVTypeParameter::VClassDefaultValues(vClass).maxSpeed.getParameter()[0];
     // declare map for reachable edges
     std::map<GNEEdge*, double> reachableEdges;
     // init first edge

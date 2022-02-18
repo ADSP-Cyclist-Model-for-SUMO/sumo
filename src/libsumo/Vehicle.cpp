@@ -884,7 +884,7 @@ Vehicle::getMinGapLat(const std::string& vehID) {
 
 double
 Vehicle::getMaxSpeed(const std::string& vehID) {
-    return Helper::getVehicleType(vehID).getMaxSpeed();
+    return Helper::getVehicleType(vehID).getMaxSpeed().getMax();
 }
 
 

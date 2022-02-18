@@ -1635,15 +1635,15 @@ MSLink::getZipperSpeed(const MSVehicle* ego, const double dist, double vSafe,
         // we cannot trust avi.arrivalSpeed if the foe has leader vehicles that are accelerating
         // lets try to extrapolate
         const double uMax = foe->getLane()->getVehicleMaxSpeed(foe);
-        const double uAccel = foe->getCarFollowModel().estimateSpeedAfterDistance(foeDist, avi.speed, foe->getCarFollowModel().getMaxAccel());
+        const double uAccel = foe->getCarFollowModel().estimateSpeedAfterDistance(foeDist, avi.speed, ego->getMaxSpeed(), foe->getCarFollowModel().getMaxAccel());
         const double uEnd = MIN2(uMax, uAccel);
         const double uAvg = (avi.speed + uEnd) / 2;
         const double tf0 = foeDist / MAX2(NUMERICAL_EPS, uAvg);
         const double tf = MAX2(1.0, ceil((tf0) / TS) * TS);
 
         const double vMax = ego->getLane()->getVehicleMaxSpeed(ego);
-        const double vAccel = ego->getCarFollowModel().estimateSpeedAfterDistance(dist, ego->getSpeed(), ego->getCarFollowModel().getMaxAccel());
-        const double vDecel = ego->getCarFollowModel().estimateSpeedAfterDistance(dist, ego->getSpeed(), ego->getCarFollowModel().getMaxDecel());
+        const double vAccel = ego->getCarFollowModel().estimateSpeedAfterDistance(dist, ego->getSpeed(), ego->getMaxSpeed(), ego->getCarFollowModel().getMaxAccel());
+        const double vDecel = ego->getCarFollowModel().estimateSpeedAfterDistance(dist, ego->getSpeed(), ego->getMaxSpeed(), ego->getCarFollowModel().getMaxDecel());
         const double vEnd = MIN3(vMax, vAccel, MAX2(uEnd, vDecel));
         const double vAvg = (ego->getSpeed() + vEnd) / 2;
         const double te0 = dist / MAX2(NUMERICAL_EPS, vAvg);

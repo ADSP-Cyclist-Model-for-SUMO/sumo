@@ -520,12 +520,6 @@ GNEVType::getAttributeDouble(SumoXMLAttr key) const {
             } else {
                 return defaultValues.height;
             }
-        case SUMO_ATTR_MAXSPEED:
-            if (wasSet(VTYPEPARS_MAXSPEED_SET)) {
-                return maxSpeed;
-            } else {
-                return defaultValues.maxSpeed;
-            }
         default:
             throw InvalidArgument(getTagStr() + " doesn't have a double attribute of type '" + toString(key) + "'");
     }
@@ -789,7 +783,7 @@ GNEVType::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_MINGAP:
             return canParse<double>(value) && (parse<double>(value) >= 0);
         case SUMO_ATTR_MAXSPEED:
-            return canParse<double>(value) && (parse<double>(value) >= 0);
+            return Distribution_Parameterized::isValidDescription(value);
         case SUMO_ATTR_SPEEDFACTOR:
             return Distribution_Parameterized::isValidDescription(value);
         case SUMO_ATTR_COLOR:
@@ -1514,12 +1508,12 @@ GNEVType::setAttribute(SumoXMLAttr key, const std::string& value) {
             break;
         case SUMO_ATTR_MAXSPEED:
             if (!value.empty() && (value != toString(defaultValues.maxSpeed))) {
-                maxSpeed = parse<double>(value);
+                maxSpeed.parse(value, false);
                 // mark parameter as set
                 parametersSet |= VTYPEPARS_MAXSPEED_SET;
             } else {
                 // set default value
-                maxSpeed = defaultValues.maxSpeed;
+                maxSpeed.parse(toString(defaultValues.speedFactor), false);
                 // unset parameter
                 parametersSet &= ~VTYPEPARS_MAXSPEED_SET;
             }

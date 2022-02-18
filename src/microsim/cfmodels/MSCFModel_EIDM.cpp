@@ -89,13 +89,13 @@ MSCFModel_EIDM::insertionFollowSpeed(const MSVehicle* const /*veh*/, double spee
 
 
 double
-MSCFModel_EIDM::insertionStopSpeed(const MSVehicle* const /*veh*/, double speed, double gap) const {
+MSCFModel_EIDM::insertionStopSpeed(const MSVehicle* const veh, double speed, double gap) const {
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         return maximumSafeStopSpeed(gap, myDecel, speed, true, myHeadwayTime);
     } else {
         // Not Done/checked yet for the ballistic update model!!!!
 //        return MIN2(maximumSafeStopSpeed(gap, myDecel, 0., true, 0.), myType->getMaxSpeed());
-        return MIN2(maximumSafeStopSpeed(gap, myDecel, speed, true, myHeadwayTime), myType->getMaxSpeed());
+        return MIN2(maximumSafeStopSpeed(gap, myDecel, speed, true, myHeadwayTime), veh->getMaxSpeed());
     }
 }
 

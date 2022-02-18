@@ -609,7 +609,7 @@ Simulation::findIntermodalRoute(const std::string& from, const std::string& to,
         departStep = MSNet::getInstance()->getCurrentTimeStep();
     }
     if (speed < 0) {
-        speed =  pedType->getMaxSpeed();
+        speed =  pedType->getMaxSpeed().getMax();
     }
     if (walkFactor < 0) {
         walkFactor = OptionsCont::getOptions().getFloat("persontrip.walkfactor");

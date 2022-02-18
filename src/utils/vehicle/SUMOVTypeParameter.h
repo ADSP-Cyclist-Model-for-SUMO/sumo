@@ -125,7 +125,7 @@ public:
         double minGap;
 
         /// @brief The vehicle type's maximum speed [m/s]
-        double maxSpeed;
+        Distribution_Parameterized maxSpeed;
 
         /// @brief This class' width
         double width;
@@ -252,7 +252,7 @@ public:
     double minGap;
 
     /// @brief The vehicle type's maximum speed [m/s]
-    double maxSpeed;
+    Distribution_Parameterized maxSpeed;
 
     /// @brief The vehicle type's default actionStepLength [ms], i.e. the interval between two control actions.
     ///        The default value of 0ms. induces the value to be traced from MSGlobals::gActionStepLength

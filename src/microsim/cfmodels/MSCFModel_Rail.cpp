@@ -26,6 +26,7 @@
 #include <microsim/MSVehicle.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include "MSCFModel_Rail.h"
+#include "microsim/MSRouteHandler.h"
 
 MSCFModel_Rail::MSCFModel_Rail(const MSVehicleType* vtype) :
     MSCFModel(vtype) {
@@ -52,7 +53,7 @@ MSCFModel_Rail::MSCFModel_Rail(const MSVehicleType* vtype) :
     }
     // override with user values
     if (vtype->wasSet(VTYPEPARS_MAXSPEED_SET)) {
-        myTrainParams.vmax = vtype->getMaxSpeed();
+        myTrainParams.vmax = vtype->getMaxSpeed().sample(MSRouteHandler::getParsingRNG());
     }
     if (vtype->wasSet(VTYPEPARS_LENGTH_SET)) {
         myTrainParams.length = vtype->getLength();
