@@ -140,9 +140,9 @@ MSVehicleType::setMinGapLat(const double& minGapLat) {
 void
 MSVehicleType::setMaxSpeed(const double& maxSpeed) {
     if (myOriginalType != nullptr && maxSpeed < 0) {
-        myParameter.maxSpeed = myOriginalType->getMaxSpeed();
+        myParameter.maxSpeed.getParameter()[0] = myOriginalType->myParameter.maxSpeed.getParameter()[0];
     } else {
-        myParameter.maxSpeed = Distribution_Parameterized("", maxSpeed, 0.0);
+        myParameter.maxSpeed.getParameter()[0] = maxSpeed;
     }
     myParameter.parametersSet |= VTYPEPARS_MAXSPEED_SET;
 }
