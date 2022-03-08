@@ -55,9 +55,6 @@ void GenericEngineModel::parseParameter(const ParMap& parameters, std::string pa
         value = par->second;
     }
 }
-void GenericEngineModel::setMaximumAcceleration(double maxAcc) {
-    maxAcceleration_mpsps = maxAcc;
-}
 void GenericEngineModel::setMaximumDeceleration(double maxDec) {
     maxDeceleration_mpsps = maxDec;
 }

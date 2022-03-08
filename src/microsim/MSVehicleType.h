@@ -159,6 +159,8 @@ public:
         return myParameter.maxSpeed;
     }
 
+    // TODO: document
+    double computeChosenAccel(SumoRNG* rng, const double minDev = -1.) const;
 
     // TODO: document
     double computeChosenMaxSpeed(SumoRNG* rng, const double minDev = -1.) const;

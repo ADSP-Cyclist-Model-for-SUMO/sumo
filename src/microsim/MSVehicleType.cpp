@@ -83,6 +83,10 @@ MSVehicleType::~MSVehicleType() {
 
 
 double
+MSVehicleType::computeChosenAccel(SumoRNG* rng, const double minDev) const {
+    return roundDecimal(MAX2(minDev, myParameter.maxAccel.sample(rng)), gPrecisionRandom);
+}
+double
 MSVehicleType::computeChosenMaxSpeed(SumoRNG* rng, const double minDev) const {
     return roundDecimal(MAX2(minDev, myParameter.maxSpeed.sample(rng)), gPrecisionRandom);
 }
@@ -436,10 +440,10 @@ MSVehicleType::check() {
 void
 MSVehicleType::setAccel(double accel) {
     if (myOriginalType != nullptr && accel < 0) {
-        accel = myOriginalType->getCarFollowModel().getMaxAccel();
+        accel = myOriginalType->getCarFollowModel().getMaxAccel().getParameter()[0];
     }
-    myCarFollowModel->setMaxAccel(accel);
-    myParameter.cfParameter[SUMO_ATTR_ACCEL] = toString(accel);
+    myCarFollowModel->getMaxAccel().getParameter()[0] = accel;
+    myParameter.cfParameter[SUMO_ATTR_ACCEL] = toString(myCarFollowModel->getMaxAccel());
 }
 
 void

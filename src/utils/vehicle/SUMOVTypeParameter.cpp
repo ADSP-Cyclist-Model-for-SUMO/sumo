@@ -41,6 +41,7 @@
 SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues(SUMOVehicleClass vclass) :
     length(getDefaultVehicleLength(vclass)),
     minGap(2.5),
+    maxAccel("", 5. / 3.6, 0.0),
     maxSpeed("", 200. / 3.6, 0.0),
     width(1.8),
     height(1.5),
@@ -238,6 +239,7 @@ SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues(SUMOVehicleClass vc
 
 
 SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues() :
+        maxAccel("", 5. / 3.6, 0.0),
         maxSpeed("", 200.0 / 3.6, 0.0),
         speedFactor("normc", 1.0, 0.0, 0.2, 2.0) {}
 
@@ -245,6 +247,7 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
     : id(vtid),
       length(5. /*4.3*/),
       minGap(2.5),
+      maxAccel("", 5. / 3.6, 0.0),
       maxSpeed("", 200. / 3.6, 0.0),
       actionStepLength(0),
       defaultProbability(DEFAULT_VEH_PROB),
@@ -284,6 +287,7 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
     // overwritte SUMOVTypeParameter with VClassDefaultValues
     length = defaultValues.length;
     minGap = defaultValues.minGap;
+    maxAccel = defaultValues.maxAccel;
     maxSpeed = defaultValues.maxSpeed;
     width = defaultValues.width;
     height = defaultValues.height;
@@ -510,6 +514,18 @@ SUMOVTypeParameter::getCFParamString(const SumoXMLAttr attr, const std::string d
     }
 }
 
+Distribution_Parameterized
+SUMOVTypeParameter::getCFParamDistributionParameterized(const SumoXMLAttr attr, const Distribution_Parameterized defaultValue) const {
+    if (cfParameter.count(attr)) {
+        Distribution_Parameterized distr{"", 0., 0.};
+        distr.parse(cfParameter.find(attr)->second, false);
+        return distr;
+    } else {
+        return defaultValue;
+    }
+}
+
+
 
 double
 SUMOVTypeParameter::getLCParam(const SumoXMLAttr attr, const double defaultValue) const {
@@ -687,38 +703,38 @@ SUMOVTypeParameter::initRailVisualizationParameters() {
 }
 
 
-double
+Distribution_Parameterized
 SUMOVTypeParameter::getDefaultAccel(const SUMOVehicleClass vc) {
     switch (vc) {
         case SVC_PEDESTRIAN:
-            return 1.5;
+            return { "", 1.5, 0. };
         case SVC_BICYCLE:
-            return 1.2;
+            return { "", 1.2, 0. };
         case SVC_MOTORCYCLE:
-            return 6.;
+            return { "", 6., 0. };
         case SVC_MOPED:
-            return 1.1;
+            return { "", 1.1, 0. };
         case SVC_TRUCK:
-            return 1.3;
+            return { "", 1.3, 0. };
         case SVC_TRAILER:
-            return 1.1;
+            return { "", 1.1, 0. };
         case SVC_BUS:
-            return 1.2;
+            return { "", 1.2, 0. };
         case SVC_COACH:
-            return 2.;
+            return { "", 2., 0. };
         case SVC_TRAM:
-            return 1.;
+            return { "", 1., 0. };
         case SVC_RAIL_URBAN:
-            return 1.;
+            return { "", 1., 0. };
         case SVC_RAIL:
-            return 0.25;
+            return { "", 0.25, 0. };
         case SVC_RAIL_ELECTRIC:
         case SVC_RAIL_FAST:
-            return 0.5;
+            return { "", 0.5, 0.};
         case SVC_SHIP:
-            return 0.1;
+            return { "", 0.1, 0. };
         default:
-            return 2.6;//2.9;
+            return { "", 2.6, 0. };//{ "", 2.9, 0. };
     }
 }
 

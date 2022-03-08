@@ -96,7 +96,7 @@ protected:
      * @param[in] sigma The sigma value to use
      * @return The speed after dawdling
      */
-    double dawdle2(double speed, double sigma, SumoRNG* rng) const;
+    double dawdle2(double speed, double sigma, double maxAccel, SumoRNG* rng) const;
 
 };
 

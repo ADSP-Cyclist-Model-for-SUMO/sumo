@@ -125,7 +125,7 @@ MEVehicle::estimateLeaveSpeed(const MSLink* link) const {
     /// @see MSVehicle.cpp::estimateLeaveSpeed
     const double v = getSpeed();
     return MIN2(link->getViaLaneOrLane()->getVehicleMaxSpeed(this),
-                (double)sqrt(2 * link->getLength() * getVehicleType().getCarFollowModel().getMaxAccel() + v * v));
+                (double)sqrt(2 * link->getLength() * MSBaseVehicle::getMaxAccel() + v * v));
 }
 
 

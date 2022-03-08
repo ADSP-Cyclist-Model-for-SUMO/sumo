@@ -153,6 +153,11 @@ public:
         return myType->getParameter().vehicleClass;
     }
 
+    // TODO: document
+    double getMaxAccel() const {
+        return myChosenMaxAccel;
+    };
+
     /** @brief Returns the maximum speed
      * @return The vehicle's maximum speed
      */
@@ -904,6 +909,9 @@ protected:
 
     /// @brief Iterator to current route-edge
     MSRouteIterator myCurrEdge;
+
+    /// @brief A precomputed acceleration limit of the vehicle
+    double myChosenMaxAccel;
 
     /// @brief A precomputed speed limit of the vehicle
     double myChosenMaxSpeed;

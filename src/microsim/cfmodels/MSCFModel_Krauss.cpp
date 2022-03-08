@@ -56,7 +56,7 @@ MSCFModel_Krauss::patchSpeedBeforeLC(const MSVehicle* veh, double vMin, double v
     const double sigma = (veh->passingMinor()
                           ? veh->getVehicleType().getParameter().getJMParam(SUMO_ATTR_JM_SIGMA_MINOR, myDawdle)
                           : myDawdle);
-    const double vDawdle = MAX2(vMin, dawdle2(vMax, sigma, veh->getRNG()));
+    const double vDawdle = MAX2(vMin, dawdle2(vMax, sigma, veh->getMaxAccel(), veh->getRNG()));
     return vDawdle;
 }
 
@@ -67,7 +67,7 @@ MSCFModel_Krauss::stopSpeed(const MSVehicle* const veh, const double speed, doub
     // Only relevant for the ballistic update: We give the argument headway=veh->getActionStepLengthSecs(), to assure that
     // the stopping position is approached with a uniform deceleration also for tau!=veh->getActionStepLengthSecs().
     applyHeadwayPerceptionError(veh, speed, gap);
-    return MIN2(maximumSafeStopSpeed(gap, decel, speed, false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, decel, speed, veh->getMaxAccel(), false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
 }
 
 
@@ -76,7 +76,7 @@ MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, double speed, double g
     //gDebugFlag1 = DEBUG_COND;
     applyHeadwayAndSpeedDifferencePerceptionErrors(veh, speed, gap, predSpeed, predMaxDecel, pred);
     //gDebugFlag1 = DEBUG_COND; // enable for DEBUG_EMERGENCYDECEL
-    const double vsafe = maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel);
+    const double vsafe = maximumSafeFollowSpeed(gap, speed, veh->getMaxAccel(), predSpeed, predMaxDecel);
     //gDebugFlag1 = false;
     const double vmin = minNextSpeedEmergency(speed);
     const double vmax = maxNextSpeed(speed, veh);
@@ -90,7 +90,7 @@ MSCFModel_Krauss::followSpeed(const MSVehicle* const veh, double speed, double g
 }
 
 double
-MSCFModel_Krauss::dawdle2(double speed, double sigma, SumoRNG* rng) const {
+MSCFModel_Krauss::dawdle2(double speed, double sigma, double maxAccel, SumoRNG* rng) const {
     if (!MSGlobals::gSemiImplicitEulerUpdate) {
         // in case of the ballistic update, negative speeds indicate
         // a desired stop before the completion of the next timestep.
@@ -102,13 +102,13 @@ MSCFModel_Krauss::dawdle2(double speed, double sigma, SumoRNG* rng) const {
     // generate random number out of [0,1)
     const double random = RandHelper::rand(rng);
     // Dawdle.
-    if (speed < myAccel) {
+    if (speed < maxAccel) {
         // we should not prevent vehicles from driving just due to dawdling
         //  if someone is starting, he should definitely start
         // (but what about slow-to-start?)!!!
         speed -= ACCEL2SPEED(sigma * speed * random);
     } else {
-        speed -= ACCEL2SPEED(sigma * myAccel * random);
+        speed -= ACCEL2SPEED(sigma * maxAccel * random);
     }
     return MAX2(0., speed);
 }
