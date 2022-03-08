@@ -369,7 +369,7 @@ Person::getSpeedFactor(const std::string& personID) {
 
 double
 Person::getAccel(const std::string& personID) {
-    return getPerson(personID)->getVehicleType().getCarFollowModel().getMaxAccel();
+    return getPerson(personID)->getMaxAccel();
 }
 
 

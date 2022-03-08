@@ -43,6 +43,7 @@
 #include <microsim/devices/MSDevice_Tripinfo.h>
 #include <microsim/devices/MSDevice_Taxi.h>
 #include "MSPModel.h"
+#include "microsim/MSRouteHandler.h"
 
 // ===========================================================================
 // method definitions

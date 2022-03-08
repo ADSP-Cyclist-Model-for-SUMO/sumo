@@ -2062,7 +2062,7 @@ MSLCM_SL2015::updateExpectedSublaneSpeeds(const MSLeaderDistanceInfo& ahead, int
                     vSafe = getCarFollowModel().followSpeed(&myVehicle, vMax, dist, 0, 0);
                 }
             } else {
-                if (leader->getAcceleration() > 0.5 * leader->getCarFollowModel().getMaxAccel()) {
+                if (leader->getAcceleration() > 0.5 * leader->getMaxAccel()) {
                     // assume that the leader will continue accelerating to its maximum speed
                     vSafe = leader->getLane()->getVehicleMaxSpeed(leader);
                 } else {
@@ -3351,7 +3351,7 @@ MSLCM_SL2015::commitManoeuvre(int blocked, int blockedFully,
                                                  nextLeftSpace, secondsToLeaveLane - timeTillActionStep, nextActionStepSpeed, myVehicle.getCarFollowModel().getEmergencyDecel()));
 
             myCommittedSpeed = MIN3(avoidArrivalSpeed,
-                                    myVehicle.getSpeed() + myVehicle.getCarFollowModel().getMaxAccel() * myVehicle.getActionStepLengthSecs(),
+                                    myVehicle.getSpeed() + myVehicle.getMaxAccel() * myVehicle.getActionStepLengthSecs(),
                                     myVehicle.getLane()->getVehicleMaxSpeed(&myVehicle));
 
 #if defined(DEBUG_MANEUVER) || defined(DEBUG_COMMITTED_SPEED)

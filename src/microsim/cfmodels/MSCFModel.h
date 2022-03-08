@@ -27,6 +27,7 @@
 #include <string>
 #include <utils/common/StdDefs.h>
 #include <utils/common/SUMOTime.h>
+#include "utils/distribution/Distribution_Parameterized.h"
 
 #define INVALID_SPEED 299792458 + 1 // nothing can go faster than the speed of light!
 // Factor that the minimum emergency decel is increased by in corresponding situations
@@ -228,7 +229,7 @@ public:
     /** @brief Get the vehicle type's maximum acceleration [m/s^2]
      * @return The maximum acceleration (in m/s^2) of vehicles of this class
      */
-    inline double getMaxAccel() const {
+    inline Distribution_Parameterized getMaxAccel() const {
         return myAccel;
     }
 
@@ -370,8 +371,9 @@ public:
      * @param[in] dist Distance to be covered
      * @param[in] currentSpeed Actual speed of vehicle
      * @param[in] arrivalSpeed Desired speed at arrival
+     * @param[in] maxAccel Acceleration limit of the vehicle
      */
-    SUMOTime getMinimalArrivalTime(double dist, double currentSpeed, double arrivalSpeed) const;
+    SUMOTime getMinimalArrivalTime(double dist, double currentSpeed, double arrivalSpeed, double maxAccel) const;
 
 
     /** @brief Computes the time needed to travel a distance dist given an initial speed
@@ -490,7 +492,7 @@ public:
     /** @brief Sets a new value for maximum acceleration [m/s^2]
      * @param[in] accel The new acceleration in m/s^2
      */
-    virtual void setMaxAccel(double accel) {
+    virtual void setMaxAccel(Distribution_Parameterized accel) {
         myAccel = accel;
     }
 
@@ -538,12 +540,13 @@ public:
     /** @brief Returns the maximum safe velocity for following the given leader
      * @param[in] gap2pred The (netto) distance to the LEADER
      * @param[in] egoSpeed The FOLLOWERS's speed
+     * @param[in] egoMaxAccel The FOLLOWERS's acceleration limit
      * @param[in] predSpeed The LEADER's speed
      * @param[in] predMaxDecel The LEADER's maximum deceleration
      * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @return the safe velocity
      */
-    double maximumSafeFollowSpeed(double gap,  double egoSpeed, double predSpeed, double predMaxDecel, bool onInsertion = false) const;
+    double maximumSafeFollowSpeed(double gap,  double egoSpeed, double egoMaxAccel, double predSpeed, double predMaxDecel, bool onInsertion = false) const;
 
 
     /** @brief Returns the minimal deceleration for following the given leader safely
@@ -564,10 +567,11 @@ public:
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] decel The desired deceleration rate
      * @param[in] currentSpeed The current speed of the ego vehicle
+     * @param[in] maxAccel The acceleration limit of the ego vehicle
      * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @param[in] headway The desired time headway to be included in the calculations (default argument -1 induces the use of myHeadway)
      */
-    double maximumSafeStopSpeed(double gap, double decel, double currentSpeed, bool onInsertion = false, double headway = -1) const;
+    double maximumSafeStopSpeed(double gap, double decel, double currentSpeed, double maxAccel, bool onInsertion = false, double headway = -1) const;
 
 
     /** @brief Returns the maximum next velocity for stopping within gap
@@ -645,7 +649,7 @@ protected:
     const MSVehicleType* myType;
 
     /// @brief The vehicle's maximum acceleration [m/s^2]
-    double myAccel;
+    Distribution_Parameterized myAccel;
 
     /// @brief The vehicle's maximum deceleration [m/s^2]
     double myDecel;

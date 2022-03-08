@@ -81,6 +81,10 @@ public:
 
     double getMaxSpeed() const;
 
+    double getMaxAccel() const {
+        return myChosenMaxAccel;
+    };
+
     SUMOTime getWaitingTime() const;
 
     double getPreviousSpeed() const {
@@ -364,6 +368,8 @@ protected:
 
     /// @brief The devices this transportable has
     std::vector<MSTransportableDevice*> myDevices;
+
+    double myChosenMaxAccel;
 
 private:
     const bool myAmPerson;

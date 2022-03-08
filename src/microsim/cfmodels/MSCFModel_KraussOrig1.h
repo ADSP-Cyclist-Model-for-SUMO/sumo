@@ -140,7 +140,7 @@ protected:
      * @param[in] speed The speed with no dawdling
      * @return The speed after dawdling
      */
-    virtual double dawdle(double speed, SumoRNG* rng) const;
+    virtual double dawdle(double speed, double maxAccel, SumoRNG* rng) const;
 
 protected:
     /// @brief The vehicle's dawdle-parameter. 0 for no dawdling, 1 for max.

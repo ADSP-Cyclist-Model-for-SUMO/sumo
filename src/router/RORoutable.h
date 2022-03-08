@@ -110,6 +110,10 @@ public:
         return getType() != 0 ? getType()->vehicleClass : SVC_IGNORING;
     }
 
+    /// TODO: document
+    inline double getMaxAccel() const {
+        return myType->maxAccel.getMax();
+    }
 
     /// @brief Returns the vehicle's maximum speed
     inline double getMaxSpeed() const {

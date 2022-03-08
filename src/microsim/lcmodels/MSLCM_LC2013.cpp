@@ -631,7 +631,7 @@ MSLCM_LC2013::informFollower(MSAbstractLaneChangeModel::MSLCMessager& msgPass,
                              double plannedSpeed) {
 
     MSVehicle* nv = neighFollow.first;
-    const double plannedAccel = SPEED2ACCEL(MAX2(MIN2(getCarFollowModel().getMaxAccel(), plannedSpeed - myVehicle.getSpeed()), -getCarFollowModel().getMaxDecel()));
+    const double plannedAccel = SPEED2ACCEL(MAX2(MIN2(myVehicle.getMaxAccel(), plannedSpeed - myVehicle.getSpeed()), -getCarFollowModel().getMaxDecel()));
 
 #ifdef DEBUG_INFORMER
     if (DEBUG_COND) {
@@ -1821,8 +1821,8 @@ MSLCM_LC2013::anticipateFollowSpeed(const std::pair<MSVehicle*, double>& leaderD
     double futureSpeed;
     if (acceleratingLeader) {
         // XXX see #6562
-        const double maxSpeed1s = (myVehicle.getSpeed() + myVehicle.getCarFollowModel().getMaxAccel()
-                                   - ACCEL2SPEED(myVehicle.getCarFollowModel().getMaxAccel()));
+        const double maxSpeed1s = (myVehicle.getSpeed() + myVehicle.getMaxAccel()
+                                   - ACCEL2SPEED(myVehicle.getMaxAccel()));
         if (leader == nullptr) {
             if (hasBlueLight()) {
                 // can continue from any lane if necessary
@@ -1840,10 +1840,10 @@ MSLCM_LC2013::anticipateFollowSpeed(const std::pair<MSVehicle*, double>& leaderD
                 // can continue from any lane if necessary
                 futureSpeed = vMax;
             } else {
-                futureSpeed = getCarFollowModel().maximumSafeStopSpeed(dist, getCarFollowModel().getMaxDecel(), myVehicle.getSpeed(), true);
+                futureSpeed = getCarFollowModel().maximumSafeStopSpeed(dist, getCarFollowModel().getMaxDecel(), myVehicle.getSpeed(), myVehicle.getMaxAccel(), true);
             }
         } else {
-            futureSpeed = getCarFollowModel().maximumSafeFollowSpeed(gap, myVehicle.getSpeed(), leader->getSpeed(), leader->getCarFollowModel().getMaxDecel(), true);
+            futureSpeed = getCarFollowModel().maximumSafeFollowSpeed(gap, myVehicle.getSpeed(), myVehicle.getMaxAccel(), leader->getSpeed(), leader->getCarFollowModel().getMaxDecel(), true);
         }
     }
     futureSpeed = MIN2(vMax, futureSpeed);

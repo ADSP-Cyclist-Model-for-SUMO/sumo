@@ -202,9 +202,6 @@ private:
     /// @brief The number of iterations in speed calculations
     const int myIterations;
 
-    /// @brief A computational shortcut
-    const double myTwoSqrtAccelDecel;
-
 private:
     /// @brief Invalidated assignment operator
     MSCFModel_IDM& operator=(const MSCFModel_IDM& s);

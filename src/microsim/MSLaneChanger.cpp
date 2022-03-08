@@ -1158,7 +1158,7 @@ MSLaneChanger::changeOpposite(MSVehicle* vehicle, std::pair<MSVehicle*, double> 
 
         // compute safety constraints (assume vehicle is safe once stop is reached)
         const double spaceToStop = vehicle->nextStopDist();
-        const double timeToStopForward = spaceToStop / MAX2(vehicle->getSpeed(), vehicle->getCarFollowModel().getMaxAccel());
+        const double timeToStopForward = spaceToStop / MAX2(vehicle->getSpeed(), vehicle->getMaxAccel());
         const double timeToStopLateral = (MSGlobals::gLaneChangeDuration > 0
                                           ? STEPS2TIME(MSGlobals::gLaneChangeDuration) * bestOffset
                                           : (MSGlobals::gLateralResolution > 0
@@ -1698,7 +1698,7 @@ MSLaneChanger::computeOvertakingTime(const MSVehicle* vehicle, double vMax, cons
     // without upper bound on speed
     const double v = vehicle->getSpeed();
     const double u = leader->getAcceleration() > 0 ? leader->getLane()->getVehicleMaxSpeed(leader) : leader->getSpeed();
-    const double a = vehicle->getCarFollowModel().getMaxAccel();
+    const double a = vehicle->getMaxAccel();
     const double d = vehicle->getCarFollowModel().getMaxDecel();
     const double g = MAX2(0.0, (
                               // drive up to the rear of leader

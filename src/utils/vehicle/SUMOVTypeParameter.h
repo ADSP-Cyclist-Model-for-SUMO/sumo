@@ -124,6 +124,9 @@ public:
         /// @brief This class' free space in front of the vehicle itself
         double minGap;
 
+        /// @brief The vehicle type's maximum acceleration [m/s^2]
+        Distribution_Parameterized maxAccel;
+
         /// @brief The vehicle type's maximum speed [m/s]
         Distribution_Parameterized maxSpeed;
 
@@ -254,6 +257,9 @@ public:
     /// @brief This class' free space in front of the vehicle itself
     double minGap;
 
+    /// @brief The vehicle type's maximum acceleration [m/s^2]
+    Distribution_Parameterized maxAccel;
+
     /// @brief The vehicle type's maximum speed [m/s]
     Distribution_Parameterized maxSpeed;
 
@@ -368,7 +374,7 @@ public:
      * @param[in] vc the vehicle class
      * @return the acceleration in m/s^2
      */
-    static double getDefaultAccel(const SUMOVehicleClass vc = SVC_IGNORING);
+    static Distribution_Parameterized getDefaultAccel(const SUMOVehicleClass vc = SVC_IGNORING);
 
     /** @brief Returns the default deceleration for the given vehicle class
      * This needs to be a function because the actual value is stored in the car following model

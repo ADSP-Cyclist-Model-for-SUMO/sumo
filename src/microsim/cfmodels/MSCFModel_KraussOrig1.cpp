@@ -50,7 +50,7 @@ MSCFModel_KraussOrig1::~MSCFModel_KraussOrig1() {}
 double
 MSCFModel_KraussOrig1::patchSpeedBeforeLC(const MSVehicle* veh, double vMin, double vMax) const {
     UNUSED_PARAMETER(veh);
-    const double vDawdle = MAX2(vMin, dawdle(vMax, veh->getRNG()));
+    const double vDawdle = MAX2(vMin, dawdle(vMax, veh->getMaxAccel(), veh->getRNG()));
     return vDawdle;
 }
 
@@ -60,7 +60,7 @@ MSCFModel_KraussOrig1::followSpeed(const MSVehicle* const veh, double speed, dou
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         return MIN2(vsafe(gap, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)); // XXX: and why not cap with minNextSpeed!? (Leo)
     } else {
-        return MAX2(MIN2(maximumSafeFollowSpeed(gap, speed, predSpeed, predMaxDecel), maxNextSpeed(speed, veh)), minNextSpeed(speed));
+        return MAX2(MIN2(maximumSafeFollowSpeed(gap, speed, veh->getMaxAccel(), predSpeed, predMaxDecel), maxNextSpeed(speed, veh)), minNextSpeed(speed));
     }
 }
 
@@ -78,7 +78,7 @@ MSCFModel_KraussOrig1::stopSpeed(const MSVehicle* const veh, const double speed,
 
 
 double
-MSCFModel_KraussOrig1::dawdle(double speed, SumoRNG* rng) const {
+MSCFModel_KraussOrig1::dawdle(double speed, double maxAccel, SumoRNG* rng) const {
     if (!MSGlobals::gSemiImplicitEulerUpdate) {
         // in case of the ballistic update, negative speeds indicate
         // a desired stop before the completion of the next timestep.
@@ -87,7 +87,7 @@ MSCFModel_KraussOrig1::dawdle(double speed, SumoRNG* rng) const {
             return speed;
         }
     }
-    return MAX2(0., speed - ACCEL2SPEED(myDawdle * myAccel * RandHelper::rand(rng)));
+    return MAX2(0., speed - ACCEL2SPEED(myDawdle * maxAccel * RandHelper::rand(rng)));
 }
 
 

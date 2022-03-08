@@ -41,7 +41,7 @@ protected:
     //class name, used to log information
     std::string className;
     //minimum and maximum acceleration of the model, if any
-    double maxAcceleration_mpsps, maxDeceleration_mpsps;
+    double maxDeceleration_mpsps;
 
     /**
      * Prints a parameter error
@@ -57,7 +57,7 @@ protected:
 
 public:
 
-    GenericEngineModel() : maxAcceleration_mpsps(1.5), maxDeceleration_mpsps(7) {};
+    GenericEngineModel() : maxDeceleration_mpsps(7) {};
     virtual ~GenericEngineModel() {};
 
     /**
@@ -68,11 +68,12 @@ public:
      * @param[in] speed_mps current speed in meters per second
      * @param[in] accel_mps2 current acceleration in meters per squared second
      * @param[in] reqAccel_mps2 requested acceleration in meters per squared second
+     * @param[in] maxAccel_mpsps acceleration limit
      * @param[in] timeStep current simulation timestep
      * @return the real acceleration that the vehicle applies in meters per
      * squared second
      */
-    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, SUMOTime timeStep = 0) = 0;
+    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, double maxAccel_mpsps, SUMOTime timeStep = 0) = 0;
 
     /**
      * Sets a single parameter value
@@ -84,12 +85,6 @@ public:
     virtual void setParameter(const std::string parameter, double value) = 0;
     virtual void setParameter(const std::string parameter, int value) = 0;
 
-    /**
-     * Sets maximum acceleration value
-     *
-     * @param[in] maximum acceleration in meters per second squared
-     */
-    void setMaximumAcceleration(double maxAcc);
     /**
      * Sets maximum deceleration value
      *
