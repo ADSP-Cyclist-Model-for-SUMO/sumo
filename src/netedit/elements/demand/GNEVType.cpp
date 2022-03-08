@@ -692,6 +692,7 @@ GNEVType::isValid(SumoXMLAttr key, const std::string& value) {
         case SUMO_ATTR_SIGMA:
             return canParse<double>(value) && (parse<double>(value) >= 0) && (parse<double>(value) <= 1);
         case SUMO_ATTR_ACCEL:
+            return Distribution_Parameterized::isValidDescription(value);
         case SUMO_ATTR_DECEL:
         case SUMO_ATTR_APPARENTDECEL:
         case SUMO_ATTR_EMERGENCYDECEL:
@@ -931,7 +932,7 @@ GNEVType::overwriteVType(GNEDemandElement* vType, const SUMOVTypeParameter newVT
     undoList->begin(vType->getTagProperty().getGUIIcon(), "update default " + vType->getTagStr() + " '" + DEFAULT_VTYPE_ID + "'");
     // CFM values
     if (!newVTypeParameter.getCFParamString(SUMO_ATTR_ACCEL, "").empty()) {
-        vType->setAttribute(SUMO_ATTR_ACCEL, toString(newVTypeParameter.getCFParam(SUMO_ATTR_ACCEL, 0)), undoList);
+        vType->setAttribute(SUMO_ATTR_ACCEL, toString(newVTypeParameter.getCFParamDistributionParameterized(SUMO_ATTR_ACCEL, Distribution_Parameterized("", 0., 0.))), undoList);
     }
     if (!newVTypeParameter.getCFParamString(SUMO_ATTR_DECEL, "").empty()) {
         vType->setAttribute(SUMO_ATTR_DECEL, toString(newVTypeParameter.getCFParam(SUMO_ATTR_DECEL, 0)), undoList);

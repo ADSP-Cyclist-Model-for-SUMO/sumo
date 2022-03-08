@@ -3234,8 +3234,10 @@ GNEAttributeCarrier::fillDemandElements() {
         myTagProperties[currentTag].addAttribute(attrProperty);
 
         attrProperty = GNEAttributeProperties(SUMO_ATTR_MAXSPEED,
-                                              GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED,
-                                              "The vehicle's maximum velocity [m/s] (or a distribution specifier)");
+                                              GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED | GNEAttributeProperties::DEFAULTVALUE,
+                                              "The vehicle's maximum velocity [m/s] (or a distribution specifier)",
+                                              "55.56");
+
         myTagProperties[currentTag].addAttribute(attrProperty);
 
         attrProperty = GNEAttributeProperties(SUMO_ATTR_SPEEDFACTOR,
@@ -4628,7 +4630,7 @@ GNEAttributeCarrier::fillCarFollowingModelAttributes(SumoXMLTag currentTag) {
     GNEAttributeProperties attrProperty;
 
     attrProperty = GNEAttributeProperties(SUMO_ATTR_ACCEL,
-                                          GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED,
+                                          GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED | GNEAttributeProperties::DEFAULTVALUE,
                                           "The acceleration ability of vehicles of this type [m/s^2] (or a distribution specifier)",
                                           "2.60");
     myTagProperties[currentTag].addAttribute(attrProperty);
