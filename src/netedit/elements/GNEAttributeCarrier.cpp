@@ -4628,7 +4628,7 @@ GNEAttributeCarrier::fillCarFollowingModelAttributes(SumoXMLTag currentTag) {
     GNEAttributeProperties attrProperty;
 
     attrProperty = GNEAttributeProperties(SUMO_ATTR_ACCEL,
-                                          GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED,
+                                          GNEAttributeProperties::STRING | GNEAttributeProperties::EXTENDED | GNEAttributeProperties::DEFAULTVALUE,
                                           "The acceleration ability of vehicles of this type [m/s^2] (or a distribution specifier)",
                                           "2.60");
     myTagProperties[currentTag].addAttribute(attrProperty);
