@@ -124,9 +124,6 @@ public:
         /// @brief This class' free space in front of the vehicle itself
         double minGap;
 
-        /// @brief The vehicle type's maximum acceleration [m/s^2]
-        Distribution_Parameterized maxAccel;
-
         /// @brief The vehicle type's maximum speed [m/s]
         Distribution_Parameterized maxSpeed;
 
@@ -256,9 +253,6 @@ public:
 
     /// @brief This class' free space in front of the vehicle itself
     double minGap;
-
-    /// @brief The vehicle type's maximum acceleration [m/s^2]
-    Distribution_Parameterized maxAccel;
 
     /// @brief The vehicle type's maximum speed [m/s]
     Distribution_Parameterized maxSpeed;

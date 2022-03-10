@@ -239,7 +239,6 @@ SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues(SUMOVehicleClass vc
 
 
 SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues() :
-        maxAccel("", 5. / 3.6, 0.0),
         maxSpeed("", 200.0 / 3.6, 0.0),
         speedFactor("normc", 1.0, 0.0, 0.2, 2.0) {}
 
@@ -247,7 +246,6 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
     : id(vtid),
       length(5. /*4.3*/),
       minGap(2.5),
-      maxAccel("", 5. / 3.6, 0.0),
       maxSpeed("", 200. / 3.6, 0.0),
       actionStepLength(0),
       defaultProbability(DEFAULT_VEH_PROB),
@@ -287,7 +285,6 @@ SUMOVTypeParameter::SUMOVTypeParameter(const std::string& vtid, const SUMOVehicl
     // overwritte SUMOVTypeParameter with VClassDefaultValues
     length = defaultValues.length;
     minGap = defaultValues.minGap;
-    maxAccel = defaultValues.maxAccel;
     maxSpeed = defaultValues.maxSpeed;
     width = defaultValues.width;
     height = defaultValues.height;
