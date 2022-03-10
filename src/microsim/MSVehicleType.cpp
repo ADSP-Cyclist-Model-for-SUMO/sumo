@@ -84,7 +84,8 @@ MSVehicleType::~MSVehicleType() {
 
 double
 MSVehicleType::computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev) const {
-    return roundDecimal(MAX2(minDev, distr.sample(rng)), gPrecisionRandom);
+    const double value = roundDecimal(MAX2(minDev, distr.sample(rng)), gPrecisionRandom);
+    return MAX2(0., value);
 }
 double
 MSVehicleType::computeChosenSpeedDeviation(SumoRNG* rng, const double minDev) const {
