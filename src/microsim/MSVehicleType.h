@@ -155,13 +155,12 @@ public:
     /** @brief Get vehicle's maximum speed [m/s].
      * @return The maximum speed (in m/s) of vehicles of this class
      */
-    Distribution_Parameterized getMaxSpeed() const {
+    inline Distribution_Parameterized getMaxSpeed() const {
         return myParameter.maxSpeed;
     }
 
-
     // TODO: document
-    double computeChosenMaxSpeed(SumoRNG* rng, const double minDev = -1.) const;
+    double computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev = -1.) const;
 
 
     /** @brief Computes and returns the speed deviation
