@@ -83,12 +83,8 @@ MSVehicleType::~MSVehicleType() {
 
 
 double
-MSVehicleType::computeChosenAccel(SumoRNG* rng, const double minDev) const {
-    return roundDecimal(MAX2(minDev, myParameter.maxAccel.sample(rng)), gPrecisionRandom);
-}
-double
-MSVehicleType::computeChosenMaxSpeed(SumoRNG* rng, const double minDev) const {
-    return roundDecimal(MAX2(minDev, myParameter.maxSpeed.sample(rng)), gPrecisionRandom);
+MSVehicleType::computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev) const {
+    return roundDecimal(MAX2(minDev, distr.sample(rng)), gPrecisionRandom);
 }
 double
 MSVehicleType::computeChosenSpeedDeviation(SumoRNG* rng, const double minDev) const {

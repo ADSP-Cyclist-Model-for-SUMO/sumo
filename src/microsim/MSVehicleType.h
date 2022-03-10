@@ -152,18 +152,21 @@ public:
     }
 
 
+    /** @brief Get vehicle's acceleration limit [m/s^2].
+     * @return The acceleration limit (in m/s^2) of vehicles of this class
+     */
+    inline Distribution_Parameterized getMaxAccel() const {
+        return myCarFollowModel->getMaxAccel();
+    }
     /** @brief Get vehicle's maximum speed [m/s].
      * @return The maximum speed (in m/s) of vehicles of this class
      */
-    Distribution_Parameterized getMaxSpeed() const {
+    inline Distribution_Parameterized getMaxSpeed() const {
         return myParameter.maxSpeed;
     }
 
     // TODO: document
-    double computeChosenAccel(SumoRNG* rng, const double minDev = -1.) const;
-
-    // TODO: document
-    double computeChosenMaxSpeed(SumoRNG* rng, const double minDev = -1.) const;
+    double computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev = -1.) const;
 
 
     /** @brief Computes and returns the speed deviation
