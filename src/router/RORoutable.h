@@ -57,7 +57,9 @@ public:
      * @param[in] type The type of the routable
      */
     RORoutable(const SUMOVehicleParameter& pars, const SUMOVTypeParameter* type)
-        : myParameter(pars), myType(type), myRoutingSuccess(false) {}
+        : myParameter(pars), myType(type),
+        estimatedMaxAccel(type->getCFParamDistributionParameterized(SUMO_ATTR_ACCEL, SUMOVTypeParameter::getDefaultAccel(type->vehicleClass)).getParameter()[0]),
+        myRoutingSuccess(false) {}
 
 
     /// @brief Destructor
@@ -112,7 +114,7 @@ public:
 
     /// TODO: document
     inline double getMaxAccel() const {
-        return myType->maxAccel.getMax();
+        return estimatedMaxAccel;
     }
 
     /// @brief Returns the vehicle's maximum speed
@@ -183,6 +185,9 @@ private:
 
     /// @brief The type of the vehicle
     const SUMOVTypeParameter* const myType;
+
+    /// @brief The vehicle's estimated acceleration limit [m/s^2]
+    const double estimatedMaxAccel;
 
 protected:
     /// @brief Whether the last routing was successful
