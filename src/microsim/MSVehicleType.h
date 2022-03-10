@@ -152,6 +152,12 @@ public:
     }
 
 
+    /** @brief Get vehicle's acceleration limit [m/s^2].
+     * @return The acceleration limit (in m/s^2) of vehicles of this class
+     */
+    inline Distribution_Parameterized getMaxAccel() const {
+        return myCarFollowModel->getMaxAccel();
+    }
     /** @brief Get vehicle's maximum speed [m/s].
      * @return The maximum speed (in m/s) of vehicles of this class
      */
