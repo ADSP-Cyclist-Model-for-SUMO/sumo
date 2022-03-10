@@ -1116,6 +1116,15 @@ SUMOVehicleParserHelper::parseCFMParams(SUMOVTypeParameter* into, const SumoXMLT
                 }
                 // add parsedCFMAttribute to cfParameter
                 into->cfParameter[it] = parsedCFMAttribute;
+            } else if (it == SUMO_ATTR_ACCEL) {
+                Distribution_Parameterized CFMDistributionParameterizedAttribute("", 0., 0.);
+                try {
+                    CFMDistributionParameterizedAttribute.parse(parsedCFMAttribute, true);
+                } catch (...) {
+                    WRITE_ERROR("Invalid Car-Following-Model Attribute " + toString(it) + ". Cannot be parsed to DistributionParameterized");
+                    return false;
+                }
+                into->cfParameter[it] = parsedCFMAttribute;
             } else {
                 // declare a double in wich save CFM float attribute
                 double CFMDoubleAttribute = -1;
@@ -1128,7 +1137,6 @@ SUMOVehicleParserHelper::parseCFMParams(SUMOVTypeParameter* into, const SumoXMLT
                 }
                 // check attributes of type "positiveFloatType" (> 0)
                 switch (it) {
-                    case SUMO_ATTR_ACCEL:
                     case SUMO_ATTR_DECEL:
                     case SUMO_ATTR_APPARENTDECEL:
                     case SUMO_ATTR_EMERGENCYDECEL:
