@@ -41,7 +41,6 @@
 SUMOVTypeParameter::VClassDefaultValues::VClassDefaultValues(SUMOVehicleClass vclass) :
     length(getDefaultVehicleLength(vclass)),
     minGap(2.5),
-    maxAccel("", 5. / 3.6, 0.0),
     maxSpeed("", 200. / 3.6, 0.0),
     width(1.8),
     height(1.5),

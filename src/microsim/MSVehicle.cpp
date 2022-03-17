@@ -2564,7 +2564,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
             double maxSpeedAtVisibilityDist = cfModel.maximumSafeStopSpeed(visibilityDistance, cfModel.getMaxDecel(), myState.mySpeed, getMaxAccel(), false, 0.);
             // XXX: estimateSpeedAfterDistance does not use euler-logic (thus returns a lower value than possible here...)
-            double maxArrivalSpeed = cfModel.estimateSpeedAfterDistance(visibilityDistance, getMaxSpeed(), getMaxAccel());
+            double maxArrivalSpeed = cfModel.estimateSpeedAfterDistance(visibilityDistance, maxSpeedAtVisibilityDist, getMaxSpeed(), getMaxAccel());
             arrivalSpeed = MIN2(vLinkPass, maxArrivalSpeed);
             slowedDownForMinor = true;
 #ifdef DEBUG_PLAN_MOVE
