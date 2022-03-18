@@ -112,7 +112,7 @@ public:
         return getType() != 0 ? getType()->vehicleClass : SVC_IGNORING;
     }
 
-    /// TODO: document
+    /// @brief Returns the vehicle's maximum acceleration
     inline double getMaxAccel() const {
         return estimatedMaxAccel;
     }

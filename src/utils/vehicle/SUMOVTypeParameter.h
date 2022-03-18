@@ -203,7 +203,11 @@ public:
     */
     std::string getCFParamString(const SumoXMLAttr attr, const std::string defaultValue) const;
 
-    /** TODO: document */
+    /** @brief Returns the named value from the map, or the default if it is not contained there
+    * @param[in] attr The corresponding xml attribute
+    * @param[in] defaultValue The value to return if the given map does not contain the named variable
+    * @return The named value from the map or the default if it does not exist there
+    */
     Distribution_Parameterized getCFParamDistributionParameterized(const SumoXMLAttr attr, const Distribution_Parameterized defaultValue) const;
 
     /** @brief Returns the named value from the map, or the default if it is not contained there

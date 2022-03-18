@@ -165,7 +165,9 @@ public:
         return myParameter.maxSpeed;
     }
 
-    // TODO: document
+    /** @brief Computes and returns the sample of a distribution value
+     * @return A new, random distribution sample value
+     */
     double computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev = -1.) const;
 
 

@@ -153,7 +153,9 @@ public:
         return myType->getParameter().vehicleClass;
     }
 
-    // TODO: document
+    /** @brief Returns the maximum acceleration
+     * @return The vehicle's maximum acceleration
+     */
     double getMaxAccel() const {
         return myChosenMaxAccel;
     };
