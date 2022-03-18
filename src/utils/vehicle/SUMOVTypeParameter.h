@@ -125,7 +125,7 @@ public:
         double minGap;
 
         /// @brief The vehicle type's maximum speed [m/s]
-        double maxSpeed;
+        Distribution_Parameterized maxSpeed;
 
         /// @brief This class' width
         double width;
@@ -204,6 +204,13 @@ public:
     std::string getCFParamString(const SumoXMLAttr attr, const std::string defaultValue) const;
 
     /** @brief Returns the named value from the map, or the default if it is not contained there
+    * @param[in] attr The corresponding xml attribute
+    * @param[in] defaultValue The value to return if the given map does not contain the named variable
+    * @return The named value from the map or the default if it does not exist there
+    */
+    Distribution_Parameterized getCFParamDistributionParameterized(const SumoXMLAttr attr, const Distribution_Parameterized defaultValue) const;
+
+    /** @brief Returns the named value from the map, or the default if it is not contained there
      * @param[in] attr The corresponding xml attribute
      * @param[in] defaultValue The value to return if the given map does not contain the named variable
      * @return The named value from the map or the default if it does not exist there
@@ -252,7 +259,7 @@ public:
     double minGap;
 
     /// @brief The vehicle type's maximum speed [m/s]
-    double maxSpeed;
+    Distribution_Parameterized maxSpeed;
 
     /// @brief The vehicle type's default actionStepLength [ms], i.e. the interval between two control actions.
     ///        The default value of 0ms. induces the value to be traced from MSGlobals::gActionStepLength
@@ -365,7 +372,7 @@ public:
      * @param[in] vc the vehicle class
      * @return the acceleration in m/s^2
      */
-    static double getDefaultAccel(const SUMOVehicleClass vc = SVC_IGNORING);
+    static Distribution_Parameterized getDefaultAccel(const SUMOVehicleClass vc = SVC_IGNORING);
 
     /** @brief Returns the default deceleration for the given vehicle class
      * This needs to be a function because the actual value is stored in the car following model

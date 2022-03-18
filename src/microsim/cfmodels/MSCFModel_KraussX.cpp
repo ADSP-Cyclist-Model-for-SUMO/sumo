@@ -52,12 +52,12 @@ MSCFModel_KraussX::duplicate(const MSVehicleType* vtype) const {
 
 double
 MSCFModel_KraussX::patchSpeedBeforeLC(const MSVehicle* veh, double vMin, double vMax) const {
-    return dawdleX(veh->getSpeed(), vMin, vMax, veh->getRNG());
+    return dawdleX(veh->getSpeed(), vMin, vMax, veh->getMaxAccel(), veh->getRNG());
 }
 
 
 double
-MSCFModel_KraussX::dawdleX(double vOld, double vMin, double vMax, SumoRNG* rng) const {
+MSCFModel_KraussX::dawdleX(double vOld, double vMin, double vMax, double maxAccel, SumoRNG* rng) const {
     double speed = vMax;
     if (!MSGlobals::gSemiImplicitEulerUpdate) {
         // in case of the ballistic update, negative speeds indicate
@@ -68,14 +68,14 @@ MSCFModel_KraussX::dawdleX(double vOld, double vMin, double vMax, SumoRNG* rng) 
         }
     }
     // extra slow to start
-    if (vOld < myAccel) {
-        speed -= ACCEL2SPEED(myTmp1 * myAccel);
+    if (vOld < maxAccel) {
+        speed -= ACCEL2SPEED(myTmp1 * maxAccel);
     }
     const double random = RandHelper::rand(rng);
-    speed -= ACCEL2SPEED(myDawdle * myAccel * random);
+    speed -= ACCEL2SPEED(myDawdle * maxAccel * random);
     // overbraking
     if (vOld > vMax) {
-        speed -= ACCEL2SPEED(myTmp2 * myAccel * random);
+        speed -= ACCEL2SPEED(myTmp2 * maxAccel * random);
         //std::cout << " vMin=" << vMin << " vMax=" << vMax << "speed=" << speed << " d1=" << ACCEL2SPEED(myDawdle * myAccel * random) << " d2=" << ACCEL2SPEED(myTmp2 * myAccel * random) << " unexpectedDecel=" << (speed < vMin) << "\n";
         if (MSGlobals::gSemiImplicitEulerUpdate) {
             speed = MAX2(0.0, speed);

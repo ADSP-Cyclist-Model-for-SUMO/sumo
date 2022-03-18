@@ -93,21 +93,23 @@ public:
     /** @brief Returns the maximum safe velocity for following the given leader
      * @param[in] gap2pred The (netto) distance to the LEADER
      * @param[in] egoSpeed The FOLLOWERS's speed
+     * @param[in] egoMaxAccel The FOLLOWERS's acceleration limit
      * @param[in] predSpeed The LEADER's speed
      * @param[in] predMaxDecel The LEADER's maximum deceleration
      * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @return the safe velocity
      */
-    double maximumSafeFollowSpeed(double gap, double egoSpeed, double predSpeed, double predMaxDecel, bool onInsertion = false) const;
+    double maximumSafeFollowSpeed(double gap, double egoSpeed, double egoMaxAccel, double predSpeed, double predMaxDecel, bool onInsertion = false) const;
 
 
     /** @brief Returns the maximum next velocity for stopping within gap
      * @param[in] gap The (netto) distance to the desired stopping point
      * @param[in] currentSpeed The current speed of the ego vehicle
+     * @param[in] maxAccel The acceleration limit of the ego vehicle
      * @param[in] onInsertion Indicator whether the call is triggered during vehicle insertion
      * @param[in] headway The desired time headway to be included in the calculations (default argument -1 induces the use of myHeadway)
      */
-    double maximumSafeStopSpeed(double gap, double decel, double currentSpeed, bool onInsertion = false, double headway = -1) const;
+    double maximumSafeStopSpeed(double gap, double decel, double currentSpeed, double maxAccel, bool onInsertion = false, double headway = -1) const;
 
 
     /** @brief Applies interaction with stops and lane changing model influences
@@ -284,9 +286,6 @@ private:
 private:
     // @brief The IDM delta exponent
     const double myDelta;
-
-    // @brief A computational shortcut
-    const double myTwoSqrtAccelDecel;
 
     // @brief The number of iterations in speed calculations
     const int myIterations;

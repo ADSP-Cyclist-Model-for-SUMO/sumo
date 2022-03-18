@@ -447,7 +447,7 @@ public:
         if (isTazConnector()) {
             return 0;
         } else if (veh != 0) {
-            return myLength / MIN2(veh->getType()->maxSpeed, veh->getChosenSpeedFactor() * mySpeed);
+            return myLength / MIN2(veh->getType()->maxSpeed.getMax(), veh->getChosenSpeedFactor() * mySpeed);
         } else {
             return myLength / mySpeed;
         }
@@ -459,8 +459,8 @@ public:
         double ret = 0;
         if (!edge->getStoredEffort(time, ret)) {
             const SUMOVTypeParameter* const type = veh->getType();
-            const double vMax = MIN2(type->maxSpeed, edge->mySpeed);
-            const double accel = type->getCFParam(SUMO_ATTR_ACCEL, SUMOVTypeParameter::getDefaultAccel(type->vehicleClass)) * type->getCFParam(SUMO_ATTR_SIGMA, SUMOVTypeParameter::getDefaultImperfection(type->vehicleClass)) / 2.;
+            const double vMax = MIN2(type->maxSpeed.getMax(), edge->mySpeed);
+            const double accel = veh->getMaxAccel() / 2.;
             ret = PollutantsInterface::computeDefault(type->emissionClass, ET, vMax, accel, 0, edge->getTravelTime(veh, time)); // @todo: give correct slope
         }
         return ret;

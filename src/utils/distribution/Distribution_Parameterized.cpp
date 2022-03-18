@@ -33,6 +33,11 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
+Distribution_Parameterized::Distribution_Parameterized(double mean) :
+    Distribution("") {
+    myParameter.push_back(mean);
+    myParameter.push_back(-1);
+}
 Distribution_Parameterized::Distribution_Parameterized(const std::string& id, double mean, double deviation) :
     Distribution(id) {
     myParameter.push_back(mean);

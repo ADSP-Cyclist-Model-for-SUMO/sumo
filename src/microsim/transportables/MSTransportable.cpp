@@ -45,7 +45,7 @@
 // ===========================================================================
 MSTransportable::MSTransportable(const SUMOVehicleParameter* pars, MSVehicleType* vtype, MSTransportablePlan* plan, const bool isPerson) :
     SUMOTrafficObject(pars->id),
-    myParameter(pars), myVType(vtype), myPlan(plan), myAmPerson(isPerson) {
+    myParameter(pars), myVType(vtype), myPlan(plan), myChosenMaxAccel(vtype->computeChosenDistributionValue(getRNG(), vtype->getCarFollowModel().getMaxAccel())), myAmPerson(isPerson) {
     myStep = myPlan->begin();
     // init devices
     MSDevice::buildTransportableDevices(*this, myDevices);
@@ -445,7 +445,7 @@ MSTransportable::getWaitingTime() const {
 
 double
 MSTransportable::getMaxSpeed() const {
-    return getVehicleType().getMaxSpeed() * getSpeedFactor();
+    return getMaxSpeed() * getSpeedFactor();
 }
 
 SUMOVehicleClass

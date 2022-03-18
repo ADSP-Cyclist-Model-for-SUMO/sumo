@@ -82,13 +82,13 @@ MSCFModel_Kerner::_v(const MSVehicle* const veh, double speed, double vfree, dou
         return 0;
     }
     // !!! in the following, the prior step is not considered!!!
-    double G = MAX2((double) 0, (double)(SPEED2DIST(myK * speed) + myPhi / myAccel * speed * (speed - predSpeed)));
-    double vcond = gap > G ? speed + ACCEL2SPEED(myAccel) : speed + MAX2(ACCEL2SPEED(-myDecel), MIN2(ACCEL2SPEED(myAccel), predSpeed - speed));
+    double G = MAX2((double) 0, (double)(SPEED2DIST(myK * speed) + myPhi / veh->getMaxAccel() * speed * (speed - predSpeed)));
+    double vcond = gap > G ? speed + ACCEL2SPEED(veh->getMaxAccel()) : speed + MAX2(ACCEL2SPEED(-myDecel), MIN2(ACCEL2SPEED(veh->getMaxAccel()), predSpeed - speed));
     double vsafe = (double)(-1. * myTauDecel + sqrt(myTauDecel * myTauDecel + (predSpeed * predSpeed) + (2. * myDecel * gap)));
     VehicleVariables* vars = (VehicleVariables*)veh->getCarFollowVariables();
     double va = MAX2((double) 0, MIN3(vfree, vsafe, vcond)) + vars->rand;
     //std::cout << SIMTIME << " veh=" << veh->getID() << " speed=" << speed << " gap=" << gap << " G=" << G << " predSpeed=" << predSpeed << " vfree=" << vfree << " vsafe=" << vsafe << " vcond=" << vcond << " rand=" << vars->rand << "\n";
-    double v = MAX2((double) 0, MIN4(vfree, va, speed + ACCEL2SPEED(myAccel), vsafe));
+    double v = MAX2((double) 0, MIN4(vfree, va, speed + ACCEL2SPEED(veh->getMaxAccel()), vsafe));
     return v;
 }
 

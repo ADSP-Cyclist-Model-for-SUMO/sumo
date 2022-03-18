@@ -45,24 +45,6 @@ MSCFModel_SmartSK::MSCFModel_SmartSK(const MSVehicleType* vtype) :
     myTmp3(vtype->getParameter().getCFParam(SUMO_ATTR_TMP3, 1.0)),
     myTmp4(vtype->getParameter().getCFParam(SUMO_ATTR_TMP4, 1.0)),
     myTmp5(vtype->getParameter().getCFParam(SUMO_ATTR_TMP5, 1.0)) {
-    // the variable tmp1 is the acceleration delay time, e.g. two seconds (or something like this).
-    // for use in the upate process, a rule like if (v<myTmp1) vsafe = 0; is needed.
-    // To have this, we have to transform myTmp1 (which is a time) into an equivalent speed. This is done by the
-    // using the vsafe formula and computing:
-    // v(t=myTmp1) = -myTauDecel + sqrt(myTauDecel*myTauDecel + accel*(accel + decel)*t*t + accel*decel*t*TS);
-    double t = myTmp1;
-    myS2Sspeed = -myTauDecel + sqrt(myTauDecel * myTauDecel + myAccel * (myAccel + myDecel) * t * t + myAccel * myDecel * t * TS);
-#ifdef SmartSK_DEBUG
-    std::cout << "# s2s-speed: " << myS2Sspeed << std::endl;
-#endif
-    if (myS2Sspeed > 5.0) {
-        myS2Sspeed = 5.0;
-    }
-// double maxDeltaGap = -0.5*ACCEL2DIST(myDecel + myAccel);
-    maxDeltaGap = -0.5 * (myDecel + myAccel) * TS * TS;
-#ifdef SmartSK_DEBUG
-    std::cout << "# maxDeltaGap = " << maxDeltaGap << std::endl;
-#endif
     myTmp2 = TS / myTmp2;
     myTmp3 = sqrt(TS) * myTmp3;
 }
@@ -94,7 +76,7 @@ MSCFModel_SmartSK::followSpeed(const MSVehicle* const veh, double speed, double 
     SSKVehicleVariables* vars = (SSKVehicleVariables*)veh->getCarFollowVariables();
 
 // if (((gap - vars->gOld) < maxDeltaGap) && (speed>=5.0) && gap>=5.0) {
-    if ((gap - vars->gOld) < maxDeltaGap) {
+    if ((gap - vars->gOld) < computeMaxDeltaGap(veh->getMaxAccel())) {
         double tTauTest = gap / speed;
 // allow  headway only to decrease only, never to increase. Increase is handled automatically by the headway dynamics in finalizeSpeed()!!!
         if ((tTauTest < vars->myHeadway) && (tTauTest > TS)) {
@@ -103,7 +85,7 @@ MSCFModel_SmartSK::followSpeed(const MSVehicle* const veh, double speed, double 
     }
 
     double vsafe = _vsafe(veh, gap, predSpeed);
-    if ((speed <= 0.0) && (vsafe < myS2Sspeed)) {
+    if ((speed <= 0.0) && (vsafe < computeS2Sspeed(veh->getMaxAccel()))) {
         vsafe = 0;
     }
 
@@ -119,7 +101,7 @@ MSCFModel_SmartSK::stopSpeed(const MSVehicle* const veh, const double speed, dou
     SSKVehicleVariables* vars = (SSKVehicleVariables*)veh->getCarFollowVariables();
 
 // if (((gap - vars->gOld) < maxDeltaGap) && (speed>=5.0) && gap>=5.0) {
-    if ((gap - vars->gOld) < maxDeltaGap) {
+    if ((gap - vars->gOld) < veh->getMaxAccel()) {
         double tTauTest = gap / speed;
 // allow  headway only to decrease only, never to increase. Increase is handled automatically by the headway dynamics in finalizeSpeed()!!!
         if ((tTauTest < vars->myHeadway) && (tTauTest > TS)) {
@@ -132,12 +114,12 @@ MSCFModel_SmartSK::stopSpeed(const MSVehicle* const veh, const double speed, dou
 
 double
 MSCFModel_SmartSK::patchSpeedBeforeLC(const MSVehicle* veh, double /*vMin*/, double /*vMax*/) const {
-    return dawdle(veh->getSpeed(), veh->getRNG());
+    return dawdle(veh->getSpeed(), veh->getMaxAccel(), veh->getRNG());
 }
 
 double
-MSCFModel_SmartSK::dawdle(double speed, SumoRNG* rng) const {
-    return MAX2(0., speed - ACCEL2SPEED(myDawdle * myAccel * RandHelper::rand(rng)));
+MSCFModel_SmartSK::dawdle(double speed, double maxAccel, SumoRNG* rng) const {
+    return MAX2(0., speed - ACCEL2SPEED(myDawdle * maxAccel * RandHelper::rand(rng)));
 }
 
 

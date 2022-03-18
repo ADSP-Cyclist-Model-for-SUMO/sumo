@@ -208,7 +208,7 @@ double
 MSDevice_GLOSA::earliest_arrival(double distance, double vMax) {
     // assume we keep acceleration until we hit maximum speed
     const double v = myVeh.getSpeed();
-    const double a = myVeh.getCarFollowModel().getMaxAccel();
+    const double a = myVeh.getMaxAccel();
     const double accel_time = MIN2((vMax - v) / a, time_to_junction_at_continuous_accel(distance, v));
     const double remaining_dist = distance - distance_at_continuous_accel(v, accel_time);
     const double remaining_time = remaining_dist / vMax;
@@ -246,7 +246,7 @@ double
 MSDevice_GLOSA::distance_at_continuous_accel(double speed, double time) {
     const double v = speed;
     const double t = time;
-    const double a = myVeh.getCarFollowModel().getMaxAccel();
+    const double a = myVeh.getMaxAccel();
     // integrated area composed of a rectangle and a triangle
     return v * t + a * t * t / 2;
 }
@@ -256,7 +256,7 @@ double
 MSDevice_GLOSA::time_to_junction_at_continuous_accel(double d, double v) {
     // see distance_at_continuous_accel
     // t^2 + (2v/a)t - 2d/a = 0
-    const double a = myVeh.getCarFollowModel().getMaxAccel();
+    const double a = myVeh.getMaxAccel();
     const double p_half = v / a;
     const double t = -p_half + sqrt(p_half * p_half + 2 * d / a);
     return t;
@@ -278,7 +278,7 @@ MSDevice_GLOSA::adaptSpeed(double distance, double timeToJunction, double timeTo
             && myVeh.getSpeed() > myMinSpeed) {
         // need to start/continue maneuver
         const double t = timeToSwitch;
-        const double a = myVeh.getCarFollowModel().getMaxAccel();
+        const double a = myVeh.getMaxAccel();
         const double d = myVeh.getCarFollowModel().getMaxDecel();
         const double u = myMinSpeed;
         const double w = vMax;

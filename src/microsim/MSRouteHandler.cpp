@@ -1518,7 +1518,8 @@ MSRouteHandler::addTranship(const SUMOSAXAttributes& attrs) {
                 throw ProcessError("Could not read tranship speed for container '" + cid + "'.");
             }
         } else if (vtype != nullptr && vtype->wasSet(VTYPEPARS_MAXSPEED_SET)) { // speed is set by vtype
-            speed = vtype->getMaxSpeed();
+            SUMOVehicle* veh = MSNet::getInstance()->getVehicleControl().getVehicle(myVehicleParameter->id);
+            speed = veh->getMaxSpeed();
         } else { // default speed value
             speed = DEFAULT_CONTAINER_TRANSHIP_SPEED;
         }

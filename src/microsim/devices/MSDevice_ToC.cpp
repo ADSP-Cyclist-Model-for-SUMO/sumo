@@ -304,7 +304,7 @@ MSDevice_ToC::MSDevice_ToC(SUMOVehicle& holder, const std::string& id, const std
     myMRMSafeSpot(mrmSafeSpot),
     myMRMSafeSpotDuration(mrmSafeSpotDuration),
     myMaxPreparationAccel(maxPreparationAccel),
-    myOriginalMaxAccel(-1) {
+    myOriginalMaxAccel(SUMOVTypeParameter::getDefaultAccel(holder.getVClass())) {
     // Take care! Holder is currently being constructed. Cast occurs before completion.
     myHolderMS = static_cast<MSVehicle*>(&holder);
 
@@ -473,7 +473,11 @@ MSDevice_ToC::setState(ToCState state) {
         // Store original value of maxAccel for restoring it after preparation phase
         myOriginalMaxAccel = myHolderMS->getCarFollowModel().getMaxAccel();
         // Impose acceleration limit during preparation
-        myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(MIN2(myMaxPreparationAccel, myOriginalMaxAccel));
+        if (myMaxPreparationAccel < myOriginalMaxAccel.getMax()) {
+            myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(Distribution_Parameterized("", myMaxPreparationAccel, 0.));
+        } else {
+            myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(myOriginalMaxAccel);
+        }
     }
 
     if (myIssuedDynamicToC) {

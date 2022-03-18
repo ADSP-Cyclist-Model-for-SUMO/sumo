@@ -134,6 +134,11 @@ public:
      */
     virtual double getMaxSpeed() const = 0;
 
+    /** @brief Returns the object's maximum acceleration
+     * @return The object's maximum acceleration
+     */
+    virtual double getMaxAccel() const = 0;
+
     virtual SUMOTime getWaitingTime() const = 0;
 
     /** @brief Returns the object's current speed

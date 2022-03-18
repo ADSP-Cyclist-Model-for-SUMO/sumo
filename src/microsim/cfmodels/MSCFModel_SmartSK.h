@@ -144,9 +144,10 @@ private:
 
     /** @brief Applies driver imperfection (dawdling / sigma)
      * @param[in] speed The speed with no dawdling
+     * @param[in] maxAccel The acceleration limit
      * @return The speed after dawdling
      */
-    virtual double dawdle(double speed, SumoRNG* rng) const;
+    virtual double dawdle(double speed, double maxAccel, SumoRNG* rng) const;
 
     virtual void updateMyHeadway(const MSVehicle* const veh) const {
         // this is the point were the preferred headway changes slowly:
@@ -164,6 +165,28 @@ private:
         ret->gOld = 0.0;
         ret->myHeadway = myHeadwayTime;
         return ret;
+    }
+
+    virtual double computeS2Sspeed(double maxAccel) const {
+        // the variable tmp1 is the acceleration delay time, e.g. two seconds (or something like this).
+        // for use in the upate process, a rule like if (v<myTmp1) vsafe = 0; is needed.
+        // To have this, we have to transform myTmp1 (which is a time) into an equivalent speed. This is done by the
+        // using the vsafe formula and computing:
+        // v(t=myTmp1) = -myTauDecel + sqrt(myTauDecel*myTauDecel + accel*(accel + decel)*t*t + accel*decel*t*TS);
+        double s2sspeed = -myTauDecel + sqrt(myTauDecel * myTauDecel + maxAccel * (maxAccel + myDecel) * myTmp1 * myTmp1 + maxAccel * myDecel * myTmp1 * TS);
+#ifdef SmartSK_DEBUG
+        std::cout << "# s2s-speed: " << s2sspeed << std::endl;
+#endif
+        return MIN2(s2sspeed, 5.);
+    }
+
+    virtual double computeMaxDeltaGap(double maxAccel) const {
+        // double maxDeltaGap = -0.5*ACCEL2DIST(myDecel + myAccel);
+        double maxDeltaGap = -0.5 * (myDecel + maxAccel) * TS * TS;
+#ifdef SmartSK_DEBUG
+        std::cout << "# maxDeltaGap = " << maxDeltaGap << std::endl;
+#endif
+        return maxDeltaGap;
     }
 
 #include <map>
@@ -188,7 +211,7 @@ protected:
     /** @brief new variables needed in this model; myS2Sspeed is the speed below which the vehicle does not move when stopped
      * @brief maxDeltaGap is the theoretical maximum change in gap that can happen in one time step
     */
-    double myS2Sspeed, maxDeltaGap;
+    double maxDeltaGap;
 
 };
 

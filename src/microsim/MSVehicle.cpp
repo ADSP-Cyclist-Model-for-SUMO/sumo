@@ -851,7 +851,7 @@ MSVehicle::Influencer::postProcessRemoteControl(MSVehicle* v) {
         v->drawOutsideNetwork(true);
         // see updateState
         double vNext = v->processTraCISpeedControl(
-                           v->getVehicleType().getMaxSpeed(), v->getSpeed());
+                           v->getMaxSpeed(), v->getSpeed());
         v->setBrakingSignals(vNext);
         v->updateWaitingTime(vNext);
         v->myState.myPreviousSpeed = v->getSpeed();
@@ -888,7 +888,7 @@ MSVehicle::Influencer::implicitSpeedRemote(const MSVehicle* veh, double oldSpeed
                              ? myRemoteLane->getVehicleMaxSpeed(veh)
                              : (veh->getLane() != nullptr
                                 ? veh->getLane()->getVehicleMaxSpeed(veh)
-                                : veh->getVehicleType().getMaxSpeed()));
+                                : veh->getMaxSpeed()));
     return MIN2(maxSpeed, MAX2(minSpeed, DIST2SPEED(dist)));
 }
 
@@ -1017,7 +1017,7 @@ MSVehicle::hasValidRouteStart(std::string& msg) {
                 return false;
             }
         }
-        if (myParameter->departSpeedProcedure == DepartSpeedDefinition::GIVEN && myParameter->departSpeed > myType->getMaxSpeed() + SPEED_EPS) {
+        if (myParameter->departSpeedProcedure == DepartSpeedDefinition::GIVEN && myParameter->departSpeed > getMaxSpeed() + SPEED_EPS) {
             msg = "Departure speed for vehicle '" + getID() + "' is too high for the vehicle type '" + myType->getID() + "'.";
             myRouteValidity |= ROUTE_START_INVALID_LANE;
             return false;
@@ -1242,7 +1242,7 @@ MSVehicle::getMaxSpeedOnLane() const {
     if (myLane != nullptr) {
         return myLane->getVehicleMaxSpeed(this);
     }
-    return myType->getMaxSpeed();
+    return getMaxSpeed();
 }
 
 
@@ -2078,7 +2078,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
     bool encounteredTurn = (MSGlobals::gLateralResolution <= 0); // next turn is only needed for sublane
     double seenNonInternal = 0;
     double seenInternal = myLane->isInternal() ? seen : 0;
-    double vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(seen, v, cfModel.getMaxAccel()), laneMaxV); // upper bound
+    double vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(seen, v, getMaxSpeed(), getMaxAccel()), laneMaxV); // upper bound
     int view = 0;
     DriveProcessItem* lastLink = nullptr;
     bool slowedDownForMinor = false; // whether the vehicle already had to slow down on approach to a minor link
@@ -2562,9 +2562,9 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         const bool couldBrakeForMinor = !(*link)->havePriority() && brakeDist < seen && !(*link)->lastWasContMajor();
         if (couldBrakeForMinor && !determinedFoePresence) {
             // vehicle decelerates just enough to be able to stop if necessary and then accelerates
-            double maxSpeedAtVisibilityDist = cfModel.maximumSafeStopSpeed(visibilityDistance, cfModel.getMaxDecel(), myState.mySpeed, false, 0.);
+            double maxSpeedAtVisibilityDist = cfModel.maximumSafeStopSpeed(visibilityDistance, cfModel.getMaxDecel(), myState.mySpeed, getMaxAccel(), false, 0.);
             // XXX: estimateSpeedAfterDistance does not use euler-logic (thus returns a lower value than possible here...)
-            double maxArrivalSpeed = cfModel.estimateSpeedAfterDistance(visibilityDistance, maxSpeedAtVisibilityDist, cfModel.getMaxAccel());
+            double maxArrivalSpeed = cfModel.estimateSpeedAfterDistance(visibilityDistance, maxSpeedAtVisibilityDist, getMaxSpeed(), getMaxAccel());
             arrivalSpeed = MIN2(vLinkPass, maxArrivalSpeed);
             slowedDownForMinor = true;
 #ifdef DEBUG_PLAN_MOVE
@@ -2613,11 +2613,11 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         if (seen < bGap && !isStopped()) { // XXX: should this use the current speed (at least for the ballistic case)? (Leo) Refs. #2575
             // vehicle cannot come to a complete stop in time
             if (MSGlobals::gSemiImplicitEulerUpdate) {
-                arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v);
+                arrivalSpeedBraking = cfModel.getMinimalArrivalSpeedEuler(seen, v, MSBaseVehicle::getMaxSpeed());
                 // due to discrete/continuous mismatch (when using Euler update) we have to ensure that braking actually helps
                 arrivalSpeedBraking = MIN2(arrivalSpeedBraking, arrivalSpeed);
             } else {
-                arrivalSpeedBraking = cfModel.getMinimalArrivalSpeed(seen, myState.mySpeed);
+                arrivalSpeedBraking = cfModel.getMinimalArrivalSpeed(seen, MSBaseVehicle::getMaxSpeed(), myState.mySpeed);
             }
         }
 
@@ -2625,7 +2625,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         // l=linkLength, a=accel, t=continuousTime, v=vLeave
         // l=v*t + 0.5*a*t^2, solve for t and multiply with a, then add v
         const double estimatedLeaveSpeed = MIN2((*link)->getViaLaneOrLane()->getVehicleMaxSpeed(this),
-                                                getCarFollowModel().estimateSpeedAfterDistance((*link)->getLength(), arrivalSpeed, getVehicleType().getCarFollowModel().getMaxAccel()));
+                                                getCarFollowModel().estimateSpeedAfterDistance((*link)->getLength(), arrivalSpeed, getMaxSpeed(), getMaxAccel()));
         lfLinks.push_back(DriveProcessItem(*link, v, vLinkWait, setRequest,
                                            arrivalTime, arrivalSpeed,
                                            arrivalSpeedBraking,
@@ -2670,7 +2670,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
         }
         ahead = opposite ? MSLeaderInfo(leaderLane) : leaderLane->getLastVehicleInformation(nullptr, 0);
         seen += lane->getLength();
-        vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, cfModel.getMaxAccel()), laneMaxV); // upper bound
+        vLinkPass = MIN2(cfModel.estimateSpeedAfterDistance(lane->getLength(), v, getMaxSpeed(), getMaxAccel()), laneMaxV); // upper bound
         lastLink = &lfLinks.back();
     }
 
@@ -2694,9 +2694,9 @@ MSVehicle::getArrivalTime(SUMOTime t, double seen, double v, double arrivalSpeed
         // @note intuitively it would make sense to compare arrivalSpeed with getSpeed() instead of v
         // however, due to the current position update rule (ticket #860) the vehicle moves with v in this step
         // subtract DELTA_T because t is the time at the end of this step and the movement is not carried out yet
-        arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, v, arrivalSpeed);
+        arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, v, arrivalSpeed, getMaxAccel());
     } else {
-        arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, myState.mySpeed, arrivalSpeed);
+        arrivalTime = t - DELTA_T + cfModel.getMinimalArrivalTime(seen, myState.mySpeed, arrivalSpeed, getMaxAccel());
     }
     if (isStopped()) {
         arrivalTime += MAX2((SUMOTime)0, myStops.front().duration);
@@ -3652,7 +3652,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
                 std::cout << "    fail: remainingEdges=" << ((int)(myRoute->end() - myCurrEdge)) << " further=" << myFurtherLanes.size() << "\n";
             }
 #endif
-            return getVehicleType().getMaxSpeed();
+            return getMaxSpeed();
         }
         //if (isSelected()) std::cout << "   check2 passed\n";
 
@@ -3664,7 +3664,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
                 std::cout << "    noTurn (bidi=" << myLane->getEdge().getBidiEdge()->getID() << " succ=" << toString(succ) << "\n";
             }
 #endif
-            return getVehicleType().getMaxSpeed();
+            return getMaxSpeed();
         }
         //if (isSelected()) std::cout << "   check3 passed\n";
 
@@ -3680,7 +3680,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
                 }
 #endif
                 if (seen > MAX2(brakeDist, 1.0)) {
-                    return getVehicleType().getMaxSpeed();
+                    return getMaxSpeed();
                 } else {
 #ifdef DEBUG_REVERSE_BIDI
                     if (DEBUG_COND) {
@@ -3702,7 +3702,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
                         std::cout << "    noBidi view=" << view << " further=" << further->getID() << " furtherBidi=" << Named::getIDSecure(further->getEdge().getBidiEdge()) << " future=" << (*(myCurrEdge + view))->getID() << "\n";
                     }
 #endif
-                    return getVehicleType().getMaxSpeed();
+                    return getMaxSpeed();
                 }
                 if (!myStops.empty() && myStops.front().edge == (myCurrEdge + view)) {
                     const double brakeDist = getCarFollowModel().brakeGap(getSpeed(), getCarFollowModel().getMaxDecel(), 0);
@@ -3716,7 +3716,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
 #endif
                         if (seen > MAX2(brakeDist, 1.0)) {
                             canReverse = false;
-                            return getVehicleType().getMaxSpeed();
+                            return getMaxSpeed();
                         } else {
 #ifdef DEBUG_REVERSE_BIDI
                             if (DEBUG_COND) {
@@ -3739,7 +3739,7 @@ MSVehicle::checkReversal(bool& canReverse, double speedThreshold, double seen) c
         canReverse = true;
         return vMinComfortable;
     }
-    return getVehicleType().getMaxSpeed();
+    return getMaxSpeed();
 }
 
 
@@ -6299,7 +6299,7 @@ bool
 MSVehicle::handleCollisionStop(MSStop& stop, const double distToStop) {
     if (myCurrEdge == stop.edge && distToStop + POSITION_EPS < getCarFollowModel().brakeGap(myState.mySpeed, getCarFollowModel().getMaxDecel(), 0)) {
         if (distToStop < getCarFollowModel().brakeGap(myState.mySpeed, getCarFollowModel().getEmergencyDecel(), 0)) {
-            double vNew = getCarFollowModel().maximumSafeStopSpeed(distToStop, getCarFollowModel().getMaxDecel(), getSpeed(), false, 0);
+            double vNew = getCarFollowModel().maximumSafeStopSpeed(distToStop, getCarFollowModel().getMaxDecel(), getSpeed(), getMaxAccel(), false, 0);
             //std::cout << SIMTIME << " veh=" << getID() << " v=" << myState.mySpeed << " distToStop=" << distToStop
             //    << " vMinNex=" << getCarFollowModel().minNextSpeed(getSpeed(), this)
             //    << " bg1=" << getCarFollowModel().brakeGap(myState.mySpeed)
@@ -6980,7 +6980,7 @@ MSVehicle::estimateTimeToNextStop() const {
         travelTime += stop.lane->getEdge().getMinimumTravelTime(this) * (stopEdgeDist / stop.lane->getLength());
         // estimate time loss due to acceleration and deceleration
         // maximum speed is limited by available distance:
-        const double a = getCarFollowModel().getMaxAccel();
+        const double a = getMaxAccel();
         const double b = getCarFollowModel().getMaxDecel();
         const double c = getSpeed();
         const double d = dist;

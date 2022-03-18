@@ -53,7 +53,7 @@
 // ===========================================================================
 MSCFModel::MSCFModel(const MSVehicleType* vtype) :
     myType(vtype),
-    myAccel(vtype->getParameter().getCFParam(SUMO_ATTR_ACCEL, SUMOVTypeParameter::getDefaultAccel(vtype->getParameter().vehicleClass))),
+    myAccel(vtype->getParameter().getCFParamDistributionParameterized(SUMO_ATTR_ACCEL, SUMOVTypeParameter::getDefaultAccel(vtype->getParameter().vehicleClass))),
     myDecel(vtype->getParameter().getCFParam(SUMO_ATTR_DECEL, SUMOVTypeParameter::getDefaultDecel(vtype->getParameter().vehicleClass))),
     myEmergencyDecel(vtype->getParameter().getCFParam(SUMO_ATTR_EMERGENCYDECEL,
                      SUMOVTypeParameter::getDefaultEmergencyDecel(vtype->getParameter().vehicleClass, myDecel, MSGlobals::gDefaultEmergencyDecel))),
@@ -234,8 +234,8 @@ MSCFModel::interactionGap(const MSVehicle* const veh, double vL) const {
 
 
 double
-MSCFModel::maxNextSpeed(double speed, const MSVehicle* const /*veh*/) const {
-    return MIN2(speed + (double) ACCEL2SPEED(getMaxAccel()), myType->getMaxSpeed());
+MSCFModel::maxNextSpeed(double speed, const MSVehicle* const veh) const {
+    return MIN2(speed + (double) ACCEL2SPEED(veh->getMaxAccel()), veh->getMaxSpeed());
 }
 
 
@@ -274,12 +274,12 @@ MSCFModel::freeSpeed(const MSVehicle* const veh, double speed, double seen, doub
 
 
 double
-MSCFModel::insertionFollowSpeed(const MSVehicle* const /* v */, double speed, double gap2pred, double predSpeed, double predMaxDecel, const MSVehicle* const /*pred*/) const {
+MSCFModel::insertionFollowSpeed(const MSVehicle* const v, double speed, double gap2pred, double predSpeed, double predMaxDecel, const MSVehicle* const /*pred*/) const {
     if (MSGlobals::gSemiImplicitEulerUpdate) {
-        return maximumSafeFollowSpeed(gap2pred, speed, predSpeed, predMaxDecel, true);
+        return maximumSafeFollowSpeed(gap2pred, speed, v->getMaxAccel(), predSpeed, predMaxDecel, true);
     } else {
         // NOTE: Even for ballistic update, the current speed is irrelevant at insertion, therefore passing 0. (Leo)
-        return maximumSafeFollowSpeed(gap2pred, 0., predSpeed, predMaxDecel, true);
+        return maximumSafeFollowSpeed(gap2pred, 0., v->getMaxAccel(), predSpeed, predMaxDecel, true);
     }
 }
 
@@ -289,7 +289,7 @@ MSCFModel::insertionStopSpeed(const MSVehicle* const veh, double speed, double g
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         return stopSpeed(veh, speed, gap);
     } else {
-        return MIN2(maximumSafeStopSpeed(gap, myDecel, 0., true, 0.), myType->getMaxSpeed());
+        return MIN2(maximumSafeStopSpeed(gap, myDecel, 0., veh->getMaxAccel(), true, 0.), veh->getMaxSpeed());
     }
 }
 
@@ -370,10 +370,10 @@ MSCFModel::distAfterTime(double t, double speed, const double accel) const {
 }
 
 SUMOTime
-MSCFModel::getMinimalArrivalTime(double dist, double currentSpeed, double arrivalSpeed) const {
+MSCFModel::getMinimalArrivalTime(double dist, double currentSpeed, double arrivalSpeed, double maxAccel) const {
     // will either drive as fast as possible and decelerate as late as possible
     // or accelerate as fast as possible and then hold that speed
-    const double accel = (arrivalSpeed >= currentSpeed) ? getMaxAccel() : -getMaxDecel();
+    const double accel = (arrivalSpeed >= currentSpeed) ? maxAccel : -getMaxDecel();
     const double accelTime = (arrivalSpeed - currentSpeed) / accel;
     const double accelWay = accelTime * (arrivalSpeed + currentSpeed) * 0.5;
     if (dist >= accelWay) {
@@ -477,14 +477,14 @@ MSCFModel::avoidArrivalAccel(double dist, double time, double speed, double maxD
 
 
 double
-MSCFModel::getMinimalArrivalSpeed(double dist, double currentSpeed) const {
+MSCFModel::getMinimalArrivalSpeed(double dist, double currentSpeed, double maxSpeed) const {
     // ballistic update
-    return estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, -getMaxDecel());
+    return estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, maxSpeed, -getMaxDecel());
 }
 
 
 double
-MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed) const {
+MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed, double maxSpeed) const {
     double arrivalSpeedBraking;
     // Because we use a continuous formula for computing the possible slow-down
     // we need to handle the mismatch with the discrete dynamics
@@ -492,7 +492,7 @@ MSCFModel::getMinimalArrivalSpeedEuler(double dist, double currentSpeed) const {
         arrivalSpeedBraking = INVALID_SPEED; // no time left for braking after this step
         //	(inserted max() to get rid of arrivalSpeed dependency within method) (Leo)
     } else if (2 * (dist - currentSpeed * getHeadwayTime()) * -getMaxDecel() + currentSpeed * currentSpeed >= 0) {
-        arrivalSpeedBraking = estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, -getMaxDecel());
+        arrivalSpeedBraking = estimateSpeedAfterDistance(dist - currentSpeed * getHeadwayTime(), currentSpeed, maxSpeed, -getMaxDecel());
     } else {
         arrivalSpeedBraking = getMaxDecel();
     }
@@ -704,16 +704,15 @@ MSCFModel::speedAfterTime(const double t, const double v0, const double dist) {
 
 
 double
-MSCFModel::estimateSpeedAfterDistance(const double dist, const double v, const double accel) const {
+MSCFModel::estimateSpeedAfterDistance(const double dist, const double v, const double maxSpeed, const double accel) const {
     // dist=v*t + 0.5*accel*t^2, solve for t and use v1 = v + accel*t
-    return MIN2(myType->getMaxSpeed(),
-                (double)sqrt(MAX2(0., 2 * dist * accel + v * v)));
+    return MIN2(maxSpeed,(double)sqrt(MAX2(0., 2 * dist * accel + v * v)));
 }
 
 
 
 double
-MSCFModel::maximumSafeStopSpeed(double gap, double decel, double currentSpeed, bool onInsertion, double headway) const {
+MSCFModel::maximumSafeStopSpeed(double gap, double decel, double currentSpeed, double /* maxAccel */, bool onInsertion, double headway) const {
     double vsafe;
     if (MSGlobals::gSemiImplicitEulerUpdate) {
         vsafe = maximumSafeStopSpeedEuler(gap, decel, onInsertion, headway);
@@ -858,7 +857,7 @@ MSCFModel::maximumSafeStopSpeedBallistic(double gap, double decel, double curren
 
 /** Returns the SK-vsafe. */
 double
-MSCFModel::maximumSafeFollowSpeed(double gap, double egoSpeed, double predSpeed, double predMaxDecel, bool onInsertion) const {
+MSCFModel::maximumSafeFollowSpeed(double gap, double egoSpeed, double egoMaxAccel, double predSpeed, double predMaxDecel, bool onInsertion) const {
     // the speed is safe if allows the ego vehicle to come to a stop behind the leader even if
     // the leaders starts braking hard until stopped
     // unfortunately it is not sufficient to compare stopping distances if the follower can brake harder than the leader
@@ -886,7 +885,7 @@ MSCFModel::maximumSafeFollowSpeed(double gap, double egoSpeed, double predSpeed,
     //    const double headway = predSpeed > 0. ? myHeadwayTime : 0.;
 
     const double headway = myHeadwayTime;
-    double x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), myDecel, egoSpeed, onInsertion, headway);
+    double x = maximumSafeStopSpeed(gap + brakeGap(predSpeed, MAX2(myDecel, predMaxDecel), 0), myDecel, egoSpeed, egoMaxAccel, onInsertion, headway);
 
     if (myDecel != myEmergencyDecel && !onInsertion && !MSGlobals::gComputeLC) {
         double origSafeDecel = SPEED2ACCEL(egoSpeed - x);

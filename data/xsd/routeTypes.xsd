@@ -30,7 +30,7 @@
         <xsd:attribute name="id" type="idType" use="required"/>
         <xsd:attribute name="length" type="positiveFloatType"/>
         <xsd:attribute name="minGap" type="nonNegativeFloatType"/>
-        <xsd:attribute name="maxSpeed" type="positiveFloatType"/>
+        <xsd:attribute name="maxSpeed" type="nonNegativeDistributionType"/>
         <xsd:attribute name="probability" type="nonNegativeFloatType"/>
         <xsd:attribute name="speedFactor" type="nonNegativeDistributionType"/>
         <xsd:attribute name="speedDev" type="nonNegativeFloatType"/>
@@ -41,7 +41,7 @@
         <xsd:attribute name="width" type="positiveFloatType"/>
         <xsd:attribute name="height" type="positiveFloatType"/>
         <xsd:attribute name="color" type="colorType"/>
-        <xsd:attribute name="accel" type="positiveFloatType"/>
+        <xsd:attribute name="accel" type="nonNegativeDistributionType"/>
         <xsd:attribute name="decel" type="positiveFloatType"/>
         <xsd:attribute name="emergencyDecel" type="positiveFloatType"/>
         <xsd:attribute name="apparentDecel" type="positiveFloatType"/>
