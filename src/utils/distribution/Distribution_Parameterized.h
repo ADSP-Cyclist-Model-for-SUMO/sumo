@@ -40,6 +40,9 @@
 class Distribution_Parameterized : public Distribution {
 
 public:
+    /// @brief Constructor for simple value
+    Distribution_Parameterized(double mean);
+
     /// @brief Constructor for standard normal distribution
     Distribution_Parameterized(const std::string& id, double mean, double deviation);
 
