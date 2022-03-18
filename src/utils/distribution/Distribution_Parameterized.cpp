@@ -33,6 +33,12 @@
 // ===========================================================================
 // method definitions
 // ===========================================================================
+Distribution_Parameterized::Distribution_Parameterized(double mean) :
+    Distribution("") {
+    myParameter.push_back(mean);
+    myParameter.push_back(-1.);
+};
+
 Distribution_Parameterized::Distribution_Parameterized(const std::string& id, double mean, double deviation) :
     Distribution(id) {
     myParameter.push_back(mean);
@@ -137,7 +143,7 @@ Distribution_Parameterized::getParameter() const {
 std::string
 Distribution_Parameterized::toStr(std::streamsize accuracy) const {
     if (myParameter[1] < 0) {
-        // only write simple speedFactor
+        // only write simple value
         return toString(myParameter[0]);
     } else {
         return (myParameter[1] == 0.
