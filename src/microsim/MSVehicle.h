@@ -1648,6 +1648,9 @@ public:
     /// @brief get a numerical value for the priority of the  upcoming link
     static int nextLinkPriority(const std::vector<MSLane*>& conts);
 
+    /// @brief get a numerical value for the turn priority (based on the directTurnPreference) of the upcoming link
+    int nextLinkTurnPriority(const std::vector<MSLane*>& conts, bool prefersDirectTurn) const;
+
     /// @brief whether the given vehicle must be followed at the given junction
     bool isLeader(const MSLink* link, const MSVehicle* veh) const;
 
@@ -1822,6 +1825,8 @@ protected:
 
     /// The lane the vehicle is on
     MSLane* myLane;
+
+    std::map<const MSEdge*, bool> myDirectTurnsPreferred;
 
     MSAbstractLaneChangeModel* myLaneChangeModel;
 

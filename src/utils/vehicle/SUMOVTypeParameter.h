@@ -71,6 +71,7 @@ const int VTYPEPARS_CARRIAGE_GAP_SET = 1 << 27;
 const int VTYPEPARS_MANEUVER_ANGLE_TIMES_SET = 1 << 28;
 const int VTYPEPARS_FRONT_SEAT_POS_SET = 1 << 29;
 const int VTYPEPARS_SCALE_SET = 1 << 30;
+const int VTYPEPARS_DIRECT_TURN_PROBABILITY = 1 << 31;
 
 
 const int VTYPEPARS_DEFAULT_EMERGENCYDECEL_DEFAULT = -1;
@@ -148,6 +149,9 @@ public:
 
         /// @brief The container capacity of the vehicle
         int containerCapacity;
+
+        /// @brief The probability of prioritizing a lane with a direct turn in the next intersection over one with an indirect turn
+        int directTurnProbability;
 
         /// @brief 3D model file for this class
         std::string osgFile;
@@ -343,6 +347,9 @@ public:
     double carriageLength;
     double locomotiveLength;
     double carriageGap;
+
+    /// @brief The probability of the vehicle to prioritize any lane leading up to a direct turn if it could also choose a lane leading up to an indirect turn.
+    double directTurnProbability;
 
     /// @brief the offset of the first person seat from the front of the vehicle
     double frontSeatPos;

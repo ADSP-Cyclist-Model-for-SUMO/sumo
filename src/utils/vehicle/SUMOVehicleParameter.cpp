@@ -171,6 +171,10 @@ SUMOVehicleParameter::write(OutputDevice& dev, const OptionsCont& oc, const Sumo
     if (wasSet(VEHPARS_PERSON_NUMBER_SET)) {
         dev.writeAttr(SUMO_ATTR_PERSON_NUMBER, personNumber);
     }
+    // direct turn probability
+    if (wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+        dev.writeAttr(SUMO_ATTR_DIRECT_TURN_PROBABILITY, directTurnProbability);
+    }
     // container number
     if (wasSet(VEHPARS_CONTAINER_NUMBER_SET)) {
         dev.writeAttr(SUMO_ATTR_CONTAINER_NUMBER, containerNumber);

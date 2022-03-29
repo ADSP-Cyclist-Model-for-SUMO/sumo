@@ -70,6 +70,7 @@ const int VEHPARS_DEPARTEDGE_SET = 2 << 25;
 const int VEHPARS_ARRIVALEDGE_SET = 2 << 26;
 const int VEHPARS_CALIBRATORSPEED_SET = 2 << 27;
 const int VEHPARS_JUNCTIONMODEL_PARAMS_SET = 2 << 28;
+const int VEHPARS_DIRECT_TURN_PROBABILITY_SET = 2 << 29;
 
 const int STOP_INDEX_END = -1;
 const int STOP_INDEX_FIT = -2;
@@ -754,6 +755,9 @@ public:
 
     /// @brief The static number of containers in the vehicle when it departs
     int containerNumber;
+
+    /// @brief probability of a bike path user to prefer the direct turn over an indirect turn - if both are available
+    double directTurnProbability;
 
     /// @brief individual speedFactor (overriding distribution from vType)
     double speedFactor;

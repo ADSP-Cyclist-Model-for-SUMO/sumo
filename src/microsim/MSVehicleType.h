@@ -290,6 +290,13 @@ public:
         return myParameter.containerCapacity;
     }
 
+    /** @brief Get this vehicle type's direct turn probability
+     * @return The direct turn probability of this vehicle type
+     */
+    double getDirectTurnProbability() const {
+        return myParameter.directTurnProbability;
+    }
+
     /** @brief Get this vehicle type's loading duration
      * @return The time a container / person needs to get loaded on a vehicle of this type
      */

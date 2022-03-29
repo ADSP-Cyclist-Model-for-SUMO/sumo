@@ -638,6 +638,18 @@ SUMOVehicleParserHelper::parseCommonAttributes(const SUMOSAXAttributes& attrs, S
             handleVehicleError(true, ret, toString(SUMO_ATTR_PERSON_NUMBER) + " cannot be negative");
         }
     }
+    if (attrs.hasAttribute(SUMO_ATTR_DIRECT_TURN_PROBABILITY)) {
+        bool ok = true;
+        double directTurnProbability = attrs.get<double>(SUMO_ATTR_DIRECT_TURN_PROBABILITY, ret->id.c_str(), ok);
+        if (!ok) {
+            handleVehicleError(true, ret);
+        } else if (directTurnProbability >= 0) {
+            ret->parametersSet |= VEHPARS_DIRECT_TURN_PROBABILITY_SET;
+            ret->directTurnProbability = directTurnProbability;
+        } else {
+            handleVehicleError(true, ret, toString(SUMO_ATTR_DIRECT_TURN_PROBABILITY) + " cannot be negative");
+        }
+    }
     // parse container number
     if (attrs.hasAttribute(SUMO_ATTR_CONTAINER_NUMBER)) {
         bool ok = true;
@@ -954,6 +966,18 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
             } else {
                 vType->containerCapacity = containerCapacity;
                 vType->parametersSet |= VTYPEPARS_CONTAINER_CAPACITY;
+            }
+        }
+        if (attrs.hasAttribute(SUMO_ATTR_DIRECT_TURN_PROBABILITY)) {
+            bool ok = true;
+            const double directTurnProbability = attrs.get<double>(SUMO_ATTR_DIRECT_TURN_PROBABILITY, vType->id.c_str(), ok);
+            if (!ok) {
+                return handleVehicleTypeError(hardFail, vType);
+            } else if (directTurnProbability < 0) {
+                return handleVehicleTypeError(hardFail, vType, toString(SUMO_ATTR_DIRECT_TURN_PROBABILITY) + " must be equal or greater than 0");
+            } else {
+                vType->directTurnProbability = directTurnProbability;
+                vType->parametersSet |= VTYPEPARS_DIRECT_TURN_PROBABILITY;
             }
         }
         if (attrs.hasAttribute(SUMO_ATTR_BOARDING_DURATION)) {

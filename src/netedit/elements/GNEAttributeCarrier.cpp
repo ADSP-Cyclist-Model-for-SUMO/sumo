@@ -3447,6 +3447,12 @@ GNEAttributeCarrier::fillDemandElements() {
                                               "1");
         myTagProperties[currentTag].addAttribute(attrProperty);
 
+        attrProperty = GNEAttributeProperties(SUMO_ATTR_DIRECT_TURN_PROBABILITY,
+                                              GNEAttributeProperties::FLOAT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
+                                              "The probability of prioritizing a lane with a direct turn in the next intersection over one with an indirect turn",
+                                              "0");
+        myTagProperties[currentTag].addAttribute(attrProperty);
+
         // fill VType Car Following Model Values (implemented in a separated function to improve code legibility)
         fillCarFollowingModelAttributes(currentTag);
 
@@ -4752,6 +4758,12 @@ GNEAttributeCarrier::fillCommonVehicleAttributes(SumoXMLTag currentTag) {
     attrProperty = GNEAttributeProperties(SUMO_ATTR_PERSON_NUMBER,
                                           GNEAttributeProperties::INT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
                                           "The number of occupied seats when the " + toString(currentTag) + " is inserted",
+                                          "0");
+    myTagProperties[currentTag].addAttribute(attrProperty);
+
+    attrProperty = GNEAttributeProperties(SUMO_ATTR_DIRECT_TURN_PROBABILITY,
+                                          GNEAttributeProperties::FLOAT | GNEAttributeProperties::POSITIVE | GNEAttributeProperties::DEFAULTVALUE,
+                                          "The probability of the " + toString(currentTag) + " to prefer a lane leading to a direct turn over one with an indirect turn - if both are available on an edge.",
                                           "0");
     myTagProperties[currentTag].addAttribute(attrProperty);
 
