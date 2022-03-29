@@ -1095,7 +1095,7 @@ void
 NBEdgeCont::addPostProcessConnection(const std::string& from, int fromLane, const std::string& to, int toLane, bool mayDefinitelyPass,
                                      KeepClear keepClear, double contPos, double visibility, double speed, double length,
                                      const PositionVector& customShape, bool uncontrolled, bool warnOnly,
-                                     SVCPermissions permissions, bool indirectLeft, const std::string& edgeType, SVCPermissions changeLeft, SVCPermissions changeRight) {
+                                     SVCPermissions permissions, IndirectLeft indirectLeft, const std::string& edgeType, SVCPermissions changeLeft, SVCPermissions changeRight) {
     myConnections[from].push_back(PostProcessConnection(from, fromLane, to, toLane, mayDefinitelyPass, keepClear, contPos, visibility,
                                   speed, length, customShape, uncontrolled, warnOnly, permissions, indirectLeft, edgeType, changeLeft, changeRight));
 }

@@ -133,6 +133,7 @@ NIXMLConnectionsHandler::myStartElement(int element,
             fromEdge->getToNode()->invalidateTLS(myTLLogicCont, true, false);
             if (attrs.hasAttribute(SUMO_ATTR_PASS)
                     || attrs.hasAttribute(SUMO_ATTR_KEEP_CLEAR)
+                    || attrs.hasAttribute(SUMO_ATTR_INDIRECT)
                     || attrs.hasAttribute(SUMO_ATTR_CONTPOS)
                     || attrs.hasAttribute(SUMO_ATTR_VISIBILITY_DISTANCE)
                     || attrs.hasAttribute(SUMO_ATTR_SPEED)
@@ -257,7 +258,10 @@ NIXMLConnectionsHandler::parseLaneBound(const SUMOSAXAttributes& attrs, NBEdge* 
         const double speed = attrs.getOpt<double>(SUMO_ATTR_SPEED, nullptr, ok, defaultCon.speed);
         const double length = attrs.getOpt<double>(SUMO_ATTR_LENGTH, nullptr, ok, defaultCon.customLength);
         const bool uncontrolled = attrs.getOpt<bool>(SUMO_ATTR_UNCONTROLLED, nullptr, ok, defaultCon.uncontrolled);
-        const bool indirectLeft = attrs.getOpt<bool>(SUMO_ATTR_INDIRECT, nullptr, ok, false);
+        IndirectLeft indirectLeft = defaultCon.indirectLeft;
+        if (attrs.hasAttribute(SUMO_ATTR_INDIRECT)) {
+            indirectLeft = attrs.get<bool>(SUMO_ATTR_INDIRECT, nullptr, ok) ? INDIRECTLEFT_TRUE : INDIRECTLEFT_FALSE;
+        }
         const std::string edgeType = attrs.getOpt<std::string>(SUMO_ATTR_TYPE, nullptr, ok, "");
         PositionVector customShape = attrs.getOpt<PositionVector>(SUMO_ATTR_SHAPE, nullptr, ok, defaultCon.customShape);
         std::string allow = attrs.getOpt<std::string>(SUMO_ATTR_ALLOW, nullptr, ok, "");

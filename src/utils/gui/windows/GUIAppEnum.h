@@ -67,6 +67,8 @@ enum {
     MID_HOTKEY_V_MODE_VEHICLE,
     /// @brief hotkey for mode editing overhead wires
     MID_HOTKEY_W_MODE_WIRE,
+    /// @brief hotkey for mode create dynamic intersections ADSP JAN 2022
+    MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,
     /// @brief hotkey for mode editing TAZ and TAZRel
     MID_HOTKEY_Z_MODE_TAZ_TAZREL,
 
@@ -700,6 +702,8 @@ enum {
     MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,
     /// @brief show demand elements
     MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,
+    /// @brief toggle indirect turn generation ADSP JAN 2022
+    MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,
     /// @brief select edges
     MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,
     /// @brief show connections
@@ -767,7 +771,7 @@ enum {
 
     /// @name GNEViewNet Data view options messages
     /// @{
-    
+
     /// @brief toogle draw junction shape
     MID_GNE_DATAVIEWOPTIONS_TOGGLEDRAWJUNCTIONSHAPE,
     /// @brief show additionals

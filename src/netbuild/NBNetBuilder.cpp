@@ -569,6 +569,7 @@ NBNetBuilder::compute(OptionsCont& oc, const std::set<std::string>& explicitTurn
     for (std::map<std::string, NBEdge*>::const_iterator i = myEdgeCont.begin(); i != myEdgeCont.end(); ++i) {
         (*i).second->sortOutgoingConnectionsByIndex();
     }
+
     // FINISHING INNER EDGES
     if (!oc.getBool("no-internal-links")) {
         before = PROGRESS_BEGIN_TIME_MESSAGE("Building inner edges");

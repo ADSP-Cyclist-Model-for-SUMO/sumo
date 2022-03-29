@@ -84,25 +84,27 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_F4_SUPERMODE_DATA,                    GNEViewNet::onCmdSetSupermode),
     // Modes
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_G_MODE_CONTAINER,                     GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_H_MODE_PROHIBITION_CONTAINERPLAN,     GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_A_MODE_ADDITIONAL_STOP,               GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_C_MODE_CONNECT_PERSONPLAN,            GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_D_MODE_DELETE,                        GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_E_MODE_EDGE_EDGEDATA,                 GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_I_MODE_INSPECT,                       GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_M_MODE_MOVE,                          GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_P_MODE_POLYGON_PERSON,                GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_R_MODE_CROSSING_ROUTE_EDGERELDATA,    GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_S_MODE_SELECT,                        GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_T_MODE_TLS_TYPE,                      GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_V_MODE_VEHICLE,                       GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_W_MODE_WIRE,                          GNEViewNet::onCmdSetMode),
-    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_Z_MODE_TAZ_TAZREL,                    GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_H_MODE_CONTAINERDATA,                 GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_A_MODES_ADDITIONAL_STOP,              GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_C_MODES_CONNECT_PERSONPLAN,           GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_D_MODES_DELETE,                       GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_E_MODES_EDGE_EDGEDATA,                GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_I_MODES_INSPECT,                      GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_M_MODES_MOVE,                         GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_P_MODES_POLYGON_PERSON,               GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_R_MODES_CROSSING_ROUTE_EDGERELDATA,   GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_S_MODES_SELECT,                       GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_T_MODES_TLS_TYPE,                     GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_V_MODES_VEHICLE,                      GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_W_MODES_PROHIBITION,                  GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,              GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_Z_MODES_TAZ_TAZREL,                   GNEViewNet::onCmdSetMode),
     // Network view options
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_TOGGLEGRID,               GNEViewNet::onCmdToggleShowGrid),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_TOGGLEDRAWJUNCTIONSHAPE,  GNEViewNet::onCmdToggleDrawJunctionShape),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,       GNEViewNet::onCmdToggleDrawSpreadVehicles),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,       GNEViewNet::onCmdToggleShowDemandElementsNetwork),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEViewNet::onCmdToggleIndirectTurn),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,              GNEViewNet::onCmdToggleSelectEdges),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS,          GNEViewNet::onCmdToggleShowConnections),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_HIDECONNECTIONS,          GNEViewNet::onCmdToggleHideConnections),
@@ -3372,6 +3374,29 @@ GNEViewNet::onCmdToggleAutoOppositeEdge(FXObject*, FXSelector sel, void*) {
     return 1;
 }
 
+long
+GNEViewNet::onCmdToggleIndirectTurn(FXObject*, FXSelector sel, void*) {
+    // Toggle menuCheckIndirectTurn
+    OptionsCont::getOptions().unSet("bike.indirectturn.enabled");
+    if (myNetworkViewOptions.menuCheckIndirectTurn->amChecked() == TRUE) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(FALSE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "false");
+    } else {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(TRUE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "true");
+    }
+    myNetworkViewOptions.menuCheckIndirectTurn->update();
+    // Only update view
+    updateViewNet();
+    // trigger update on indirect flag checkbox
+    myViewParent->getInspectorFrame()->getAttributesEditor()->refreshAttributeEditor(false, false);
+    // set focus in menu check again, if this function was called clicking over menu check instead using alt+<key number>
+    if (sel == FXSEL(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN)) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setFocus();
+    }
+    return 1;
+}
+
 
 long
 GNEViewNet::onCmdToggleHideNonInspecteDemandElements(FXObject*, FXSelector sel, void*) {
@@ -3901,10 +3926,12 @@ GNEViewNet::updateNetworkModeSpecificControls() {
     myNetworkViewOptions.menuCheckToggleDrawJunctionShape->show();
     myNetworkViewOptions.menuCheckDrawSpreadVehicles->show();
     myNetworkViewOptions.menuCheckShowDemandElements->show();
+    myNetworkViewOptions.menuCheckIndirectTurn->show(); // ADSP changes 2022
     menuChecks.menuCheckToggleGrid->show();
     menuChecks.menuCheckToggleDrawJunctionShape->show();
     menuChecks.menuCheckDrawSpreadVehicles->show();
     menuChecks.menuCheckShowDemandElements->show();
+    menuChecks.menuCheckIndirectTurn->show();
     // show separator
     menuChecks.separator->show();
     // enable selected controls

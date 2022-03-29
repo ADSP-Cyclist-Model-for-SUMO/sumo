@@ -61,3 +61,10 @@ enum KeepClear {
     KEEPCLEAR_UNSPECIFIED = -1
 };
 
+/// @brief indirectTurn status of connections
+enum IndirectLeft {
+    INDIRECTLEFT_FALSE = 0,
+    INDIRECTLEFT_TRUE = 1,
+    INDIRECTLEFT_UNSPECIFIED = -1
+};
+

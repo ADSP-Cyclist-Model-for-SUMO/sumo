@@ -2466,6 +2466,16 @@ NBNode::isDistrict() const {
 }
 
 
+bool
+NBNode::isHeuristicAllowingIndirectTurns() const {
+    int totalLanes = 0;
+    for (const NBEdge* edge : myAllEdges) {
+        totalLanes += edge->getNumLanes();
+    }
+    return totalLanes > OptionsCont::getOptions().getInt("bike.indirectturn.heuristic");
+}
+
+
 int
 NBNode::guessCrossings() {
 #ifdef DEBUG_PED_STRUCTURES

@@ -109,7 +109,7 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) :
     permissions(SVC_UNSPECIFIED),
     changeLeft(SVC_UNSPECIFIED),
     changeRight(SVC_UNSPECIFIED),
-    indirectLeft(false),
+    indirectLeft(INDIRECTLEFT_UNSPECIFIED),
     id(toEdge_ == nullptr ? "" : toEdge->getFromNode()->getID()),
     haveVia(false),
     internalLaneIndex(UNSPECIFIED_INTERNAL_LANE_INDEX),
@@ -119,7 +119,7 @@ NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_) :
 
 NBEdge::Connection::Connection(int fromLane_, NBEdge* toEdge_, int toLane_, bool mayDefinitelyPass_, KeepClear keepClear_, double contPos_,
                                double visibility_, double speed_, double length_, bool haveVia_, bool uncontrolled_, const PositionVector& customShape_,
-                               SVCPermissions permissions_, bool indirectLeft_, const std::string& edgeType_,
+                               SVCPermissions permissions_, IndirectLeft indirectLeft_, const std::string& edgeType_,
                                SVCPermissions changeLeft_, SVCPermissions changeRight_) :
     fromLane(fromLane_),
     toEdge(toEdge_),
@@ -1075,7 +1075,7 @@ NBEdge::addLane2LaneConnection(int from, NBEdge* dest,
                                const PositionVector& customShape,
                                bool uncontrolled,
                                SVCPermissions permissions,
-                               bool indirectLeft,
+                               IndirectLeft indirectLeft,
                                const std::string& edgeType,
                                SVCPermissions changeLeft,
                                SVCPermissions changeRight,
@@ -1127,7 +1127,7 @@ NBEdge::setConnection(int lane, NBEdge* destEdge,
                       const PositionVector& customShape,
                       bool uncontrolled,
                       SVCPermissions permissions,
-                      bool indirectLeft,
+                      IndirectLeft indirectLeft,
                       const std::string& edgeType,
                       SVCPermissions changeLeft,
                       SVCPermissions changeRight,
@@ -1563,7 +1563,7 @@ NBEdge::replaceInConnections(NBEdge* which, const std::vector<NBEdge::Connection
         }
 #endif
         setConnection(toUse, i->toEdge, i->toLane, Lane2LaneInfoType::COMPUTED, false, i->mayDefinitelyPass, i->keepClear,
-                      i->contPos, i->visibility, i->speed, i->customLength, i->customShape, i->uncontrolled);
+                      i->contPos, i->visibility, i->speed, i->customLength, i->customShape, i->uncontrolled, SVC_UNSPECIFIED, i->indirectLeft);
     }
     // remove the remapped edge from connections
     removeFromConnections(which);
@@ -1627,6 +1627,7 @@ NBEdge::buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex,
     const bool higherSpeed = oc.getBool("junctions.higher-speed");
     const double interalJunctionVehicleWidth = oc.getFloat("internal-junctions.vehicle-width");
     const bool fromRail = isRailway(getPermissions());
+    const bool indirectLeftHeuristic = oc.getBool("bike.indirectturn.enabled");
     std::string innerID = ":" + n.getID();
     NBEdge* toEdge = nullptr;
     int edgeIndex = linkIndex;
@@ -1658,6 +1659,25 @@ NBEdge::buildInnerEdges(const NBNode& n, int noInternalNoSplits, int& linkIndex,
         averageLength = !isTurn || joinTurns; // legacy behavior
         SVCPermissions conPermissions = getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane);
         const int conShapeFlag = (conPermissions & ~SVC_PEDESTRIAN) != 0 ? 0 : NBNode::SCURVE_IGNORE;
+        
+        // SET INDIRECT TURNS FOR BICYCLES ON LARGE CROSSINGS
+        // todo: find a better way to iterate
+        // todo!: reset indirect turn connections here
+
+        if (indirectLeftHeuristic) {
+            // automatic mode
+            if (n.isHeuristicAllowingIndirectTurns() && isValidIndirectLeftConnection(conPermissions, dir, toEdge)) {
+                con.indirectLeft = INDIRECTLEFT_TRUE;
+            }
+            else {
+                con.indirectLeft = INDIRECTLEFT_FALSE;
+            }
+        } else {
+            // manual mode; do not allow unspecified mode, it behaves as "true" which is not the behaviour wanted
+            if(!isValidIndirectLeftConnection(conPermissions, dir, toEdge) || con.indirectLeft == INDIRECTLEFT_UNSPECIFIED)
+                con.indirectLeft = INDIRECTLEFT_FALSE;
+        }
+
         PositionVector shape = n.computeInternalLaneShape(this, con, numPoints, myTo, conShapeFlag);
         std::vector<int> foeInternalLinks;
 
@@ -3702,6 +3722,32 @@ NBEdge::hasSignalisedConnectionTo(const NBEdge* const e) const {
         }
     }
     return false;
+}
+
+
+bool
+NBEdge::isValidIndirectLeftConnection(const Connection& con) {
+    // con.permissions cannot be used!
+    return isValidIndirectLeftConnection(getPermissions(con.fromLane) & con.toEdge->getPermissions(con.toLane), getToNode()->getDirection(this, con.toEdge), con.toEdge);
+}
+
+
+bool
+NBEdge::isValidIndirectLeftConnection(const SVCPermissions& perm, const LinkDirection& dir, const NBEdge* toEdge) {
+    
+    // check if we have a straight connection from any edge to our toEdge
+    // this is similar to the ckeck on linkIndex2
+    bool ok = false;
+    for (const NBEdge* incoming : toEdge->getIncomingEdges()) {
+        if (getToNode()->getDirection(incoming, toEdge) == LinkDirection::STRAIGHT) {
+            if (!isBikepath(incoming->getPermissions())) { // the straight lane taken into account must not be a bike lane
+                ok = true;
+                break;
+            }
+        }
+    }
+
+    return ok && getToNode()->isTLControlled() && isBikepath(perm) && dir == LinkDirection::LEFT;
 }
 
 

@@ -1870,7 +1870,7 @@ GNEEdge::addConnection(NBEdge::Connection nbCon, bool selectAfterCreation) {
     // If a new connection was successfully created
     if (myNBEdge->setConnection(nbCon.fromLane, nbCon.toEdge, nbCon.toLane, NBEdge::Lane2LaneInfoType::USER, true, nbCon.mayDefinitelyPass,
                                 nbCon.keepClear, nbCon.contPos, nbCon.visibility,
-                                nbCon.speed, nbCon.customLength, nbCon.customShape, nbCon.uncontrolled)) {
+                                nbCon.speed, nbCon.customLength, nbCon.customShape, nbCon.uncontrolled, SVC_UNSPECIFIED, nbCon.indirectLeft)) {
         // Create  or retrieve existent GNEConnection
         GNEConnection* con = retrieveGNEConnection(nbCon.fromLane, nbCon.toEdge, nbCon.toLane);
         // add it to GNEConnection container

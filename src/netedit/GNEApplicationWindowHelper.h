@@ -423,6 +423,9 @@ struct GNEApplicationWindowHelper {
             /// @brief menu check to show Demand Elements
             FXMenuCheckIcon* menuCheckShowDemandElements;
 
+            /// @brief menu check to toggle indirect turn generation  ADSP JAN 2022
+            FXMenuCheckIcon* menuCheckIndirectTurn;
+
             /// @brief menu check to select only edges
             FXMenuCheckIcon* menuCheckSelectEdges;
 

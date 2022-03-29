@@ -188,6 +188,8 @@ FXDEFMAP(GNEApplicationWindow) GNEApplicationWindowMap[] = {
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,       GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,       GNEApplicationWindow::onCmdToggleViewOption),
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,       GNEApplicationWindow::onUpdToggleViewOption),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEApplicationWindow::onCmdToggleViewOption),
+    FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,              GNEApplicationWindow::onCmdToggleViewOption),
     FXMAPFUNC(SEL_UPDATE,  MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,              GNEApplicationWindow::onUpdToggleViewOption),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS,          GNEApplicationWindow::onCmdToggleViewOption),
@@ -2217,6 +2219,15 @@ GNEApplicationWindow::onCmdOptions(FXObject*, FXSelector, void*) {
         NBFrame::checkOptions();
         NWFrame::checkOptions();
         SystemFrame::checkOptions(); // needed to set precision
+
+        //process triggers
+        if (OptionsCont::getOptions().getBool("bike.indirectturn.enabled")) {
+            getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(TRUE);
+        } else {
+            getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->setChecked(FALSE);
+        }
+        getViewNet()->getNetworkViewOptions().menuCheckIndirectTurn->update();
+        getViewNet()->getViewParent()->getInspectorFrame()->getAttributesEditor()->refreshAttributeEditor(false, false);
     }
     return 1;
 }
@@ -2655,6 +2666,8 @@ GNEApplicationWindow::onCmdToggleViewOption(FXObject* obj, FXSelector sel, void*
                 return myViewNet->onCmdToggleDrawSpreadVehicles(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS:
                 return myViewNet->onCmdToggleShowDemandElementsNetwork(obj, sel, ptr);
+            case MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN:
+                return myViewNet->onCmdToggleIndirectTurn(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES:
                 return myViewNet->onCmdToggleSelectEdges(obj, sel, ptr);
             case MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS:
@@ -2760,6 +2773,14 @@ GNEApplicationWindow::onUpdToggleViewOption(FXObject* obj, FXSelector sel, void*
                 if (myViewNet->getNetworkViewOptions().menuCheckShowDemandElements->amChecked()) {
                     menuCheck->setCheck(TRUE);
                 } else {
+                    menuCheck->setCheck(FALSE);
+                }
+                break;
+            case MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN:
+                if (myViewNet->getNetworkViewOptions().menuCheckIndirectTurn->amChecked()) {
+                    menuCheck->setCheck(TRUE);
+                }
+                else {
                     menuCheck->setCheck(FALSE);
                 }
                 break;
@@ -3172,7 +3193,7 @@ GNEApplicationWindow::onCmdSaveEdgeTypes(FXObject*, FXSelector, void*) {
 }
 
 
-long 
+long
 GNEApplicationWindow::onUpdSaveEdgeTypes(FXObject* sender, FXSelector, void*) {
     // check if net exist and there are edge types
     if (myNet && (myNet->getAttributeCarriers()->getEdgeTypes().size() > 0)) {

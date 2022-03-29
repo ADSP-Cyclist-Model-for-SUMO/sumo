@@ -905,6 +905,12 @@ GNEAttributeCarrier::fillNetworkElements() {
                                               GNEAttributeProperties::STRING | GNEAttributeProperties::DEFAULTVALUE,
                                               "An optional id for the traffic light program");
         myTagProperties[currentTag].addAttribute(attrProperty);
+
+        attrProperty = GNEAttributeProperties(SUMO_ATTR_INDIRECT,
+                                              GNEAttributeProperties::BOOL | GNEAttributeProperties::DEFAULTVALUE,
+                                              "Whether the indirect-left-heuristic should be activated at this node",
+                                              "0");
+        myTagProperties[currentTag].addAttribute(attrProperty);
     }
     currentTag = SUMO_TAG_TYPE;
     {

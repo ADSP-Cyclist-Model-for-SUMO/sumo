@@ -526,6 +526,10 @@ struct GNEViewNetHelper {
         /// @brief checkable button to show Demand Elements
         MFXCheckableButton* menuCheckShowDemandElements;
 
+        /// @brief chekable button to toggle indirect turn generation
+        // ADSP Jan 2022
+        MFXCheckableButton* menuCheckIndirectTurn;
+
         /// @brief checkable button to select only edges
         MFXCheckableButton* menuCheckSelectEdges;
 
