@@ -284,6 +284,11 @@ public:
         return myKeepClear;
     }
 
+    /// @brief Returns the indirectLeft flag
+    bool getIndirectLeft() const {
+        return myIndirectLeft;
+    }
+
     /// @brief Returns hint on how to compute right of way
     RightOfWay getRightOfWay() const {
         return myRightOfWay;
@@ -539,6 +544,11 @@ public:
         myKeepClear = keepClear;
     }
 
+    /// @brief set the indirectLeft flag
+    void setIndirectLeft(bool indirectLeft) {
+        myIndirectLeft = indirectLeft;
+    }
+
     /// @brief set method for computing right-of-way
     void setRightOfWay(RightOfWay rightOfWay) {
         myRightOfWay = rightOfWay;
@@ -573,6 +583,9 @@ public:
 
     /// @brief check if node is a district
     bool isDistrict() const;
+
+    /// @brief check if node can have indirect turn connections based on the heuristic
+    bool isHeuristicAllowingIndirectTurns() const;
 
     /// @brief whether an internal junction should be built at from and respect other
     bool needsCont(const NBEdge* fromE, const NBEdge* otherFromE,
@@ -901,6 +914,9 @@ private:
 
     /// @brief whether the junction area must be kept clear
     bool myKeepClear;
+
+    /// @brief whether the junction allows indirect left turns for all suitable connections
+    bool myIndirectLeft;
 
     /// @brief how to compute right of way for this node
     RightOfWay myRightOfWay;

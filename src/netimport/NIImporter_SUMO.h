@@ -206,7 +206,9 @@ private:
         PositionVector customShape;
         /// @brief if set to true, This connection will not be TLS-controlled despite its node being controlled.
         bool uncontrolled;
-        /// @brief Whether this connection is an indirect left turn
+        /* @brief Whether this connection is an indirect left turn
+         * @note: The enum NBEdge::IndirectLeft is not needed here because data
+         *        from a .net.xml is fully specified */
         bool indirectLeft;
         /// @brief optional edge type
         std::string edgeType;

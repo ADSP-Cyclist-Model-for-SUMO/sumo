@@ -155,6 +155,7 @@
 #include "checkbox_showsubadditionals.xpm"
 #include "checkbox_hidenoninspecteddemandelements.xpm"
 #include "checkbox_hideshapes.xpm"
+#include "checkbox_indirectturn.xpm"
 #include "checkbox_lockcontainer.xpm"
 #include "checkbox_lockperson.xpm"
 #include "checkbox_selectededges.xpm"
@@ -550,6 +551,7 @@ GUIIconSubSys::GUIIconSubSys(FXApp* a) {
     myIcons[GUIIcon::COMMONMODE_CHECKBOX_TOGGLEGRID] = new FXXPMIcon(a, checkbox_grid_xpm);
     myIcons[GUIIcon::COMMONMODE_CHECKBOX_SPREADVEHICLE] = new FXXPMIcon(a, checkbox_spreadvehicle_xpm);
     myIcons[GUIIcon::COMMONMODE_CHECKBOX_SHOWDEMANDELEMENTS] = new FXXPMIcon(a, checkbox_showdemandelements_xpm);
+    myIcons[GUIIcon::COMMONMODE_CHECKBOX_INDIRECTTURN] = new FXXPMIcon(a, checkbox_indirectturn_xpm);
 
     myIcons[GUIIcon::NETWORKMODE_CHECKBOX_SELECTEDGES] = new FXXPMIcon(a, checkbox_selectededges_xpm);
     myIcons[GUIIcon::NETWORKMODE_CHECKBOX_SHOWCONNECTIONS] = new FXXPMIcon(a, checkbox_showconnections_xpm);

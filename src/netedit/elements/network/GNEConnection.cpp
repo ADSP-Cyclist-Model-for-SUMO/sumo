@@ -581,7 +581,7 @@ GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value, GNEUndoLi
             break;
         case SUMO_ATTR_INDIRECT:
             undoList->begin(GUIIcon::CONNECTION, "change attribute indirect for connection");
-            if (isAttributeEnabled(SUMO_ATTR_TLLINKINDEX) && (value != getAttribute(key))) {
+            if (isAttributeEnabled(SUMO_ATTR_INDIRECT) && (value != getAttribute(key))) {
                 undoList->changeAttribute(new GNEChange_Attribute(this, key, value));
                 int linkIndex2 = -1;
                 if (parse<bool>(value)) {
@@ -725,7 +725,7 @@ GNEConnection::isAttributeEnabled(SumoXMLAttr key) const {
             if (getEdgeFrom()->getNBEdge()->getToNode()->isTLControlled()) {
                 NBTrafficLightDefinition* tlDef = *getEdgeFrom()->getNBEdge()->getToNode()->getControllingTLS().begin();
                 NBLoadedSUMOTLDef* sumoDef = dynamic_cast<NBLoadedSUMOTLDef*>(tlDef);
-                NBTrafficLightLogic* tllogic = sumoDef != nullptr ? sumoDef->getLogic() : tlDef->compute(OptionsCont::getOptions());
+                NBTrafficLightLogic* tllogic = sumoDef != nullptr ? sumoDef->getLogic() : tlDef->compute(OptionsCont::getOptions()); //todo: bug found on compute(...)
                 if (tllogic != nullptr) {
                     return true;
                 } else {
@@ -733,6 +733,8 @@ GNEConnection::isAttributeEnabled(SumoXMLAttr key) const {
                 }
             }
             return false;
+        case SUMO_ATTR_INDIRECT:
+            return !OptionsCont::getOptions().getBool("bike.indirectturn.enabled") && getEdgeFrom()->getNBEdge()->isValidIndirectLeftConnection(getNBEdgeConnection()); // enable editing of indirect left flag only if (1) auto generation is off and (2) connection is relevant
         default:
             return true;
     }
@@ -767,7 +769,7 @@ GNEConnection::setAttribute(SumoXMLAttr key, const std::string& value) {
             nbCon.mayDefinitelyPass = parse<bool>(value);
             break;
         case SUMO_ATTR_INDIRECT:
-            nbCon.indirectLeft = parse<bool>(value);
+            nbCon.indirectLeft = parse<bool>(value) ? INDIRECTLEFT_TRUE : INDIRECTLEFT_FALSE;
             break;
         case SUMO_ATTR_KEEP_CLEAR:
             nbCon.keepClear = parse<bool>(value) ? KEEPCLEAR_TRUE : KEEPCLEAR_FALSE;

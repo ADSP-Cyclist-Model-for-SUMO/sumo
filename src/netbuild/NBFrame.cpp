@@ -422,6 +422,14 @@ NBFrame::fillOptions(bool forNetgen) {
     oc.addDescription("bikelanes.guess.exclude", "Bicycle",
                       "Do not guess bikelanes for the given list of edges");
 
+    oc.doRegister("bike.indirectturn.enabled", new Option_Bool(false));
+    oc.addDescription("bike.indirectturn.enabled", "Bicycle",
+                      "Enable indirect left turn heuristic");
+
+    oc.doRegister("bike.indirectturn.heuristic", new Option_Integer(8));
+    oc.addDescription("bike.indirectturn.heuristic", "Bicycle",
+                      "Add indirect turns for bikes at large intersections (give number of total lanes as parameter)");
+
     oc.doRegister("crossings.guess", new Option_Bool(false));
     oc.addDescription("crossings.guess", "Pedestrian",
                       "Guess pedestrian crossings based on the presence of sidewalks");
@@ -754,6 +762,5 @@ NBFrame::checkOptions() {
     }
     return ok;
 }
-
 
 /****************************************************************************/

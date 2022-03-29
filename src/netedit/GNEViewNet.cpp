@@ -96,11 +96,13 @@ FXDEFMAP(GNEViewNet) GNEViewNetMap[] = {
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_T_MODES_TLS_TYPE,                     GNEViewNet::onCmdSetMode),
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_V_MODES_VEHICLE,                      GNEViewNet::onCmdSetMode),
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_W_MODES_PROHIBITION,                  GNEViewNet::onCmdSetMode),
+    FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,              GNEViewNet::onCmdSetMode),
     FXMAPFUNC(SEL_COMMAND, MID_HOTKEY_Z_MODES_TAZ_TAZREL,                   GNEViewNet::onCmdSetMode),
     // Network view options
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_TOGGLEGRID,           GNEViewNet::onCmdToggleShowGrid),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_DRAWSPREADVEHICLES,   GNEViewNet::onCmdToggleDrawSpreadVehicles),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS,   GNEViewNet::onCmdToggleShowDemandElementsNetwork),
+    FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN,         GNEViewNet::onCmdToggleIndirectTurn),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SELECTEDGES,          GNEViewNet::onCmdToggleSelectEdges),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_SHOWCONNECTIONS,      GNEViewNet::onCmdToggleShowConnections),
     FXMAPFUNC(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_HIDECONNECTIONS,      GNEViewNet::onCmdToggleHideConnections),
@@ -3306,6 +3308,29 @@ GNEViewNet::onCmdToggleAutoOppositeEdge(FXObject*, FXSelector sel, void*) {
     return 1;
 }
 
+long
+GNEViewNet::onCmdToggleIndirectTurn(FXObject*, FXSelector sel, void*) {
+    // Toggle menuCheckIndirectTurn
+    OptionsCont::getOptions().unSet("bike.indirectturn.enabled");
+    if (myNetworkViewOptions.menuCheckIndirectTurn->amChecked() == TRUE) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(FALSE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "false");
+    } else {
+        myNetworkViewOptions.menuCheckIndirectTurn->setChecked(TRUE);
+        OptionsCont::getOptions().set("bike.indirectturn.enabled", "true");
+    }
+    myNetworkViewOptions.menuCheckIndirectTurn->update();
+    // Only update view
+    updateViewNet();
+    // trigger update on indirect flag checkbox
+    myViewParent->getInspectorFrame()->getAttributesEditor()->refreshAttributeEditor(false, false);
+    // set focus in menu check again, if this function was called clicking over menu check instead using alt+<key number>
+    if (sel == FXSEL(SEL_COMMAND, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN)) {
+        myNetworkViewOptions.menuCheckIndirectTurn->setFocus();
+    }
+    return 1;
+}
+
 
 long
 GNEViewNet::onCmdToggleHideNonInspecteDemandElements(FXObject*, FXSelector sel, void*) {
@@ -3834,9 +3859,11 @@ GNEViewNet::updateNetworkModeSpecificControls() {
     myNetworkViewOptions.menuCheckToggleGrid->show();
     myNetworkViewOptions.menuCheckDrawSpreadVehicles->show();
     myNetworkViewOptions.menuCheckShowDemandElements->show();
+    myNetworkViewOptions.menuCheckIndirectTurn->show(); // ADSP changes 2022
     menuChecks.menuCheckToggleGrid->show();
     menuChecks.menuCheckDrawSpreadVehicles->show();
     menuChecks.menuCheckShowDemandElements->show();
+    menuChecks.menuCheckIndirectTurn->show();
     // show separator
     menuChecks.separator->show();
     // enable selected controls

@@ -222,6 +222,10 @@ NIXMLNodesHandler::processNodeType(const SUMOSAXAttributes& attrs, NBNode* node,
     if (attrs.hasAttribute(SUMO_ATTR_KEEP_CLEAR)) {
         node->setKeepClear(attrs.get<bool>(SUMO_ATTR_KEEP_CLEAR, nodeID.c_str(), ok));
     }
+    // set optional indirectLeft flag
+    if (attrs.hasAttribute(SUMO_ATTR_INDIRECT)) {
+        node->setIndirectLeft(attrs.get<bool>(SUMO_ATTR_INDIRECT, nodeID.c_str(), ok));
+    }
     node->setRightOfWay(attrs.getOpt<RightOfWay>(SUMO_ATTR_RIGHT_OF_WAY, nodeID.c_str(), ok, node->getRightOfWay()));
     node->setFringeType(attrs.getOpt<FringeType>(SUMO_ATTR_FRINGE, nodeID.c_str(), ok, node->getFringeType()));
     // set optional name

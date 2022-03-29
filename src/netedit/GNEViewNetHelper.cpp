@@ -1976,6 +1976,7 @@ GNEViewNetHelper::NetworkViewOptions::NetworkViewOptions(GNEViewNet* viewNet) :
     menuCheckToggleGrid(nullptr),
     menuCheckDrawSpreadVehicles(nullptr),
     menuCheckShowDemandElements(nullptr),
+    menuCheckIndirectTurn(nullptr),          // ADSP Jan 2022
     menuCheckSelectEdges(nullptr),
     menuCheckShowConnections(nullptr),
     menuCheckHideConnections(nullptr),
@@ -2014,6 +2015,15 @@ GNEViewNetHelper::NetworkViewOptions::buildNetworkViewOptionsMenuChecks() {
             myViewNet, MID_GNE_NETWORKVIEWOPTIONS_SHOWDEMANDELEMENTS, GUIDesignMFXCheckableButton);
     menuCheckShowDemandElements->setChecked(false);
     menuCheckShowDemandElements->create();
+
+    // dynamic intersection mode
+    // ADSP Jan 2022
+    menuCheckIndirectTurn = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
+            ("\t\tToggle indirect turn generation."),
+            GUIIconSubSys::getIcon(GUIIcon::COMMONMODE_CHECKBOX_INDIRECTTURN),
+            myViewNet, MID_GNE_NETWORKVIEWOPTIONS_INDIRECTTURN, GUIDesignMFXCheckableButton);
+    menuCheckIndirectTurn->setChecked(OptionsCont::getOptions().getBool("bike.indirectturn.enabled"));
+    menuCheckIndirectTurn->create();
 
     menuCheckSelectEdges = new MFXCheckableButton(false, myViewNet->myViewParent->getGNEAppWindows()->getToolbarsGrip().modes,
             ("\t\tToggle whether clicking should select edges or lanes."),
@@ -2102,6 +2112,7 @@ GNEViewNetHelper::NetworkViewOptions::hideNetworkViewOptionsMenuChecks() {
     menuCheckToggleGrid->hide();
     menuCheckDrawSpreadVehicles->hide();
     menuCheckShowDemandElements->hide();
+    menuCheckIndirectTurn->hide();         // ADSP Jan 2022
     menuCheckSelectEdges->hide();
     menuCheckShowConnections->hide();
     menuCheckHideConnections->hide();
@@ -2129,6 +2140,9 @@ GNEViewNetHelper::NetworkViewOptions::getVisibleNetworkMenuCommands(std::vector<
     }
     if (menuCheckShowDemandElements->shown()) {
         commands.push_back(menuCheckShowDemandElements);
+    }
+    if (menuCheckIndirectTurn->shown()) {
+        commands.push_back(menuCheckIndirectTurn);
     }
     if (menuCheckSelectEdges->shown()) {
         commands.push_back(menuCheckSelectEdges);
