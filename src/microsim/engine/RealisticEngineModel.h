@@ -333,10 +333,11 @@ public:
      * @param[in] speed_mps current speed in meters per second
      * @param[in] accel_mps2 current acceleration in meters per squared second
      * @param[in] reqAccel_mps2 requested acceleration in meters per squared second
+     * @param[in] maxAccel_mpsps acceleration limit
      * @param[in] timeStep current simulation timestep. needed for debugging purposes only
      * @return the real acceleration that the vehicle applies
      */
-    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, SUMOTime timeStep = 0);
+    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, double maxAccel_mpsps, SUMOTime timeStep = 0);
 
     /**
      * Load parameters from xml file

@@ -140,8 +140,8 @@ private:
 
     /// @name acceleration based on the 'driving regime'
     /// @{
-    double fullspeed(double v, double vpref, double dx, double bx) const; // also 'WUNSCH'
-    double following(double sign) const; // also 'FOLGEN'
+    double fullspeed(double v, double vpref, double dx, double bx, double maxAccel) const; // also 'WUNSCH'
+    double following(double sign, double maxAccel) const; // also 'FOLGEN'
     double approaching(double dv, double dx, double abx, double predAccel) const;  // also 'BREMSBX'
     double emergency(double dv, double dx, double predAccel, double v, double gap, double abx, double bx) const; // also 'BREMSAX'
     /// @}
@@ -162,8 +162,8 @@ private:
     /// @brief perception threshold modifier
     const double myCX;
 
-    /// @brief The vehicle's minimum acceleration [m/s^2] // also b_null
-    const double myMinAccel;
+    /// @brief Factor determining the vehicle's minimum acceleration myMinAccelFactor * maxAccel // also b_null
+    const double myMinAccelFactor;
 
     /// @brief The maximum deceleration when approaching
     const double myMaxApproachingDecel;

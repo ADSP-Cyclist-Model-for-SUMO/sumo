@@ -190,7 +190,7 @@ GUIContainer::getTypeParameterWindow(GUIMainWindow& app,
     ret->mkItem("width", false, myVType->getWidth());
     ret->mkItem("height", false, myVType->getHeight());
     ret->mkItem("minGap", false, myVType->getMinGap());
-    ret->mkItem("maximum speed [m/s]", false, myVType->getMaxSpeed());
+    ret->mkItem("maximum speed [m/s]", false, toString(myVType->getMaxSpeed()));
     // close building
     ret->closeBuilding(&(myVType->getParameter()));
     return ret;

@@ -50,6 +50,7 @@
 #include "MSParkingArea.h"
 #include "MSInsertionControl.h"
 #include "MSBaseVehicle.h"
+#include "MSRouteHandler.h"
 
 //#define DEBUG_REROUTE
 //#define DEBUG_ADD_STOP
@@ -104,6 +105,8 @@ MSBaseVehicle::MSBaseVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myRoute(route),
     myType(type),
     myCurrEdge(route->begin()),
+    myChosenMaxAccel(type->computeChosenDistributionValue(MSRouteHandler::getParsingRNG(), type->getCarFollowModel().getMaxAccel())),
+    myChosenMaxSpeed(type->computeChosenDistributionValue(MSRouteHandler::getParsingRNG(), type->getMaxSpeed())),
     myChosenSpeedFactor(pars->speedFactor < 0 ? speedFactor : pars->speedFactor),
     myMoveReminders(0),
     myPersonDevice(nullptr),
@@ -195,7 +198,7 @@ MSBaseVehicle::replaceParameter(const SUMOVehicleParameter* newParameter) {
 
 double
 MSBaseVehicle::getMaxSpeed() const {
-    return myType->getMaxSpeed();
+    return myChosenMaxSpeed;
 }
 
 

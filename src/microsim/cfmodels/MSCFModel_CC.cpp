@@ -100,7 +100,6 @@ MSCFModel_CC::createVehicleVariables() const {
     vars->engine = new FirstOrderLagModel();
     vars->engine->setParameter(FOLM_PAR_TAU, vars->engineTau);
     vars->engine->setParameter(FOLM_PAR_DT, TS);
-    vars->engine->setMaximumAcceleration(myAccel);
     vars->engine->setMaximumDeceleration(myDecel);
     vars->engineModel = CC_ENGINE_MODEL_FOLM;
     return (VehicleVariables*)vars;
@@ -194,7 +193,7 @@ MSCFModel_CC::finalizeSpeed(MSVehicle* const veh, double vPos) const {
         controllerAcceleration = SPEED2ACCEL(vPos - veh->getSpeed());
         controllerAcceleration = std::min(vars->uMax, std::max(vars->uMin, controllerAcceleration));
         //compute the actual acceleration applied by the engine
-        engineAcceleration = vars->engine->getRealAcceleration(veh->getSpeed(), veh->getAcceleration(), controllerAcceleration, MSNet::getInstance()->getCurrentTimeStep());
+        engineAcceleration = vars->engine->getRealAcceleration(veh->getSpeed(), veh->getAcceleration(), controllerAcceleration, veh->getMaxAccel(), MSNet::getInstance()->getCurrentTimeStep());
         vNext = MAX2(double(0), veh->getSpeed() + ACCEL2SPEED(engineAcceleration));
         vars->controllerAcceleration = controllerAcceleration;
     } else {
@@ -275,7 +274,7 @@ double
 MSCFModel_CC::maxNextSpeed(double speed, const MSVehicle* const veh) const {
     CC_VehicleVariables* vars = (CC_VehicleVariables*) veh->getCarFollowVariables();
     if (vars->engineModel == CC_ENGINE_MODEL_FOLM) {
-        return speed + (double) ACCEL2SPEED(getMaxAccel());
+        return speed + (double) ACCEL2SPEED(veh->getMaxAccel());
     } else {
         return speed + (double) ACCEL2SPEED(20);
     }
@@ -807,7 +806,6 @@ void MSCFModel_CC::setParameter(MSVehicle* veh, const std::string& key, const st
                     break;
                 }
             }
-            vars->engine->setMaximumAcceleration(myAccel);
             vars->engine->setMaximumDeceleration(myDecel);
             return;
         }

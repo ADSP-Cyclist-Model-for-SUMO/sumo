@@ -78,7 +78,7 @@ MSCFModel_PWag2009::followSpeed(const MSVehicle* const veh, double speed, double
     double apref = vars->aOld;
     if (apref <= asafe && RandHelper::rand(veh->getRNG()) <= myActionPointProbability * TS) {
         apref = myDecelDivTau * (gap + (predSpeed - speed) * myHeadwayTime - speed * myHeadwayTime) / (speed + myTauDecel);
-        apref = MIN2(apref, myAccel);
+        apref = MIN2(apref, veh->getMaxAccel());
         apref = MAX2(apref, -myDecel);
         apref += myDawdle * RandHelper::rand((double) - 1., (double)1., veh->getRNG());
     }
@@ -90,7 +90,7 @@ MSCFModel_PWag2009::followSpeed(const MSVehicle* const veh, double speed, double
 
 // uses the safe speed and preferred acceleration with the same NORMAL tau to compute stopSpeed
 double
-MSCFModel_PWag2009::stopSpeed(const MSVehicle* const /* veh */, const double speed, double gap, double /*decel*/) const {
+MSCFModel_PWag2009::stopSpeed(const MSVehicle* const veh, const double speed, double gap, double /*decel*/) const {
     if (gap < 0.01) {
         return 0.;
     }
@@ -99,7 +99,7 @@ MSCFModel_PWag2009::stopSpeed(const MSVehicle* const /* veh */, const double spe
 //    VehicleVariables* vars = (VehicleVariables*)veh->getCarFollowVariables();
     double apref = myDecelDivTau * (gap  - 2 * speed * myHeadwayTime) / (speed + myTauDecel);
     if (apref <= asafe) {
-        apref = MIN2(apref, myAccel);
+        apref = MIN2(apref, veh->getMaxAccel());
         apref = MAX2(apref, -myDecel);
     } else {
         apref = asafe;

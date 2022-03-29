@@ -61,7 +61,7 @@ MSCFModel_W99::MSCFModel_W99(const MSVehicleType* vtype) :
     myCC9(vtype->getParameter().getCFParam(SUMO_ATTR_CF_W99_CC9,  1.50)) {
     // translate some values to make them show up correctly in the gui
     myHeadwayTime = myCC1;
-    myAccel = myCC8;
+    myAccel = Distribution_Parameterized("", myCC8, 0.);
     // W99 does not drive very precise and may violate minGap on occasion
     myCollisionMinGapFactor = vtype->getParameter().getCFParam(SUMO_ATTR_COLLISION_MINGAP_FACTOR, 0.1);
 }
@@ -186,7 +186,7 @@ MSCFModel_W99::followSpeed(const MSVehicle* const veh, double speed, double gap2
 double
 MSCFModel_W99::stopSpeed(const MSVehicle* const veh, const double speed, double gap, double decel) const {
     // see reasoning in MSCFModel_Wiedemann::stopSpeed
-    return MIN2(maximumSafeStopSpeed(gap, decel, speed, false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, decel, speed, veh->getMaxAccel(), false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
 }
 
 

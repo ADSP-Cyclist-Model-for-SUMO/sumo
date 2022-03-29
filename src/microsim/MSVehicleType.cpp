@@ -68,7 +68,6 @@ MSVehicleType::MSVehicleType(const SUMOVTypeParameter& parameter) :
     myCarFollowModel(nullptr),
     myOriginalType(nullptr) {
     assert(getLength() > 0);
-    assert(getMaxSpeed() > 0);
 
     // Check if actionStepLength was set by user, if not init to global default
     if (!myParameter.wasSet(VTYPEPARS_ACTIONSTEPLENGTH_SET)) {
@@ -83,6 +82,11 @@ MSVehicleType::~MSVehicleType() {
 }
 
 
+double
+MSVehicleType::computeChosenDistributionValue(SumoRNG* rng, Distribution_Parameterized distr, const double minDev) const {
+    const double value = roundDecimal(MAX2(minDev, distr.sample(rng)), gPrecisionRandom);
+    return MAX2(0., value);
+}
 double
 MSVehicleType::computeChosenSpeedDeviation(SumoRNG* rng, const double minDev) const {
     return roundDecimal(MAX2(minDev, myParameter.speedFactor.sample(rng)), gPrecisionRandom);
@@ -137,9 +141,9 @@ MSVehicleType::setMinGapLat(const double& minGapLat) {
 void
 MSVehicleType::setMaxSpeed(const double& maxSpeed) {
     if (myOriginalType != nullptr && maxSpeed < 0) {
-        myParameter.maxSpeed = myOriginalType->getMaxSpeed();
+        myParameter.maxSpeed.getParameter()[0] = myOriginalType->myParameter.maxSpeed.getParameter()[0];
     } else {
-        myParameter.maxSpeed = maxSpeed;
+        myParameter.maxSpeed.getParameter()[0] = maxSpeed;
     }
     myParameter.parametersSet |= VTYPEPARS_MAXSPEED_SET;
 }
@@ -437,10 +441,10 @@ MSVehicleType::check() {
 void
 MSVehicleType::setAccel(double accel) {
     if (myOriginalType != nullptr && accel < 0) {
-        accel = myOriginalType->getCarFollowModel().getMaxAccel();
+        accel = myOriginalType->getCarFollowModel().getMaxAccel().getParameter()[0];
     }
-    myCarFollowModel->setMaxAccel(accel);
-    myParameter.cfParameter[SUMO_ATTR_ACCEL] = toString(accel);
+    myCarFollowModel->getMaxAccel().getParameter()[0] = accel;
+    myParameter.cfParameter[SUMO_ATTR_ACCEL] = toString(myCarFollowModel->getMaxAccel());
 }
 
 void

@@ -73,10 +73,11 @@ private:
      * @param[in] vOld The previous speed
      * @param[in] vMin The minimum speed (due to braking constraints)
      * @param[in] vMax The maximum speed that may be driven (all constraints)
+     * @param[in] maxAccel The accerlation limit of the vehicle
      * @return The speed after dawdling
      *
      */
-    double dawdleX(double vOld, double vMin, double vMax, SumoRNG* rng) const;
+    double dawdleX(double vOld, double vMin, double vMax, double maxAccel, SumoRNG* rng) const;
 
     /// @brief extension parameter nr1
     double myTmp1;

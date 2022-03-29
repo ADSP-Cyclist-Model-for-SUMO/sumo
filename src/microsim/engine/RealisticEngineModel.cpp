@@ -192,7 +192,7 @@ double RealisticEngineModel::getEngineTimeConstant_s(double rpm) {
     }
 }
 
-double RealisticEngineModel::getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, SUMOTime timeStep) {
+double RealisticEngineModel::getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, double /* maxAccel_mpsps */, SUMOTime timeStep) {
 
     double realAccel_mps2;
     //perform gear shifting, if needed

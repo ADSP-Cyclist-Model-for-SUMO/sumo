@@ -62,7 +62,7 @@ VehicleType::getLength(const std::string& typeID) {
 
 double
 VehicleType::getMaxSpeed(const std::string& typeID) {
-    return getVType(typeID)->getMaxSpeed();
+    return getVType(typeID)->getMaxSpeed().getMax();
 }
 
 
@@ -86,7 +86,7 @@ VehicleType::getSpeedDeviation(const std::string& typeID) {
 
 double
 VehicleType::getAccel(const std::string& typeID) {
-    return getVType(typeID)->getCarFollowModel().getMaxAccel();
+    return getVType(typeID)->getCarFollowModel().getMaxAccel().getParameter()[0];
 }
 
 

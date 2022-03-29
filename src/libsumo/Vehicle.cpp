@@ -804,7 +804,7 @@ Vehicle::getLength(const std::string& vehID) {
 
 double
 Vehicle::getAccel(const std::string& vehID) {
-    return Helper::getVehicleType(vehID).getCarFollowModel().getMaxAccel();
+    return Helper::getVehicle(vehID)->getMaxAccel();
 }
 
 
@@ -884,7 +884,7 @@ Vehicle::getMinGapLat(const std::string& vehID) {
 
 double
 Vehicle::getMaxSpeed(const std::string& vehID) {
-    return Helper::getVehicleType(vehID).getMaxSpeed();
+    return Helper::getVehicle(vehID)->getMaxSpeed();
 }
 
 

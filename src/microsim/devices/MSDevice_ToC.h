@@ -354,7 +354,7 @@ private:
     double myMaxPreparationAccel;
 
     /// @brief Storage for original maximal acceleration of vehicle.
-    double myOriginalMaxAccel;
+    Distribution_Parameterized myOriginalMaxAccel;
 
     /// @brief Grid of the response time distribution.
     static std::vector<double> lookupResponseTimeMRMProbs;

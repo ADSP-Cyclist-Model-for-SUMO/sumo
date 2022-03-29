@@ -55,11 +55,12 @@ public:
      * @param[in] speed_mps current speed in meters per second
      * @param[in] accel_mps2 current acceleration in meters per squared second
      * @param[in] reqAccel_mps2 requested acceleration in meters per squared second
+     * @param[in] maxAccel_mpsps acceleration limit
      * @param[in] timeStep current simulation timestep
      * @return the real acceleration that the vehicle applies in meters per
      * squared second
      */
-    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, SUMOTime timeStep = 0);
+    virtual double getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, double maxAccel_mpsps, SUMOTime timeStep = 0);
 
     /**
      * Load model parameters. This method requires a map of strings to be as

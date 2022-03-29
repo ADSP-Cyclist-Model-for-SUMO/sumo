@@ -26,6 +26,7 @@
 #include <microsim/MSVehicle.h>
 #include <microsim/lcmodels/MSAbstractLaneChangeModel.h>
 #include "MSCFModel_Rail.h"
+#include "microsim/MSRouteHandler.h"
 
 MSCFModel_Rail::MSCFModel_Rail(const MSVehicleType* vtype) :
     MSCFModel(vtype) {
@@ -52,7 +53,7 @@ MSCFModel_Rail::MSCFModel_Rail(const MSVehicleType* vtype) :
     }
     // override with user values
     if (vtype->wasSet(VTYPEPARS_MAXSPEED_SET)) {
-        myTrainParams.vmax = vtype->getMaxSpeed();
+        myTrainParams.vmax = vtype->getMaxSpeed().sample(MSRouteHandler::getParsingRNG());
     }
     if (vtype->wasSet(VTYPEPARS_LENGTH_SET)) {
         myTrainParams.length = vtype->getLength();
@@ -81,7 +82,7 @@ double MSCFModel_Rail::followSpeed(const MSVehicle* const veh, double speed, dou
         gap = MAX2(0.0, gap + veh->getVehicleType().getMinGap() - 50);
     }
 
-    const double vsafe = maximumSafeStopSpeed(gap, myDecel, speed, false, TS); // absolute breaking distance
+    const double vsafe = maximumSafeStopSpeed(gap, myDecel, speed, veh->getMaxAccel(), false, TS); // absolute breaking distance
     const double vmin = minNextSpeed(speed, veh);
     const double vmax = maxNextSpeed(speed, veh);
 
@@ -255,5 +256,5 @@ double MSCFModel_Rail::freeSpeed(const MSVehicle* const /* veh */, double /* spe
 }
 
 double MSCFModel_Rail::stopSpeed(const MSVehicle* const veh, const double speed, double gap, double decel) const {
-    return MIN2(maximumSafeStopSpeed(gap, decel, speed, false, TS), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, decel, speed, veh->getMaxAccel(), false, TS), maxNextSpeed(speed, veh));
 }

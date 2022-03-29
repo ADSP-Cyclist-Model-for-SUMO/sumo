@@ -224,7 +224,7 @@ GUIVehicle::getTypeParameterWindow(GUIMainWindow& app,
     ret->mkItem("LaneChangeModel", false, SUMOXMLDefinitions::LaneChangeModels.getString(getLaneChangeModel().getModelID()));
     ret->mkItem("guiShape", false, getVehicleShapeName(myType->getGuiShape()));
     ret->mkItem("maximum speed [m/s]", false, getMaxSpeed());
-    ret->mkItem("maximum acceleration [m/s^2]", false, getCarFollowModel().getMaxAccel());
+    ret->mkItem("maximum acceleration [m/s^2]", false, getMaxAccel());
     ret->mkItem("maximum deceleration [m/s^2]", false, getCarFollowModel().getMaxDecel());
     ret->mkItem("emergency deceleration [m/s^2]", false, getCarFollowModel().getEmergencyDecel());
     ret->mkItem("apparent deceleration [m/s^2]", false, getCarFollowModel().getApparentDecel());

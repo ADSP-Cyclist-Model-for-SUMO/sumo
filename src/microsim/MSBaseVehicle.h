@@ -153,6 +153,13 @@ public:
         return myType->getParameter().vehicleClass;
     }
 
+    /** @brief Returns the maximum acceleration
+     * @return The vehicle's maximum acceleration
+     */
+    double getMaxAccel() const {
+        return myChosenMaxAccel;
+    };
+
     /** @brief Returns the maximum speed
      * @return The vehicle's maximum speed
      */
@@ -916,6 +923,12 @@ protected:
 
     /// @brief Iterator to current route-edge
     MSRouteIterator myCurrEdge;
+
+    /// @brief A precomputed acceleration limit of the vehicle
+    double myChosenMaxAccel;
+
+    /// @brief A precomputed speed limit of the vehicle
+    double myChosenMaxSpeed;
 
     /// @brief A precomputed factor by which the driver wants to be faster than the speed limit
     double myChosenSpeedFactor;

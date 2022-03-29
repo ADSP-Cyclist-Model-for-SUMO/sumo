@@ -757,13 +757,10 @@ SUMOVehicleParserHelper::beginVTypeParsing(const SUMOSAXAttributes& attrs, const
         }
         if (attrs.hasAttribute(SUMO_ATTR_MAXSPEED)) {
             bool ok = true;
-            const double maxSpeed = attrs.get<double>(SUMO_ATTR_MAXSPEED, vType->id.c_str(), ok);
+            vType->maxSpeed.parse(attrs.get<std::string>(SUMO_ATTR_MAXSPEED, vType->id.c_str(), ok), hardFail);
             if (!ok) {
                 return handleVehicleTypeError(hardFail, vType);
-            } else if (maxSpeed <= 0) {
-                return handleVehicleTypeError(hardFail, vType, toString(SUMO_ATTR_MAXSPEED) + " must be greater than 0");
             } else {
-                vType->maxSpeed = maxSpeed;
                 vType->parametersSet |= VTYPEPARS_MAXSPEED_SET;
             }
         }
@@ -1177,6 +1174,15 @@ SUMOVehicleParserHelper::parseCFMParams(SUMOVTypeParameter* into, const SumoXMLT
                 }
                 // add parsedCFMAttribute to cfParameter
                 into->cfParameter[it] = parsedCFMAttribute;
+            } else if (it == SUMO_ATTR_ACCEL) {
+                Distribution_Parameterized CFMDistributionParameterizedAttribute("", 0., 0.);
+                try {
+                    CFMDistributionParameterizedAttribute.parse(parsedCFMAttribute, true);
+                } catch (...) {
+                    WRITE_ERROR("Invalid Car-Following-Model Attribute " + toString(it) + ". Cannot be parsed to DistributionParameterized");
+                    return false;
+                }
+                into->cfParameter[it] = parsedCFMAttribute;
             } else {
                 // declare a double in wich save CFM float attribute
                 double CFMDoubleAttribute = -1;
@@ -1189,7 +1195,6 @@ SUMOVehicleParserHelper::parseCFMParams(SUMOVTypeParameter* into, const SumoXMLT
                 }
                 // check attributes of type "positiveFloatType" (> 0)
                 switch (it) {
-                    case SUMO_ATTR_ACCEL:
                     case SUMO_ATTR_DECEL:
                     case SUMO_ATTR_APPARENTDECEL:
                     case SUMO_ATTR_EMERGENCYDECEL:

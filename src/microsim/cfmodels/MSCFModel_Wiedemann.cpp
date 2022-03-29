@@ -57,7 +57,7 @@ MSCFModel_Wiedemann::MSCFModel_Wiedemann(const MSVehicleType* vtype) :
     myEstimation(vtype->getParameter().getCFParam(SUMO_ATTR_CF_WIEDEMANN_ESTIMATION, 0.5)),
     myAX(vtype->getLength() + 1. + 2. * mySecurity),
     myCX(25. *(1. + mySecurity + myEstimation)),
-    myMinAccel(0.2 * myAccel),
+    myMinAccelFactor(0.2),
     myMaxApproachingDecel((myDecel + myEmergencyDecel) / 2) {
     // Wiedemann does not drive very precise and may violate minGap on occasion
     myCollisionMinGapFactor = vtype->getParameter().getCFParam(SUMO_ATTR_COLLISION_MINGAP_FACTOR, 0.1);
@@ -90,7 +90,7 @@ MSCFModel_Wiedemann::stopSpeed(const MSVehicle* const veh, const double speed, d
      * does a lousy job of closing in on a stop / junction
      * hence we borrow from Krauss here
      */
-    return MIN2(maximumSafeStopSpeed(gap, decel, speed, false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
+    return MIN2(maximumSafeStopSpeed(gap, decel, speed, veh->getMaxAccel(), false, veh->getActionStepLengthSecs()), maxNextSpeed(speed, veh));
 }
 
 
@@ -144,10 +144,10 @@ MSCFModel_Wiedemann::_v(const MSVehicle* veh, double predSpeed, double gap, doub
             accel = approaching(dv, dx, abx, predAccel);
             branch = 2;
         } else if (dv > opdv) {
-            accel = following(vars->accelSign);
+            accel = following(vars->accelSign, veh->getMaxAccel());
             branch = 3;
         } else {
-            accel = fullspeed(v, vpref, dx, abx);
+            accel = fullspeed(v, vpref, dx, abx, veh->getMaxAccel());
             branch = 4;
         }
     } else {
@@ -155,7 +155,7 @@ MSCFModel_Wiedemann::_v(const MSVehicle* veh, double predSpeed, double gap, doub
             accel = approaching(dv, dx, abx, predAccel);
             branch = 5;
         } else {
-            accel = fullspeed(v, vpref, dx, abx);
+            accel = fullspeed(v, vpref, dx, abx, veh->getMaxAccel());
             branch = 6;
         }
     }
@@ -163,7 +163,7 @@ MSCFModel_Wiedemann::_v(const MSVehicle* veh, double predSpeed, double gap, doub
 #ifdef DEBUG_V
     const double rawAccel = accel;
 #endif
-    accel = MAX2(MIN2(accel, myAccel), -myEmergencyDecel);
+    accel = MAX2(MIN2(accel, veh->getMaxAccel()), -myEmergencyDecel);
     const double vNew = MAX2(0., v + ACCEL2SPEED(accel)); // don't allow negative speeds
 #ifdef DEBUG_V
     if (veh->isSelected() && !MSGlobals::gComputeLC) {
@@ -182,11 +182,11 @@ MSCFModel_Wiedemann::_v(const MSVehicle* veh, double predSpeed, double gap, doub
 
 
 double
-MSCFModel_Wiedemann::fullspeed(double v, double vpref, double dx, double abx) const {
+MSCFModel_Wiedemann::fullspeed(double v, double vpref, double dx, double abx, double maxAccel) const {
     // maximum acceleration is reduced with increasing speed
-    double bmax = 0.2 + 0.8 * myAccel * (7 - sqrt(v));
+    double bmax = 0.2 + 0.8 * maxAccel * (7 - sqrt(v));
     // if veh just drifted out of a 'following' process the acceleration is reduced
-    double accel = dx <= 2 * abx ? MIN2(myMinAccel, bmax * (dx - abx) / abx) : bmax;
+    double accel = dx <= 2 * abx ? MIN2(myMinAccelFactor * maxAccel, bmax * (dx - abx) / abx) : bmax;
     if (v > vpref) {
         accel = - accel;
     }
@@ -195,8 +195,8 @@ MSCFModel_Wiedemann::fullspeed(double v, double vpref, double dx, double abx) co
 
 
 double
-MSCFModel_Wiedemann::following(double sign) const {
-    return myMinAccel * sign;
+MSCFModel_Wiedemann::following(double sign, double maxAccel) const {
+    return myMinAccelFactor * maxAccel * sign;
 }
 
 

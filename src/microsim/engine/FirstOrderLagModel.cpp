@@ -35,11 +35,11 @@ void FirstOrderLagModel::computeParameters() {
     oneMinusAlpha = 1 - alpha;
 }
 
-double FirstOrderLagModel::getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, SUMOTime timeStep) {
+double FirstOrderLagModel::getRealAcceleration(double speed_mps, double accel_mps2, double reqAccel_mps2, double maxAccel_mpsps, SUMOTime timeStep) {
     UNUSED_PARAMETER(speed_mps);
     UNUSED_PARAMETER(timeStep);
     return std::min(
-               maxAcceleration_mpsps,
+               maxAccel_mpsps,
                std::max(
                    -maxDeceleration_mpsps,
                    alpha * reqAccel_mps2 + oneMinusAlpha * accel_mps2
