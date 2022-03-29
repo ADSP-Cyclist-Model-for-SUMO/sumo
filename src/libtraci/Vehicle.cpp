@@ -819,7 +819,8 @@ Vehicle::add(const std::string& vehID,
              const std::string& toTaz,
              const std::string& line,
              int personCapacity,
-             int personNumber) {
+             int personNumber,
+             double directTurnProbability) {
     tcpip::Storage content;
     StoHelp::writeCompound(content, 14);
     StoHelp::writeTypedString(content, routeID);

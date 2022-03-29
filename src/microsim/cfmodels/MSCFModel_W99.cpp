@@ -61,7 +61,7 @@ MSCFModel_W99::MSCFModel_W99(const MSVehicleType* vtype) :
     myCC9(vtype->getParameter().getCFParam(SUMO_ATTR_CF_W99_CC9,  1.50)) {
     // translate some values to make them show up correctly in the gui
     myHeadwayTime = myCC1;
-    myAccel = Distribution_Parameterized("", myCC8, 0.);
+    myAccel = Distribution_Parameterized(myCC8);
     // W99 does not drive very precise and may violate minGap on occasion
     myCollisionMinGapFactor = vtype->getParameter().getCFParam(SUMO_ATTR_COLLISION_MINGAP_FACTOR, 0.1);
 }

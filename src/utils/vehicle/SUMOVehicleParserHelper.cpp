@@ -1175,7 +1175,7 @@ SUMOVehicleParserHelper::parseCFMParams(SUMOVTypeParameter* into, const SumoXMLT
                 // add parsedCFMAttribute to cfParameter
                 into->cfParameter[it] = parsedCFMAttribute;
             } else if (it == SUMO_ATTR_ACCEL) {
-                Distribution_Parameterized CFMDistributionParameterizedAttribute("", 0., 0.);
+                Distribution_Parameterized CFMDistributionParameterizedAttribute(0.);
                 try {
                     CFMDistributionParameterizedAttribute.parse(parsedCFMAttribute, true);
                 } catch (...) {

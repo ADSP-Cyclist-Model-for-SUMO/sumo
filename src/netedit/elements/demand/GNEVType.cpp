@@ -943,7 +943,7 @@ GNEVType::overwriteVType(GNEDemandElement* vType, const SUMOVTypeParameter newVT
     undoList->begin(vType->getTagProperty().getGUIIcon(), "update default " + vType->getTagStr() + " '" + DEFAULT_VTYPE_ID + "'");
     // CFM values
     if (!newVTypeParameter.getCFParamString(SUMO_ATTR_ACCEL, "").empty()) {
-        vType->setAttribute(SUMO_ATTR_ACCEL, toString(newVTypeParameter.getCFParamDistributionParameterized(SUMO_ATTR_ACCEL, Distribution_Parameterized("", 0., 0.))), undoList);
+        vType->setAttribute(SUMO_ATTR_ACCEL, toString(newVTypeParameter.getCFParamDistributionParameterized(SUMO_ATTR_ACCEL, Distribution_Parameterized(0.))), undoList);
     }
     if (!newVTypeParameter.getCFParamString(SUMO_ATTR_DECEL, "").empty()) {
         vType->setAttribute(SUMO_ATTR_DECEL, toString(newVTypeParameter.getCFParam(SUMO_ATTR_DECEL, 0)), undoList);
@@ -1520,7 +1520,9 @@ GNEVType::setAttribute(SumoXMLAttr key, const std::string& value) {
             break;
         case SUMO_ATTR_MAXSPEED:
             if (!value.empty() && (value != toString(defaultValues.maxSpeed))) {
-                maxSpeed.parse(value, false);
+                Distribution_Parameterized newMaxSpeed(0.);
+                newMaxSpeed.parse(value, false);
+                maxSpeed = newMaxSpeed;
                 // mark parameter as set
                 parametersSet |= VTYPEPARS_MAXSPEED_SET;
             } else {

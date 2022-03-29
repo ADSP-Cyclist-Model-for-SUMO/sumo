@@ -2494,7 +2494,7 @@ MSLaneChanger::getLaneAfter(const MSLane* lane, const std::vector<MSLane*>& cont
 double
 MSLaneChanger::getMaxOvertakingSpeed(const MSVehicle* vehicle, double maxSpaceToOvertake) {
     // v*v/2*a + v*v/2*d = maxSpaceToOvertake
-    const double a = vehicle->getCarFollowModel().getMaxAccel();
+    const double a = vehicle->getMaxAccel();
     const double d = vehicle->getCarFollowModel().getMaxDecel();
     const double v = sqrt(2 * maxSpaceToOvertake * a * d / (a + d));
     return v;

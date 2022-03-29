@@ -68,7 +68,7 @@ enum {
     /// @brief hotkey for mode editing overhead wires
     MID_HOTKEY_W_MODE_WIRE,
     /// @brief hotkey for mode create dynamic intersections ADSP JAN 2022
-    MID_HOTKEY_X_MODES_CONNECT_DYNAMIC,
+    MID_HOTKEY_X_MODE_CONNECT_DYNAMIC,
     /// @brief hotkey for mode editing TAZ and TAZRel
     MID_HOTKEY_Z_MODE_TAZ_TAZREL,
 

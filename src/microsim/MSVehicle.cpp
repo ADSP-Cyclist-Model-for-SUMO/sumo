@@ -2151,7 +2151,7 @@ MSVehicle::planMoveInternal(const SUMOTime t, MSLeaderInfo ahead, DriveItemVecto
                     } else {
                         // avoid frontal collision
                         const bool assumeStopped = cand.first->isStopped() || cand.first->getWaitingSeconds() > 1;
-                        const double predMaxDist = cand.first->getSpeed() + (assumeStopped ? 0 : cand.first->getCarFollowModel().getMaxAccel()) * minTimeToLeaveLane;
+                        const double predMaxDist = cand.first->getSpeed() + (assumeStopped ? 0 : cand.first->getMaxAccel()) * minTimeToLeaveLane;
                         if (cand.second >= 0 && (cand.second - v * minTimeToLeaveLane - predMaxDist < 0 || assumeStopped)) {
                             oppositeLeaders.addLeader(cand.first, cand.second + gapOffset - predMaxDist - getVehicleType().getMinGap());
                         }
@@ -2786,7 +2786,7 @@ MSVehicle::adaptToLeaders(const MSLeaderInfo& ahead, double latOffset,
                 // must react to stopped / dangerous oncoming vehicles
                 gap += -pred->getVehicleType().getLength() + getVehicleType().getMinGap() - MAX2(getVehicleType().getMinGap(), pred->getVehicleType().getMinGap());
                 // try to avoid collision in the next second
-                const double predMaxDist = pred->getSpeed() + pred->getCarFollowModel().getMaxAccel();
+                const double predMaxDist = pred->getSpeed() + pred->getMaxAccel();
                 if (gap < predMaxDist + getSpeed()) {
                     gap -= predMaxDist;
                 }

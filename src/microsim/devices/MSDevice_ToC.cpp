@@ -474,7 +474,7 @@ MSDevice_ToC::setState(ToCState state) {
         myOriginalMaxAccel = myHolderMS->getCarFollowModel().getMaxAccel();
         // Impose acceleration limit during preparation
         if (myMaxPreparationAccel < myOriginalMaxAccel.getMax()) {
-            myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(Distribution_Parameterized("", myMaxPreparationAccel, 0.));
+            myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(Distribution_Parameterized(myMaxPreparationAccel));
         } else {
             myHolderMS->getSingularType().getCarFollowModel().setMaxAccel(myOriginalMaxAccel);
         }

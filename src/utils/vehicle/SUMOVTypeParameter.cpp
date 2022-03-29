@@ -523,7 +523,7 @@ SUMOVTypeParameter::getCFParamString(const SumoXMLAttr attr, const std::string d
 Distribution_Parameterized
 SUMOVTypeParameter::getCFParamDistributionParameterized(const SumoXMLAttr attr, const Distribution_Parameterized defaultValue) const {
     if (cfParameter.count(attr)) {
-        Distribution_Parameterized distr{"", 0., 0.};
+        Distribution_Parameterized distr{ 0. };
         distr.parse(cfParameter.find(attr)->second, false);
         return distr;
     } else {
