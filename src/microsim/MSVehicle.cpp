@@ -935,7 +935,7 @@ MSVehicle::MSVehicle(SUMOVehicleParameter* pars, const MSRoute* route,
     myActionStep(true),
     myLastActionTime(0),
     myLane(nullptr),
-    myDirectTurnsPreferred(),
+    myDirectTurnsPreferred(nullptr),
     myLaneChangeModel(nullptr),
     myLastBestLanesEdge(nullptr),
     myLastBestLanesInternalLane(nullptr),
@@ -1056,29 +1056,7 @@ bool
 MSVehicle::replaceRoute(const MSRoute* newRoute, const std::string& info, bool onInit, int offset, bool addRouteStops, bool removeStops, std::string* msgReturn) {
     if (MSBaseVehicle::replaceRoute(newRoute, info, onInit, offset, addRouteStops, removeStops, msgReturn)) {
         // apply turn probabilities
-        for (auto edge = myRoute->getEdges().begin(); edge != myRoute->getEdges().end() - 1; edge++) {
-            int turnTypeOptions = 0;
-            for (const MSLane* lane : (*edge)->getLanes()) {
-                for (const MSLink* m : lane->getLinkCont()) {
-                    if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
-                        turnTypeOptions |= m->isIndirect() ? 1 : 2;
-                    }
-                }
-            }
-            bool hasMultipleTurnOptions = turnTypeOptions == 3;
-            // compute index of the best lane (highest length and least offset from the best next lane)
-            bool prefersDirectTurn;
-            if (hasMultipleTurnOptions) {
-                double rand = RandHelper::rand(0.0, 1.0);
-                if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
-                    prefersDirectTurn = myParameter->directTurnProbability <= rand;
-                } else {
-                    prefersDirectTurn = myType->getDirectTurnProbability() <= rand;
-                }
-            }
-
-            myDirectTurnsPreferred.insert({ *edge, prefersDirectTurn });
-        }
+        replaceDirectTurnPreferences();
         // update best lanes (after stops were added)
         myLastBestLanesEdge = nullptr;
         myLastBestLanesInternalLane = nullptr;
@@ -1087,6 +1065,38 @@ MSVehicle::replaceRoute(const MSRoute* newRoute, const std::string& info, bool o
         return true;
     }
     return false;
+}
+
+
+void MSVehicle::replaceDirectTurnPreferences() {
+    if (!myDirectTurnsPreferred) {
+        myDirectTurnsPreferred = new std::map<const MSEdge*, bool>();
+    } else {
+        myDirectTurnsPreferred->clear();
+    }
+
+    for (auto edge = myRoute->getEdges().begin(); edge != myRoute->getEdges().end() - 1; edge++) {
+        int turnTypeOptions = 0;
+        for (const MSLane* lane : (*edge)->getLanes()) {
+            for (const MSLink* m : lane->getLinkCont()) {
+                if (m->getDirection() == LinkDirection::LEFT && m->getLane()->allowsVehicleClass(getVClass())) {
+                    turnTypeOptions |= m->isIndirect() ? 1 : 2;
+                }
+            }
+        }
+        bool hasMultipleTurnOptions = turnTypeOptions == 3;
+        bool prefersDirectTurn;
+        if (hasMultipleTurnOptions) {
+            double rand = RandHelper::rand(0.0, 1.0);
+            if (myParameter->wasSet(VEHPARS_DIRECT_TURN_PROBABILITY_SET)) {
+                prefersDirectTurn = myParameter->directTurnProbability >= rand;
+            } else {
+                prefersDirectTurn = myType->getDirectTurnProbability() >= rand;
+            }
+        }
+
+        myDirectTurnsPreferred->insert({ *edge, prefersDirectTurn });
+    }
 }
 
 
@@ -5373,7 +5383,7 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
         std::vector<LaneQ>& nextLanes = (*(i - 1));
         std::vector<LaneQ>& clanes = (*i);
         MSEdge& cE = clanes[0].lane->getEdge();
-        bool prefersDirectTurn = myDirectTurnsPreferred.at(&cE);
+        bool prefersDirectTurn = myDirectTurnsPreferred->at(&cE);
         int index = 0;
         double bestConnectedLength = -1;
         double bestLength = -1;
@@ -5385,31 +5395,41 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                 bestLength = (*j).length;
             }
         }
+        // Check whether the edge contains at least one bike path.
+        // If it does, non-bike-path lanes are excluded as best lane candidates
+        bool hasBikePath = false;
+        for (auto j = clanes.begin(); j != clanes.end(); ++j) {
+            if (isBikepath(j->lane->getPermissions()) && j->allowsContinuation) {
+                hasBikePath = true;
+                break;
+            }
+        }
         // compute index of the best lane (highest length and least offset from the best next lane)
         int bestThisIndex = 0;
         if (bestConnectedLength > 0) {
             index = 0;
             for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j, ++index) {
-                LaneQ bestConnectedNext;
-                bestConnectedNext.length = -1;
-                if ((*j).allowsContinuation) {
-                    for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
-                        if (((*m).lane->allowsVehicleClass(getVClass()) || (*m).lane->hadPermissionChanges())
+                if (!hasBikePath || isBikepath(j->lane->getPermissions())) {
+                    LaneQ bestConnectedNext;
+                    bestConnectedNext.length = -1;
+                    if ((*j).allowsContinuation) {
+                        for (std::vector<LaneQ>::const_iterator m = nextLanes.begin(); m != nextLanes.end(); ++m) {
+                            if (((*m).lane->allowsVehicleClass(getVClass()) || (*m).lane->hadPermissionChanges())
                                 && (*m).lane->isApproachedFrom(&cE, (*j).lane)) {
-                            if (bestConnectedNext.length < (*m).length || (bestConnectedNext.length == (*m).length && abs(bestConnectedNext.bestLaneOffset) > abs((*m).bestLaneOffset))) {
-                                bestConnectedNext = *m;
+                                if (bestConnectedNext.length < (*m).length || (bestConnectedNext.length == (*m).length && abs(bestConnectedNext.bestLaneOffset) > abs((*m).bestLaneOffset))) {
+                                    bestConnectedNext = *m;
+                                }
                             }
                         }
+                        if (bestConnectedNext.length == bestConnectedLength && abs(bestConnectedNext.bestLaneOffset) < 2) {
+                            (*j).length += bestLength;
+                        } else {
+                            (*j).length += bestConnectedNext.length;
+                        }
+                        (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
                     }
-                    if (bestConnectedNext.length == bestConnectedLength && abs(bestConnectedNext.bestLaneOffset) < 2) {
-                        (*j).length += bestLength;
-                    } else {
-                        (*j).length += bestConnectedNext.length;
-                    }
-                    (*j).bestLaneOffset = bestConnectedNext.bestLaneOffset;
-                }
-                copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
-                if (clanes[bestThisIndex].length < (*j).length
+                    copy(bestConnectedNext.bestContinuations.begin(), bestConnectedNext.bestContinuations.end(), back_inserter((*j).bestContinuations));
+                    if (clanes[bestThisIndex].length < (*j).length
                         || (clanes[bestThisIndex].length == (*j).length
                             && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) > nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn))
                         || (clanes[bestThisIndex].length == (*j).length
@@ -5419,8 +5439,9 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                             && nextLinkTurnPriority(j->bestContinuations, prefersDirectTurn) == nextLinkTurnPriority(clanes[bestThisIndex].bestContinuations, prefersDirectTurn)
                             && abs(clanes[bestThisIndex].bestLaneOffset) == abs((*j).bestLaneOffset)
                             && nextLinkPriority(clanes[bestThisIndex].bestContinuations) < nextLinkPriority((*j).bestContinuations))
-                   ) {
-                    bestThisIndex = index;
+                            ) {
+                        bestThisIndex = index;
+                    }
                 }
             }
 
@@ -5434,21 +5455,6 @@ MSVehicle::updateBestLanes(bool forceRebuild, const MSLane* startLane) {
                     }
                 }
             }
-
-            // bikes ought to consider bike paths the best lanes in any case
-            if (myType->getVehicleClass() == SVC_BICYCLE) {
-                for (std::vector<LaneQ>::iterator j = clanes.begin(); j != clanes.end(); ++j) {
-                    if (isBikepath(j->lane->getPermissions()) && j->allowsContinuation) {
-                        bestThisIndex = j - clanes.begin();
-                        for (std::vector<LaneQ>::iterator l = clanes.begin(); l != clanes.end(); ++l) {
-                            (*l).bestLaneOffset = j - l;
-                            (*l).length = bestLength;
-                        }
-                        break;
-                    }
-                }
-            }
-
         } else {
             // only needed in case of disconnected routes
             int bestNextIndex = 0;

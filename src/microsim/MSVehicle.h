@@ -856,6 +856,10 @@ public:
      */
     void updateBestLanes(bool forceRebuild = false, const MSLane* startLane = 0);
 
+    /**
+     * Replaces the map of direct turn preferences within the vehicle given the current value of `myRoute`.
+     */
+    void replaceDirectTurnPreferences();
 
     /** @brief Returns the best sequence of lanes to continue the route starting at myLane
      * @return The bestContinuations of the LaneQ for myLane (see LaneQ)
@@ -1826,7 +1830,7 @@ protected:
     /// The lane the vehicle is on
     MSLane* myLane;
 
-    std::map<const MSEdge*, bool> myDirectTurnsPreferred;
+    std::map<const MSEdge*, bool>* myDirectTurnsPreferred;
 
     MSAbstractLaneChangeModel* myLaneChangeModel;
 

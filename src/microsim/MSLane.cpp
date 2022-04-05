@@ -571,6 +571,7 @@ MSLane::insertVehicle(MSVehicle& veh) {
     const SUMOVehicleParameter& pars = veh.getParameter();
     double speed = getDepartSpeed(veh, patchSpeed);
     double posLat = getDepartPosLat(veh);
+    veh.replaceDirectTurnPreferences();
 
     // determine the position
     switch (pars.departPosProcedure) {
